@@ -9,6 +9,7 @@ Widget LoginTextForm({label, hintlabel,numb=1,controller}) {
     
         decoration: InputDecoration(
           
+          
             label: Text(label),
             hintText: hintlabel,
             border: const OutlineInputBorder(

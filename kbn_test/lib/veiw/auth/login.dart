@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert'; // For decoding JSON responses
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
@@ -6,6 +8,7 @@ import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/utilities/widgets/bg_widg.dart';
 import 'package:kbn_test/utilities/widgets/error.dart';
 import 'package:kbn_test/utilities/widgets/login_textformfiled.dart';
+import 'package:kbn_test/veiw/auth/signup.dart';
 import 'package:kbn_test/veiw/auth/signup_personal.dart';
 import 'package:kbn_test/veiw/screen/home.dart';
 
@@ -17,16 +20,60 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _isChecked = false;
 
-  void _login() {
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login() async {
     if (_isChecked) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const Home(),
-        ),
-      );
+      String username = _usernameController.text;
+      String password = _passwordController.text;
+
+      try {
+        var url = Uri.parse('http://192.168.29.37:8000/user/login');
+
+        var response = await http.post(
+          url,
+          body: jsonEncode({
+            'email': username,
+            'password': password,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        );
+        // Check if the login was successful
+        if (response.statusCode == 200) {
+          var responseData = jsonDecode(response.body);
+          if (responseData is Map && responseData.containsKey('token')) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const Home(),
+                  ),
+                );
+          } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Invalid username or password.')),
+                );
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Login failed. Please try again.')),
+          );
+        }
+      } catch (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $error')),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please check the box to proceed.')),
@@ -76,8 +123,19 @@ class _LogInPageState extends State<LogInPage> {
                       ],
                     ),
                     const SizedBox(height: 30),
-                    LoginTextForm(label: "username", hintlabel: "user_name"),
-                    LoginTextForm(label: "password", hintlabel: "* * * * *"),
+                    LoginTextForm(
+                      controller:
+                          _usernameController, // Controller for username
+                      label: "username",
+                      hintlabel: "user_name",
+                    ),
+                    LoginTextForm(
+                      controller:
+                          _passwordController, // Controller for password
+                      label: "password",
+                      hintlabel: "* * * * *",
+                      // obscureText: true,  // To obscure the password input
+                    ),
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
@@ -123,9 +181,8 @@ class _LogInPageState extends State<LogInPage> {
                           ),
                           color: _isChecked ? black : Colors.grey,
                           gradient: LinearGradient(
-                            colors: _isChecked
-                                ? loginbutton
-                                : InnactiveLoginbutton,
+                            colors:
+                                _isChecked ? loginbutton : InnactiveLoginbutton,
                           ),
                         ),
                         child: const Center(
@@ -145,7 +202,7 @@ class _LogInPageState extends State<LogInPage> {
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(
                               builder: (context) {
-                                return const SignupPersonal();
+                                return const SignupPage();
                               },
                             ));
                           },
