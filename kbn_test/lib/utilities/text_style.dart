@@ -32,11 +32,36 @@ class AppTextStyle{
     fontWeight: FontWeight.w400,
     color: black,
   );
+  static const TextStyle bodytextwhite= TextStyle(
+    fontSize: 12,
+    fontFamily: "Inter",
+    fontWeight: FontWeight.w400,
+    color: white,
+  );
+  static  TextStyle bodytextwhiteunderline= const TextStyle(
+    fontSize: 12,
+    fontFamily: "Inter",
+    fontWeight: FontWeight.w400,
+    color: white,
+    decoration: TextDecoration.underline,decorationColor: white
+  );
   static const TextStyle logintext= TextStyle(
     fontSize: 25,
     fontFamily: "Inter",
     fontWeight: FontWeight.w600,
     color: white,
+  );
+  static const TextStyle firmHead= TextStyle(
+    fontSize: 25,
+    fontFamily: "Popppins",
+    fontWeight: FontWeight.w500,
+    color: black,
+  );
+  static const TextStyle abouttxt= TextStyle(
+    fontSize: 13,
+    fontFamily: "Popppins",
+    fontWeight: FontWeight.w500,
+    color: black,
   );
   static const TextStyle hoomeSubhead= TextStyle(
     fontSize: 25,
@@ -49,6 +74,18 @@ class AppTextStyle{
     fontFamily: "Poppins",
     fontWeight: FontWeight.w500,
     color: white,
+  );
+  static const TextStyle applytxt= TextStyle(
+    fontSize: 10,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w500,
+    color: white,
+  );
+  static const TextStyle normaltxt= TextStyle(
+    fontSize: 10,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w400,
+    color: black,
   );
   static const TextStyle flitertxt= TextStyle(
     fontSize: 16,
@@ -85,5 +122,11 @@ class AppTextStyle{
     fontFamily: "Poppins",
     fontWeight: FontWeight.w500,
     color: white,
+  );
+  static const TextStyle postheadtxt= TextStyle(
+    fontSize: 16,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w500,
+    color: black,
   );
 }

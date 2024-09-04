@@ -20,7 +20,7 @@ Widget HomeFilterBox(BuildContext context) {
 
   return Container(
     height: 100,
-    width: size.width - 230,
+    width: size.width *1,
     decoration: const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(2)),
       color: tealblue,
@@ -32,7 +32,7 @@ Widget HomeFilterBox(BuildContext context) {
           dropdownColor: tealblue,
           value: selectedJobType,
           iconEnabledColor: homecolor,
-          underline: SizedBox.shrink(),
+          underline: const SizedBox.shrink(),
           items: jobTypes.map((String value) {
             return DropdownMenuItem<String>(
               value: value,
@@ -46,11 +46,15 @@ Widget HomeFilterBox(BuildContext context) {
             selectedJobType = newValue!;
           },
         ),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          child: VerticalDivider(),
+        ),
         DropdownButton<String>(
           dropdownColor: tealblue,
           value: selectedSalary,
           iconEnabledColor: homecolor,
-          underline: SizedBox.shrink(),
+          underline: const SizedBox.shrink(),
           items: salaryRanges.map((String value) {
             return DropdownMenuItem<String>(
               value: value,
@@ -64,11 +68,15 @@ Widget HomeFilterBox(BuildContext context) {
             selectedSalary = newValue!;
           },
         ),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          child: VerticalDivider(),
+        ),
         DropdownButton<String>(
           dropdownColor: tealblue,
           value: selectedExperience,
           iconEnabledColor: homecolor,
-          underline: SizedBox.shrink(),
+          underline: const SizedBox.shrink(),
           items: experiences.map((String value) {
             return DropdownMenuItem<String>(
               value: value,
@@ -82,11 +90,15 @@ Widget HomeFilterBox(BuildContext context) {
             selectedExperience = newValue!;
           },
         ),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          child: VerticalDivider(),
+        ),
         DropdownButton<String>(
           dropdownColor: tealblue,
           value: selectedWorkMode,
           iconEnabledColor: homecolor,
-          underline: SizedBox.shrink(),
+          underline: const SizedBox.shrink(),
           items: workModes.map((String value) {
             return DropdownMenuItem<String>(
               value: value,
@@ -100,11 +112,18 @@ Widget HomeFilterBox(BuildContext context) {
             selectedWorkMode = newValue!;
           },
         ),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          child: VerticalDivider(),
+        ),
+        ),
         DropdownButton<String>(
           dropdownColor: tealblue,
           value: selectedLocation,
           iconEnabledColor: homecolor,
-          underline: SizedBox.shrink(),
+          underline: const SizedBox.shrink(),
           items: locations.map((String value) {
             return DropdownMenuItem<String>(
               value: value,
