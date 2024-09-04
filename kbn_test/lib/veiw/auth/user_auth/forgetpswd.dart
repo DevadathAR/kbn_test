@@ -19,8 +19,7 @@ class FrogetPswd extends StatefulWidget {
 class _FrogetPswdState extends State<FrogetPswd> {
   final TextEditingController userNameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
   final TextEditingController contactNumController = TextEditingController();
 
   void _updatePassword() async {
@@ -41,14 +40,14 @@ class _FrogetPswdState extends State<FrogetPswd> {
     // Update the user's password using the API
     try {
       final response = await http.post(
-        Uri.parse('API'),
+        Uri.parse('http://192.168.29.37:8000/user/forgot-password'),
         headers: {
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          // 'username': userNameController.text,
-          // 'new_password': newPassword,
-          // 'contact_number': contactNumController.text,
+          'email': userNameController.text,
+          'newPassword': newPassword,
+          'contact': contactNumController.text,
         }),
       );
 

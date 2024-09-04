@@ -5,7 +5,7 @@ import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/user_auth/login.dart';
 import 'package:kbn_test/veiw/screen/user_screen/home.dart';
-import 'package:kbn_test/veiw/screen/user_screen/termsandcondition.dart';
+import 'package:kbn_test/veiw/screen/user_screen/termsandcond_applicant.dart';
 Widget HomeAppBarBox(context,
     {termsiconcolor, likeiconcolor, searchiconcolor}) {
   // Size size = MediaQuery.of(context).size;

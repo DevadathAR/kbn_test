@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
-import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/widgets/boldtx.dart';
 import 'package:kbn_test/veiw/widgets/box.dart';
 import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
@@ -13,7 +12,7 @@ class CompanyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    // Size size = MediaQuery.of(context).size;
 
     return Scaffold(
       body: Column(
@@ -23,7 +22,7 @@ class CompanyHomePage extends StatelessWidget {
             height: 40,
           ),
           // appbarWidget
-          HomeAppBarBox(context),
+          HomeAppBarBox(context,),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(

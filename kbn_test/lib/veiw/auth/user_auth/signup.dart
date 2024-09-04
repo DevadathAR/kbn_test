@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
@@ -10,6 +11,7 @@ import 'package:kbn_test/veiw/auth/user_auth/login.dart';
 import 'package:kbn_test/veiw/widgets/bg_widg.dart';
 import 'package:kbn_test/veiw/widgets/user_selection.dart';
 import 'package:kbn_test/veiw/screen/user_screen/home.dart';
+import 'dart:convert';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -20,29 +22,25 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final TextEditingController fullNameController = TextEditingController();
-  final TextEditingController userNameController = TextEditingController();
+  final TextEditingController roleController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
   final TextEditingController contactNumController = TextEditingController();
-    bool _isApplicantSelected = true;
-
+  bool _isApplicantSelected = true;
 
   bool _ischeck = false;
   Uint8List? _selectedImage;
+
   void _signin() {
     print("Full Name: ${fullNameController.text}");
-    print("User Name: ${userNameController.text}");
+    print("email: ${emailController.text}");
     print("Password: ${passwordController.text}");
     print("Confirm Password: ${confirmPasswordController.text}");
     print("Contact Number: ${contactNumController.text}");
     if (_ischeck) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const Home(),
-        ),
-      );
+      _signup();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please check the box to proceed.')),
@@ -62,13 +60,62 @@ class _SignupPageState extends State<SignupPage> {
       setState(() {
         _selectedImage = null;
       });
-    };
+    }
+    ;
   }
-  
+
+  void _signup() async {
+    // Get the input from the text fields
+    String fullName = fullNameController.text;
+    String email = emailController.text;
+    String password = passwordController.text;
+    String confirmPassword = confirmPasswordController.text;
+    String contactNumber = contactNumController.text;
+
+    // Check if the passwords match
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
+
+    // Create a new user account
+    final url = Uri.parse('http://192.168.29.37:8000/user/sign-up');
+    final headers = {
+      'Content-Type': 'application/json',
+    };
+    final body = jsonEncode({
+      'name': fullName,
+      'email': email,
+      'password': password,
+      'contact': contactNumber,
+      // 'image': _selectedImage != null ? base64Encode(_selectedImage!) : null,
+    });
+
+    final response = await http.post(url, headers: headers, body: body);
+    print(response);
+
+    if (response.statusCode == 201) {
+
+      // Account created successfully
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const Home(),
+        ),
+      );
+    } else {
+      // Error creating account
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error creating account')),
+      );
+    }
+  }
 
   @override
   void dispose() {
-    userNameController.dispose();
+    emailController.dispose();
     fullNameController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
@@ -106,36 +153,38 @@ class _SignupPageState extends State<SignupPage> {
                       ],
                     ),
                     Container(
-  height: 50,
-  width: 200,
-  decoration: const BoxDecoration(
-      boxShadow: [BoxShadow(color: black)],
-      borderRadius: BorderRadius.all(Radius.circular(4)),
-      color: logintextbox),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceAround,
-    children: [
-      SignUpUserSelectionWidget(
-            appuser: "Applicant",
-            isSelected: _isApplicantSelected,
-            onTap: () {
-              setState(() {
-                _isApplicantSelected = true;
-              });
-            },
-          ),
-          SignUpUserSelectionWidget(
-            appuser: "Company",
-            isSelected: !_isApplicantSelected,
-            onTap: () {
-              setState(() {
-                _isApplicantSelected = false;
-              });
-            },
-          ),
-    ],
-  ),
-),
+                      height: 50,
+                      width: 200,
+                      decoration: const BoxDecoration(
+                          boxShadow: [BoxShadow(color: black)],
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                          color: logintextbox),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+
+                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SignUpUserSelectionWidget(
+                            appuser: "Applicant",
+                            isSelected: _isApplicantSelected,
+                            onTap: () {
+                              setState(() {
+                                _isApplicantSelected = true;
+                              });
+                            },
+                          ),
+                          SignUpUserSelectionWidget(
+                            appuser: "Company",
+                            isSelected: !_isApplicantSelected,
+                            onTap: () {
+                              setState(() {
+                                _isApplicantSelected = false;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(
                       height: 20,
                     ),
@@ -144,17 +193,13 @@ class _SignupPageState extends State<SignupPage> {
                       style: AppTextStyle.subheadertext,
                     ),
                     LoginTextForm(
-                        label: "Full name",
-                        controller: fullNameController),
-
+                        label: "Full name", controller: fullNameController),
                     LoginTextForm(
-                        label: "User name",
-                        controller: userNameController),
+                        label: "email", controller: emailController),
                     LoginTextForm(
                         obscure: true,
                         label: "Create Password",
                         controller: passwordController),
-
                     LoginTextForm(
                         label: "Confirm Password",
                         obscure: true,
@@ -256,5 +301,3 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 }
-
-

@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/screen/user_screen/home.dart';
+import 'package:kbn_test/veiw/widgets/back_button.dart';
 import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
 
-class TaC extends StatelessWidget {
-  const TaC({super.key});
+class TaCAdmin extends StatelessWidget {
+  const TaCAdmin({super.key});
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Row(
-        children: [
+      body: Stack(
+        children: [GoBack(context,backpage:Home()),
           SingleChildScrollView(
             child: Container(
               height: size.height,
@@ -38,7 +40,7 @@ class TaC extends StatelessWidget {
                     padding: EdgeInsets.only(left: 150),
                     child: SizedBox(
                         child: Text(
-                      termsandcond,
+                      termsandcondAdmin,
                       style: AppTextStyle.tactext,
                     )),
                   )

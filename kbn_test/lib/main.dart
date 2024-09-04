@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kbn_test/veiw/auth/user_auth/forgetpswd.dart';
 import 'package:kbn_test/veiw/auth/user_auth/login.dart';
+import 'package:kbn_test/veiw/screen/admin_screen/termsandcond_admin.dart';
 import 'package:kbn_test/veiw/screen/company_screen/cmony_home.dart';
 import 'package:kbn_test/veiw/screen/user_screen/home.dart';
 import 'package:kbn_test/veiw/screen/user_screen/jobdetails.dart';
@@ -24,13 +25,14 @@ class MainApp extends StatelessWidget {
       // ApplicantCompanyToggleButton()
       // Home()
       // JobDetails()
-      // LogInPage()
+      LogInPage()
       // RadioButtonExample()
       // MyHomePage()
       // FrogetPswd()
       // ImageSelector()
       // UploadMyResume()
-      CompanyHomePage()
+      // CompanyHomePage()
+      // TaCAdmin()
     );
   }
 }

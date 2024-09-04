@@ -18,14 +18,14 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   bool _isChecked = false;
 
   @override
   void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
+    usernameController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -36,14 +36,14 @@ class _LogInPageState extends State<LogInPage> {
 
       try {
         var url = Uri.parse('http://192.168.29.37:8000/user/login');
+        
 
         var response = await http.post(
           url,
           body: jsonEncode({
-            // 'username': username,
-            // 'password': password,
-            'username': "john123",
-            'password': "john@12345",
+            'email': usernameController.text,
+            'password': passwordController.text,
+            
           }),
           headers: {
             'Content-Type': 'application/json',
@@ -125,12 +125,12 @@ class _LogInPageState extends State<LogInPage> {
                   ),
                   const SizedBox(height: 30),
                   LoginTextForm(
-                    controller: _usernameController, // Controller for username
-                    label: "username",
+                    controller: usernameController, // Controller for username
+                    label: "email",
                   ),
                   LoginTextForm(
                     obscure: true,
-                    controller: _passwordController, // Controller for password
+                    controller: passwordController, // Controller for password
                     label: "password",
                     hintlabel: "* * * * *",
                   ),
