@@ -4,18 +4,18 @@ publish_to: 'none'
 version: 0.1.0
 
 environment:
-  sdk: ^3.6.0-175.0.dev
+  sdk: '>=3.3.2 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  go_router: ^14.2.7
   http: ^1.2.2
+  image_picker: ^1.1.2
 
 dev_dependencies:
-  flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
+  flutter_lints: ^3.0.0
 
 flutter:
   uses-material-design: true
@@ -31,3 +31,4 @@ flutter:
     - family: Inter
       fonts:
         - asset: assets/font/Inter_18pt-Regular.ttf
+
