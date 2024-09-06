@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
@@ -9,7 +11,7 @@ import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/companyProfile.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 
-Widget HomeAppBarBox(context, {T_and_C, logOutTo}) {
+Widget HomeAppBarBox(context, {T_and_C, logOutTo, profileImage}) {
   return Container(
     height: 80,
     decoration: const BoxDecoration(
@@ -43,7 +45,9 @@ Widget HomeAppBarBox(context, {T_and_C, logOutTo}) {
               const SizedBox(width: 20), // Space between buttons
               // profilePage
               AppBarButtons(context,
-                  icon: unknownPng, nextPage: const CompanyProfilePage()),
+                  icon: unknownPng,
+                  uploadedImage: profileImage, // Pass the uploaded image here
+                  nextPage: const CompanyProfilePage()),
               const SizedBox(width: 20), // Space between buttons
               //LogOut
               AppBarButtons(
@@ -63,25 +67,33 @@ Widget HomeAppBarBox(context, {T_and_C, logOutTo}) {
 
 Widget AppBarButtons(BuildContext context,
     {required String icon,
+    String? uploadedImage, // Add this parameter to accept the image
     required Widget nextPage,
     Color? iconcolor,
     bool isLogout = false}) {
   return TextButton(
-      onPressed: () {
-        if (isLogout) {
-          showLogoutConfirmation(context);
-        } else {
-          Navigator.push(context, MaterialPageRoute(
-            builder: (context) {
-              return nextPage;
-            },
-          ));
-        }
-      },
-      child: Image(
-        image: AssetImage(icon),
-        color: iconcolor,
-      ));
+    onPressed: () {
+      if (isLogout) {
+        showLogoutConfirmation(context);
+      } else {
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) {
+            return nextPage;
+          },
+        ));
+      }
+    },
+    child: uploadedImage != null // Check if an image is uploaded
+        ? CircleAvatar(
+            backgroundImage:
+                NetworkImage(uploadedImage), // Use the uploaded image
+            radius: 20,
+          )
+        : Image(
+            image: AssetImage(icon),
+            color: iconcolor,
+          ),
+  );
 }
 
 void showLogoutConfirmation(BuildContext context) {

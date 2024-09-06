@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -11,7 +10,6 @@ import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets/bg_widg.dart';
 import 'package:kbn_test/veiw/widgets/loginTextFeild.dart';
 import 'package:kbn_test/veiw/widgets/userSelection.dart';
-import 'dart:convert';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -29,16 +27,11 @@ class _SignupPageState extends State<SignupPage> {
       TextEditingController();
   final TextEditingController contactNumController = TextEditingController();
   bool _isApplicantSelected = true;
-
   bool _ischeck = false;
   Uint8List? _selectedImage;
+  String? _imageFilename; // Add this to store the filename
 
   void _signin() {
-    print("Full Name: ${fullNameController.text}");
-    print("email: ${emailController.text}");
-    print("Password: ${passwordController.text}");
-    print("Confirm Password: ${confirmPasswordController.text}");
-    print("Contact Number: ${contactNumController.text}");
     if (_ischeck) {
       _signup();
     } else {
@@ -55,10 +48,12 @@ class _SignupPageState extends State<SignupPage> {
       final bytes = await pickedFile.readAsBytes();
       setState(() {
         _selectedImage = bytes;
+        _imageFilename = pickedFile.name; // Store the filename
       });
     } else {
       setState(() {
         _selectedImage = null;
+        _imageFilename = null; // Clear the filename
       });
     }
   }
@@ -80,22 +75,35 @@ class _SignupPageState extends State<SignupPage> {
       return;
     }
 
-    // Create a new user account
+    // Create multipart form data request
     final url = Uri.parse('http://192.168.29.37:8000/user/sign-up');
-    final headers = {
-      'Content-Type': 'application/json',
-    };
-    final body = jsonEncode({
-      'name': fullName,
-      'role': role,
-      'email': email,
-      'password': password,
-      'contact': contactNumber,
-      // 'image': _selectedImage != null ? base64Encode(_selectedImage!) : null,
+    var request = http.MultipartRequest('POST', url);
+
+    // Add headers without Authorization
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data',
     });
 
-    final response = await http.post(url, headers: headers, body: body);
-    print(response);
+    // Add the text fields to the request
+    request.fields['name'] = fullName;
+    request.fields['role'] = role;
+    request.fields['email'] = email;
+    request.fields['password'] = password;
+    request.fields['contact'] = contactNumber;
+
+    // Add the image to the request if it exists
+    if (_selectedImage != null) {
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image',
+          _selectedImage!,
+          filename: _imageFilename!,
+        ),
+      );
+    }
+
+    // Send the request
+    var response = await request.send();
 
     if (response.statusCode == 201) {
       // Account created successfully
@@ -103,6 +111,7 @@ class _SignupPageState extends State<SignupPage> {
         context,
         MaterialPageRoute(
           builder: (context) => const UserHome(),
+          // Pass the uploaded image here
         ),
       );
     } else {
@@ -119,8 +128,8 @@ class _SignupPageState extends State<SignupPage> {
     fullNameController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
-    roleController.dispose(); // Add this line
-
+    roleController.dispose();
+    contactNumController.dispose();
     super.dispose();
   }
 
@@ -142,9 +151,7 @@ class _SignupPageState extends State<SignupPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      height: 40,
-                    ),
+                    const SizedBox(height: 40),
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -158,9 +165,10 @@ class _SignupPageState extends State<SignupPage> {
                       height: 50,
                       width: 200,
                       decoration: const BoxDecoration(
-                          boxShadow: [BoxShadow(color: black)],
-                          borderRadius: BorderRadius.all(Radius.circular(4)),
-                          color: logintextbox),
+                        boxShadow: [BoxShadow(color: black)],
+                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                        color: logintextbox,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -187,9 +195,7 @@ class _SignupPageState extends State<SignupPage> {
                         ],
                       ),
                     ),
-                    const SizedBox(
-                      height: 15,
-                    ),
+                    const SizedBox(height: 15),
                     const Text(
                       "Account details",
                       style: AppTextStyle.subheadertext,
@@ -208,10 +214,7 @@ class _SignupPageState extends State<SignupPage> {
                     LoginTextForm(
                         label: "Contact Number",
                         controller: contactNumController),
-                    const Text(
-                      tac,
-                      style: AppTextStyle.tactext,
-                    ),
+                    const Text(tac, style: AppTextStyle.tactext),
                     Row(
                       children: [
                         Checkbox(
@@ -224,15 +227,10 @@ class _SignupPageState extends State<SignupPage> {
                             });
                           },
                         ),
-                        const Text(
-                          terms,
-                          style: AppTextStyle.tactext,
-                        )
+                        const Text(terms, style: AppTextStyle.tactext),
                       ],
                     ),
-                    const SizedBox(
-                      height: 50,
-                    ),
+                    const SizedBox(height: 50),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: GestureDetector(
@@ -241,23 +239,24 @@ class _SignupPageState extends State<SignupPage> {
                           height: 33,
                           width: 119,
                           decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(4),
-                              ),
-                              color: white,
-                              border: Border.all(color: black),
-                              gradient: LinearGradient(
-                                  colors: _ischeck
-                                      ? loginbutton
-                                      : InnactiveLoginbutton)),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(4)),
+                            color: white,
+                            border: Border.all(color: black),
+                            gradient: LinearGradient(
+                              colors:
+                                  _ischeck ? loginbutton : InnactiveLoginbutton,
+                            ),
+                          ),
                           child: const Center(
-                              child: Text(
-                            signin,
-                            style: AppTextStyle.signin,
-                          )),
+                            child: Text(
+                              signin,
+                              style: AppTextStyle.signin,
+                            ),
+                          ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -275,28 +274,25 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      // Add your onTap action here
                       _selectImage();
-                      // For example, you could navigate to a new page or open an image picker
                     },
                     child: Container(
                       decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      )),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
                       height: 250,
                       width: 225,
                       child: _selectedImage != null
                           ? CircleAvatar(
                               backgroundImage: MemoryImage(_selectedImage!),
-                            ) // Using Image.memory for memory image
+                            )
                           : Image.asset(upimagPng),
                     ),
                   ),
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );

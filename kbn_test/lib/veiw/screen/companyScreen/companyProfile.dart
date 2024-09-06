@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
@@ -9,7 +11,8 @@ import 'package:kbn_test/veiw/widgets/boxBTN.dart';
 import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
 
 class CompanyProfilePage extends StatelessWidget {
-  const CompanyProfilePage({super.key});
+  final Uint8List? uploadedImage;
+  const CompanyProfilePage({super.key, this.uploadedImage});
 
   @override
   Widget build(BuildContext context) {

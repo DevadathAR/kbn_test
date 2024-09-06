@@ -23,13 +23,14 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
       title: "KBN_Test",
       debugShowCheckedModeBanner: false,
-      home: SignupPage(),
-      // CompanyLoginPage(),
-      // CompanyHomePage(),
-      // CompanyProfilePage(),
-      // AdminLogIn(),
-      // JobDetails(),
-      // UserLoginPage(),
+      home:
+          // SignupPage(),
+          // CompanyLoginPage(),
+          // CompanyHomePage(),
+          // CompanyProfilePage(),
+          // AdminLogIn(),
+          // JobDetails(),
+          UserLoginPage(),
       // AdminHomePage(),
       // UserHome(),
     );

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -5,11 +7,14 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/company_auth/testPage.dart';
 import 'package:kbn_test/veiw/auth/forgotPass.dart';
 import 'package:kbn_test/veiw/auth/signUp.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets/bg_widg.dart';
 import 'package:kbn_test/veiw/widgets/loginTextFeild.dart';
+
+// Map<String, dynamic> userDetails = {};
 
 class UserLoginPage extends StatefulWidget {
   const UserLoginPage({super.key});
@@ -31,10 +36,6 @@ class _UserLoginPageState extends State<UserLoginPage> {
   }
 
   Future<void> _login() async {
-    // if (!_isChecked||_isChecked) {
-    // String username = _usernameController.text;
-    // String password = _passwordController.text;
-
     try {
       var url = Uri.parse('http://192.168.29.37:8000/user/login');
 
@@ -49,14 +50,22 @@ class _UserLoginPageState extends State<UserLoginPage> {
           'Content-Type': 'application/json',
         },
       );
-      // Check if the login was successful
+
+      print('Login response: ${response.body}'); // Log response for debugging
+
       if (response.statusCode == 200) {
         var responseData = jsonDecode(response.body);
-        if (responseData is Map && responseData.containsKey('token')) {
+
+        if (responseData is Map && responseData.containsKey('data')) {
+          var userDetails = responseData['data'];
+
+          print('User details: $userDetails'); // Log user details
+
+          // Navigate to the next page and pass userDetails
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const UserHome(),
+              builder: (context) => TestPAge(userDetails: userDetails),
             ),
           );
         } else {
@@ -65,16 +74,17 @@ class _UserLoginPageState extends State<UserLoginPage> {
           );
         }
       } else {
+        print('Login failed: ${response.body}'); // Log error message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login failed. Please try again.')),
         );
       }
     } catch (error) {
+      print('Error: $error'); // Log errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $error')),
       );
     }
-  
   }
 
   @override

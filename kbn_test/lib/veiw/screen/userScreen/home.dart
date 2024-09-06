@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
@@ -10,7 +13,9 @@ import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
 import 'package:kbn_test/veiw/widgets/home_filter_box.dart';
 
 class UserHome extends StatelessWidget {
-  const UserHome({super.key});
+  const UserHome({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +34,8 @@ class UserHome extends StatelessWidget {
                   const Center(child: Image(image: AssetImage(kbnLogo))),
                   HomeAppBarBox(context,
                       T_and_C: const user_T_n_C(),
+                      profileImage:{},
+                          // "${ApiServices.baseUrl}/${userDetails['profile_image']}",
                       logOutTo: const UserLoginPage()),
                   const SizedBox(
                     height: 10,
