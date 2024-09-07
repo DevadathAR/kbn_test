@@ -87,7 +87,7 @@ class ApiServices {
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        print(jsonData);
+        // print(jsonData);
         var data = jsonData['data'];
 
         if (data is List) {

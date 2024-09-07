@@ -59,7 +59,7 @@ class _UserHomeState extends State<UserHome> {
                   const SizedBox(
                     height: 10,
                   ),
-                  HomeFilterBox(context),
+                  HomeFilterBox(),
                   const SizedBox(
                     height: 10,
                   ),
