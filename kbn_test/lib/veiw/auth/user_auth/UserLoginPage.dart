@@ -1,23 +1,30 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert'; 
+import 'package:kbn_test/service/api_service.dart';
+import 'dart:convert';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/user_auth/forgetpswd.dart';
-import 'package:kbn_test/veiw/widgets/bg_widg.dart';
 import 'package:kbn_test/veiw/auth/user_auth/signup.dart';
-import 'package:kbn_test/veiw/screen/user_screen/home.dart';
+import 'package:kbn_test/veiw/screen/check.dart';
+import 'package:kbn_test/veiw/screen/user_screen/UserHome.dart';
+import 'package:kbn_test/veiw/widgets/bg_widg.dart';
+import 'package:kbn_test/veiw/widgets/loginTextFile.dart';
 
-class LogInPage extends StatefulWidget {
-  const LogInPage({super.key});
+// Map<String, dynamic> userDetails = {};
+
+class UserLoginPage extends StatefulWidget {
+  const UserLoginPage({super.key});
 
   @override
-  State<LogInPage> createState() => _LogInPageState();
+  State<UserLoginPage> createState() => _UserLoginPageState();
 }
 
-class _LogInPageState extends State<LogInPage> {
+class _UserLoginPageState extends State<UserLoginPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _isChecked = false;
@@ -29,59 +36,42 @@ class _LogInPageState extends State<LogInPage> {
     super.dispose();
   }
 
-  Future<void> _login() async {
-    // if (!_isChecked||_isChecked) {
-      // String username = _usernameController.text;
-      // String password = _passwordController.text;
+  
+Future<void> _login() async {
+    try {
+      var responseData = await ApiServices.user_login(
+        usernameController.text,
+        passwordController.text,
+      );
 
-      try {
-        var url = Uri.parse('http://192.168.29.37:8000/user/login');
-        
+      if (responseData.containsKey('token') &&
+          responseData.containsKey('userId')) {
+        int userId = responseData['userId'];
+        var token = responseData['token'];
 
-        var response = await http.post(
-          url,
-          body: jsonEncode({
-            'email': usernameController.text,
-            'password': passwordController.text,
-            
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
+        var userDetailsResponse =
+            await ApiServices.fetchUserDetails(userId, token);
+
+        userDetails = userDetailsResponse;
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const UserHome(),
+          ),
         );
-        // Check if the login was successful
-        if (response.statusCode == 200) {
-          var responseData = jsonDecode(response.body);
-          if (responseData is Map && responseData.containsKey('token')) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const Home(),
-              ),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Invalid username or password.')),
-            );
-          }
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Login failed. Please try again.')),
-          );
-        }
-      } catch (error) {
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $error')),
+          const SnackBar(content: Text('Invalid username or password.')),
         );
       }
-    // } 
-    // else {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('Please check the box to proceed.')),
-    //   );
-    // }
+    } catch (error) {
+      print('Error: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
+    }
   }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -97,13 +87,12 @@ class _LogInPageState extends State<LogInPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20),
-                  const Image(image: AssetImage(logoPng)),
+                  const Image(image: AssetImage(kbnLogo)),
                   const SizedBox(height: 10),
                   const Text(firmName, style: AppTextStyle.companyName),
                   const SizedBox(height: 40),
                   const Text(welcome, style: AppTextStyle.headertext),
                   const SizedBox(height: 30),
-                  
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -179,8 +168,7 @@ class _LogInPageState extends State<LogInPage> {
                         ),
                         color: _isChecked ? black : Colors.grey,
                         gradient: const LinearGradient(
-                          colors:
-                               loginbutton ,
+                          colors: loginbutton,
                         ),
                       ),
                       child: const Center(
@@ -214,74 +202,6 @@ class _LogInPageState extends State<LogInPage> {
           ),
         ],
       ),
-    );
-  }
-}
-/////////// for login text form with eye icon/////////////
-
-class LoginTextForm extends StatefulWidget {
-  final String label;
-  final String hintlabel="";
-  final int numb;
-  final TextEditingController controller;
-  final bool obscure;
-
-  LoginTextForm({
-    required this.label,
-    hintlabel,
-    this.numb = 1,
-    required this.controller,
-    this.obscure = false,
-  });
-
-  @override
-  _LoginTextFormState createState() => _LoginTextFormState();
-}
-
-class _LoginTextFormState extends State<LoginTextForm> {
-  bool _obscureText = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 15),
-          child: TextFormField(
-            maxLines: widget.numb,
-            controller: widget.controller,
-            decoration: InputDecoration(
-              label: Text(widget.label),
-              hintText: widget.hintlabel,
-              border: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(4),
-                ),
-                borderSide: BorderSide.none,
-              ),
-              filled: true,
-              fillColor: logintextbox,
-              suffixIcon: widget.obscure
-                  ? GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _obscureText = !_obscureText;
-                        });
-                      },
-                      child: Icon(
-                        _obscureText ? Icons.visibility_off : Icons.visibility,
-                        color: Colors.grey,
-                      ),
-                    )
-                  : null,
-            ),
-            obscureText: _obscureText,
-          ),
-        ),
-        const SizedBox(
-          height: 20,
-        )
-      ],
     );
   }
 }

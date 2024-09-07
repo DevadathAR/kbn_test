@@ -1,15 +1,14 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/auth/user_auth/login.dart';
-import 'package:kbn_test/veiw/screen/user_screen/home.dart';
-import 'package:kbn_test/veiw/screen/user_screen/termsandcond_applicant.dart';
-Widget HomeAppBarBox(context,
-    {termsiconcolor, likeiconcolor, searchiconcolor}) {
-  // Size size = MediaQuery.of(context).size;
+import 'package:kbn_test/veiw/auth/user_auth/UserLoginPage.dart';
+import 'package:kbn_test/veiw/screen/user_screen/UserHome.dart';
 
+Widget HomeAppBarBox(context, {T_and_C, logOutTo, profileImage,termscolor}) {
   return Container(
     height: 80,
     decoration: const BoxDecoration(
@@ -33,24 +32,26 @@ Widget HomeAppBarBox(context,
           padding: const EdgeInsets.only(right: 20),
           child: Row(
             children: [
+              // terms and conditions
               AppBarButtons(
                 context,
                 icon: termsPng,
-                nextPage: const TaC(),
-                iconcolor: termsiconcolor,
+                nextPage: T_and_C,
+                iconcolor: termscolor,
               ),
               const SizedBox(width: 20), // Space between buttons
-              AppBarButtons(
-                context,
-                icon: unknownPng,
-                nextPage: const Home(),
-              ),
+              // profilePage
+              AppBarButtons(context,
+                  icon: unknownPng,
+                  uploadedImage: profileImage, // Pass the uploaded image here
+                  nextPage: const UserHome()),
               const SizedBox(width: 20), // Space between buttons
+              //LogOut
               AppBarButtons(
                 context,
                 icon: logOutPng,
-                nextPage: const Home(),
-                iconcolor: termsiconcolor,
+                nextPage: logOutTo,
+                // iconcolor: ,
                 isLogout: true,
               ),
             ],
@@ -63,25 +64,33 @@ Widget HomeAppBarBox(context,
 
 Widget AppBarButtons(BuildContext context,
     {required String icon,
+    String? uploadedImage, // Add this parameter to accept the image
     required Widget nextPage,
     Color? iconcolor,
     bool isLogout = false}) {
   return TextButton(
-      onPressed: () {
-        if (isLogout) {
-          showLogoutConfirmation(context);
-        } else {
-          Navigator.push(context, MaterialPageRoute(
-            builder: (context) {
-              return nextPage;
-            },
-          ));
-        }
-      },
-      child: Image(
-        image: AssetImage(icon),
-        color: iconcolor,
-      ));
+    onPressed: () {
+      if (isLogout) {
+        showLogoutConfirmation(context);
+      } else {
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) {
+            return nextPage;
+          },
+        ));
+      }
+    },
+    child: uploadedImage != null // Check if an image is uploaded
+        ? CircleAvatar(
+            backgroundImage:
+                NetworkImage(uploadedImage), // Use the uploaded image
+            radius: 20,
+          )
+        : Image(
+            image: AssetImage(icon),
+            color: iconcolor,
+          ),
+  );
 }
 
 void showLogoutConfirmation(BuildContext context) {
@@ -90,8 +99,8 @@ void showLogoutConfirmation(BuildContext context) {
     barrierColor: semitransp,
     builder: (BuildContext context) {
       return AlertDialog(
-        backgroundColor: none, // Set the background color to yellow
-        
+        backgroundColor: none, // Set the background color to none
+
         actions: <Widget>[
           Column(
             crossAxisAlignment:
@@ -107,7 +116,7 @@ void showLogoutConfirmation(BuildContext context) {
                 child: Column(
                   children: [
                     const Text(
-                      doYoyWantLogout,
+                      "Do you want to logout?",
                       style: AppTextStyle.flitertxt,
                     ),
                     Padding(
@@ -124,7 +133,7 @@ void showLogoutConfirmation(BuildContext context) {
                             ),
                           ),
                           child: const Text(
-                            logout,
+                            "Logout",
                             style: AppTextStyle.googletext,
                           ),
                           onPressed: () {
@@ -132,7 +141,7 @@ void showLogoutConfirmation(BuildContext context) {
                             Navigator.pushReplacement(context,
                                 MaterialPageRoute(
                               builder: (context) {
-                                return const LogInPage(); // Navigate to the login page
+                                return const UserLoginPage(); // Navigate to the login page
                               },
                             ));
                           },
@@ -148,12 +157,11 @@ void showLogoutConfirmation(BuildContext context) {
                         Navigator.pop(context);
                         Navigator.pushReplacement(context,
                             MaterialPageRoute(builder: (context) {
-                          return const Home();
+                          return const UserHome();
                         }));
                       },
                       child: Text(
-                        backtohome,
-                        
+                        "Back to home",
                         style: AppTextStyle.bodytextwhiteunderline,
                       )))
             ],

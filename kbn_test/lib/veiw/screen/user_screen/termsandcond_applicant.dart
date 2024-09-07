@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:kbn_test/service/api_service.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/user_auth/UserLoginPage.dart';
 import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
 
 class TaC extends StatelessWidget {
@@ -22,8 +24,8 @@ class TaC extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Center(child: Image(image: AssetImage(logoPng))),
-                  HomeAppBarBox(context,termsiconcolor: black),
+                  const Center(child: Image(image: AssetImage(kbnLogo))),
+                  HomeAppBarBox(context,T_and_C: TaC(),logOutTo: UserLoginPage(),profileImage: "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}", termscolor: black),
                   
                   const SizedBox(
                     height: 10,

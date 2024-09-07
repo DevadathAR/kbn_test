@@ -1,5 +1,4 @@
-const logoPng = "assets/kbn.png";
-const googlePng = "assets/google.png";
+const kbnLogo = "assets/kbn.png";
 const bg = "assets/bg.png";
 const loginbg = "assets/loginbg.png";
 const sideBarPng = "assets/homebg.png";

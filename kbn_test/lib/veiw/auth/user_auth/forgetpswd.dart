@@ -5,9 +5,9 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/auth/user_auth/login.dart';
-import 'package:kbn_test/veiw/widgets/bg_widg.dart';
+    import 'package:kbn_test/veiw/widgets/bg_widg.dart';
 import 'package:http/http.dart' as http;
+import 'package:kbn_test/veiw/widgets/loginTextFile.dart';
 
 class FrogetPswd extends StatefulWidget {
   const FrogetPswd({super.key});
@@ -82,7 +82,7 @@ class _FrogetPswdState extends State<FrogetPswd> {
     return Scaffold(
       body: Stack(
         children: [
-          BgWIdget(img: bg, txt: upimg),
+          BgWIdget(img: bg),
           SizedBox(
             height: size.height * 1,
             width: size.width * 0.5,

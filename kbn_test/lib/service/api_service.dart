@@ -1,50 +1,145 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-void sendData() async {
-  var url = Uri.parse('http://192.168.29.37:8000/api/data'); // Replace with the server PC's IP address
-  var response = await http.post(
-    url,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: jsonEncode({
-      "firstName": "john",
-      "lastName": "wick",
-      "dob": "2000-10-23",
-      "gender": "M",
-      "contact": "123456789",
-      "address": "a34 twn down street new york us",
-      "education": [
-        {
-          "qualification": "btech",
-          "institute": "XYZ University",
-          "year": 2021,
-          "percentage": 90.25,
-          "state": "kerala"
-        },
-        // Add more education objects as needed
-      ],
-      "skills": "fast-learner,kind,smart",
-      "experience": [
-        {
-          "company": "google",
-          "year": 2021,
-          "position": "SDE",
-          "state": "kerala",
-          "description": "skdfjsdlkfjm"
-        },
-        // Add more experience objects as needed
-      ],
-      "email": "johnwick@gmail.com",
-      "password": "john@123"
-    }),
-  );
+Map<String, dynamic> userDetails = {};
+Map<String, dynamic> jobDetailsResponse = {};
+List<dynamic> jobs = [];
 
-  if (response.statusCode == 200) {
-    print('Data sent successfully!');
-  } else {
-    print('Failed to send data.');
+class ApiServices {
+  static const String baseUrl = 'http://192.168.29.37:8000';
+  static const String baseUrl2 = 'http://192.168.29.197:5500';
+
+  // Login API
+  static Future<Map<String, dynamic>> user_login(
+      String email, String password) async {
+    var url = Uri.parse('$baseUrl/user/login');
+
+    var response = await http.post(
+      url,
+      body: jsonEncode({
+        'email': "e",
+        'password': "e",
+        // 'email': email,
+        // 'password': password,
+        'loginType': "Applicant",
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to login');
+    }
   }
-  
+
+  // Company login API
+  static Future<Map<String, dynamic>> company_login(
+      String email, String password) async {
+    var url = Uri.parse('$baseUrl/user/login');
+
+    var response = await http.post(
+      url,
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+        'loginType': "Company",
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Login failed');
+    }
+  }
+
+  // Fetch User Details API
+  static Future<Map<String, dynamic>> fetchUserDetails(
+      int userId, String token) async {
+    var url = Uri.parse('$baseUrl/user/$userId');
+
+    var response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+    // print(response);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to fetch user details');
+    }
+  }
+
+  // Fetch Job Titles API
+  static Future<List<dynamic>> fetchJobTitles() async {
+    try {
+      var url = Uri.parse('$baseUrl2/job');
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(response.body);
+        print(jsonData);
+        var data = jsonData['data'];
+
+        if (data is List) {
+          return data;
+        } else {
+          print('Unexpected structure: "data" is not a list');
+          return [];
+        }
+      } else {
+        print('Failed to load job titles');
+        return [];
+      }
+    } catch (error) {
+      print('Error: $error');
+      return [];
+    }
+  }
+
+  // Post Job Details API - post jobId as param and companyId in the body
+  static Future<void> postJobDetails(
+    int jobId,
+    int companyId,
+  ) async {
+    // Construct the URL with the dynamic jobId
+    var url = Uri.parse('$baseUrl2/job/$jobId');
+
+    try {
+      var response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer ${userDetails['token']}', // Ensure token is set
+        },
+        body: jsonEncode({
+          'companyId': companyId, // Send companyId in the request body
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(response.body);
+        jobDetailsResponse = jsonDecode(response.body);
+
+        // print(jsonData);
+        // print(jobDetailsResponse);
+
+        print("Job details posted successfully.");
+      } else {
+        print("Failed to post job details: ${response.statusCode}");
+      }
+    } catch (error) {
+      print("Error posting job details: $error");
+    }
+  }
 }

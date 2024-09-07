@@ -1,14 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:kbn_test/service/api_service.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
-import 'package:kbn_test/utilities/const.dart';
+import 'package:kbn_test/utilities/date.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/user_auth/UserLoginPage.dart';
+import 'package:kbn_test/veiw/screen/user_screen/termsandcond_applicant.dart';
 import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
 import 'package:kbn_test/veiw/widgets/jobsummury.dart';
 
-class JobDetails extends StatelessWidget {
-  const JobDetails({super.key});
+class JobDetails extends StatefulWidget {
+  final String firmname;
+  final String jobTitle;
+  final String jobSummary;
+  final String expLevel;
+  final String jobMode;
+  final String jobType;
+  final List<dynamic> keyResponsibilities;
+  final int salary;
+  final int currentVacancy;
+  final String workLocation;
+  final int jobId;
+  final int companyId;
+  final String companywebsite;
+  final String datePosted;
+  final String companyImage;
+  final Map<String, dynamic> jobReq;
 
+  const JobDetails(
+      {Key? key,
+      required this.firmname,
+      required this.jobTitle,
+      required this.jobSummary,
+      required this.expLevel,
+      required this.jobMode,
+      required this.jobType,
+      required this.keyResponsibilities,
+      required this.salary,
+      required this.currentVacancy,
+      required this.workLocation,
+      required this.jobId,
+      required this.companyId,
+      required this.companywebsite,
+      required this.datePosted,
+      required this.companyImage,
+      required this.jobReq})
+      : super(key: key);
+
+  @override
+  State<JobDetails> createState() => _JobDetailsState();
+}
+
+class _JobDetailsState extends State<JobDetails> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -16,19 +59,19 @@ class JobDetails extends StatelessWidget {
     return Scaffold(
       body: Row(
         children: [
-          // SideNavBar(context, viewhome: black),
           SingleChildScrollView(
             child: SizedBox(
-              height: size.height,
               width: size.width * 1,
               child: Column(
-                // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Center(child: Image(image: AssetImage(logoPng))),
-                  HomeAppBarBox(context),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const Center(child: Image(image: AssetImage(kbnLogo))),
+                  HomeAppBarBox(context,
+                      T_and_C: const TaC(),
+                      logOutTo: const UserLoginPage(),
+                      profileImage:
+                          "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
+                      termscolor: white),
+                  const SizedBox(height: 10),
                   Container(
                     height: 100,
                     width: size.width * 1,
@@ -46,42 +89,50 @@ class JobDetails extends StatelessWidget {
                       decoration: const BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                              color: shadowblack,
-                              spreadRadius: .1,
-                              blurRadius: 5,
-                              offset: Offset(1, 1)),
+                            color: shadowblack,
+                            spreadRadius: .1,
+                            blurRadius: 5,
+                            offset: Offset(1, 1),
+                          ),
                         ],
                         borderRadius: BorderRadius.all(Radius.circular(6)),
                         color: white,
                       ),
-
-                      ////////row seperation
-                      child: Row(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          ////logo , name and about of firm
-                          SizedBox(
-                            // color: tealblue,
-                            width: size.width * 0.4,
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: JobDetails1(),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  width: size.width * 0.4,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: CompanyDetails1(
+                                      jobTitle: widget.jobTitle,
+                                      firmname: widget.firmname,
+                                      companywebsite: widget.companywebsite,
+                                      companyImage: widget.companyImage,
+                                    ),
+                                  ),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 25),
+                                  child: VerticalDivider(color: shadowblack),
+                                ),
+                                CompanyDetails2(size),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 25),
+                                  child: VerticalDivider(color: shadowblack),
+                                ),
+                                CompanyDetails3(size),
+                              ],
                             ),
                           ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20),
-                            child: VerticalDivider(
-                              color: shadowblack,
-                            ),
-                          ),
-                          CompanyDetails2(size),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20),
-                            child: VerticalDivider(
-                              color: shadowblack,
-                            ),
-                          ),
-                          CompanyDetails3(size),
+                          Align(
+                              alignment: Alignment.bottomRight,
+                              child: Text(calculateDaysAgo(widget.datePosted)))
                         ],
                       ),
                     ),
@@ -96,44 +147,94 @@ class JobDetails extends StatelessWidget {
   }
 
   SingleChildScrollView CompanyDetails3(Size size) {
-    const String req =
-        "Responsibility 1, Responsibility 2, Responsibility 3, Responsibility 4,Responsibility 2, Responsibility 3, Responsibility ,4Responsibility 2, Responsibility 3, Responsibility 4";
-    List<String> reqlist = req.split(',');
+    Map<String, dynamic> reqlist = widget.jobReq;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15),
         child: SizedBox(
           width: size.width * .25,
           child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Align(
                 alignment: Alignment.centerLeft,
-                child: Text(
+                child: const Text(
                   "Job Requirements",
                   style: AppTextStyle.abouttxt,
                 ),
               ),
               const SizedBox(height: 10),
-              // Display the responsibilities as a bullet-pointed list
-              for (var item in reqlist)
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        '• ', // Bullet point
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      Expanded(
-                        child: Text(
-                          item.trim(),
-                          style: AppTextStyle.normaltxt,
-                        ),
-                      ),
-                    ],
+              Column(
+                children: [
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Skills:",
+                      style: AppTextStyle.normaltxt,
+                    ),
                   ),
-                ),
+                  ...reqlist['skills'].map((skill) => Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '• ',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          Expanded(
+                            child: Text(
+                              skill.toString(),
+                              style: AppTextStyle.normaltxt,
+                            ),
+                          ),
+                        ],
+                      )),
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Experience:",
+                      style: AppTextStyle.normaltxt,
+                    ),
+                  ),
+                  ...reqlist['experience'].map((exp) => Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '• ',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          Expanded(
+                            child: Text(
+                              exp.toString(),
+                              style: AppTextStyle.normaltxt,
+                            ),
+                          ),
+                        ],
+                      )),
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: const Text(
+                      "Educational Background:",
+                      style: AppTextStyle.normaltxt,
+                    ),
+                  ),
+                  ...reqlist['educational_background'].map((edu) => Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '• ',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          Expanded(
+                            child: Text(
+                              edu.toString(),
+                              style: AppTextStyle.normaltxt,
+                            ),
+                          ),
+                        ],
+                      )),
+                ],
+              ),
             ],
           ),
         ),
@@ -142,18 +243,13 @@ class JobDetails extends StatelessWidget {
   }
 
   SingleChildScrollView CompanyDetails2(Size size) {
-    // Example data, replace with actual data from your JSON response
-    const String respon =
-        "Responsibility 1, Responsibility 2, Responsibility 3, Responsibility 4,Responsibility 2, Responsibility 3, Responsibility ,4Responsibility 2, Responsibility 3, Responsibility 4";
-    List<String> responList = respon.split(','); // Convert the string to a list
-
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15),
         child: SizedBox(
           width: size.width * .25,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Align(
                 alignment: Alignment.centerLeft,
@@ -162,16 +258,21 @@ class JobDetails extends StatelessWidget {
                   style: AppTextStyle.abouttxt,
                 ),
               ),
-              const Text(
-                summry,
+              Text(
+                widget.jobSummary,
                 style: AppTextStyle.normaltxt,
                 softWrap: true,
               ),
-              JobSummaryWid(jobicon: bagPng, txt: "level"),
-              JobSummaryWid(jobicon: vacancyPng, txt: "vacancy"),
-              JobSummaryWid(jobicon: locattionPng, txt: "location"),
-              JobSummaryWid(jobicon: salaryPng, txt: "salary"),
-              JobSummaryWid(jobicon: clockPng, txt: "full time"),
+              JobSummaryWid(jobicon: bagPng, txt: widget.expLevel),
+              JobSummaryWid(
+                  jobicon: vacancyPng,
+                  txt: " ${widget.currentVacancy.toString()} vacancy"),
+              JobSummaryWid(
+                  jobicon: locattionPng,
+                  txt: "${widget.workLocation},${widget.jobMode}"),
+              JobSummaryWid(
+                  jobicon: salaryPng, txt: "${widget.salary} per month"),
+              JobSummaryWid(jobicon: clockPng, txt: widget.jobMode),
               SizedBox(
                 child: Column(
                   children: [
@@ -183,15 +284,14 @@ class JobDetails extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    // Display the responsibilities as a bullet-pointed list
-                    for (var item in responList)
+                    for (var item in widget.keyResponsibilities)
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              '• ', // Bullet point
+                              '• ',
                               style: TextStyle(fontSize: 20),
                             ),
                             Expanded(
@@ -214,12 +314,25 @@ class JobDetails extends StatelessWidget {
   }
 }
 
-class JobDetails1 extends StatefulWidget {
+class CompanyDetails1 extends StatefulWidget {
+  final String jobTitle;
+  final String firmname;
+  final String companywebsite;
+  final String companyImage;
+
+  const CompanyDetails1({
+    Key? key,
+    required this.jobTitle,
+    required this.firmname,
+    required this.companywebsite,
+    required this.companyImage
+  }) : super(key: key);
+
   @override
-  _JobDetails1State createState() => _JobDetails1State();
+  _CompanyDetails1State createState() => _CompanyDetails1State();
 }
 
-class _JobDetails1State extends State<JobDetails1> {
+class _CompanyDetails1State extends State<CompanyDetails1> {
   bool _isApplied = false;
 
   @override
@@ -227,72 +340,69 @@ class _JobDetails1State extends State<JobDetails1> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        const Row(
+        Row(
           children: [
-            Image(
-              image: AssetImage(unknownPng),
-              color: green,
-            ),
-            SizedBox(width: 10),
+            CircleAvatar(
+                    radius: 60,
+  backgroundImage: NetworkImage('${ApiServices.baseUrl2}${widget.companyImage}'),
+),
+            const SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "position",
+                  widget.jobTitle,
                   style: AppTextStyle.firmHead,
                 ),
                 Text(
-                  "company",
+                  widget.firmname, // Replace with actual company name
                   style: AppTextStyle.googletext,
                 )
               ],
             ),
           ],
         ),
-        const SizedBox(
+        SizedBox(
           child: Column(
             children: [
-              Align(
+              const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "About Company  ",
+                  "About Company",
                   style: AppTextStyle.abouttxt,
                 ),
               ),
               Text(
-                aboutcomp,
+                jobDetailsResponse['companyDetails']?['about_company'] ??
+                    "", // Replace with actual about info
                 style: AppTextStyle.normaltxt,
                 softWrap: true,
               ),
             ],
           ),
         ),
-        const Align(
+        Align(
           alignment: Alignment.centerLeft,
           child: Text(
-            "Visit - ${"site"}",
+            "Visit - ${jobDetailsResponse['companyDetails']?['company_website'] ?? ''}",
           ),
         ),
         GestureDetector(
           onTap: () {
             setState(() {
-              _isApplied = true; // set to true only once
+              _isApplied = true;
             });
           },
           child: Container(
             height: 60,
             width: 220,
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all( Radius.circular(12)),
-              color: _isApplied
-                  ? green
-                  : green, // update the color based on the state
+              borderRadius: const BorderRadius.all(Radius.circular(12)),
+              color: _isApplied ? green : green,
             ),
             child: Center(
               child: Text(
-                _isApplied
-                    ? "Applied"
-                    : "Apply for this job", // update the text based on the state
+                _isApplied ? "Applied" : "Apply for this job",
                 style: AppTextStyle.applytxt,
               ),
             ),
