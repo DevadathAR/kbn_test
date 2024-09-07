@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:kbn_test/service/apiServices.dart';
 import 'dart:convert';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/company_auth/testPage.dart';
 import 'package:kbn_test/veiw/widgets/error.dart';
 import 'package:kbn_test/veiw/widgets/loginTextFeild.dart';
 import 'package:kbn_test/veiw/widgets/bg_widg.dart';
 
 import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
+
+
 
 class CompanyLoginPage extends StatefulWidget {
   const CompanyLoginPage({super.key});
@@ -31,45 +35,43 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
     super.dispose();
   }
 
-  Future<void> company_login() async {
+  Future<void> companyLogin() async {
     if (_isChecked) {
       String email = _emailConatroller.text;
       String password = _passwordController.text;
 
       try {
-        var url = Uri.parse('http://192.168.29.37:8000/user/login');
+        var responseData = await ApiServices.company_login(email, password);
 
-        var response = await http.post(
-          url,
-          body: jsonEncode({
-            // 'username': username,
-            // 'password': password,
-            'email': email,
-            'password': password,
-            'loginType': "Company",
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        );
-        // Check if the login was successful
-        if (response.statusCode == 200) {
-          var responseData = jsonDecode(response.body);
-          if (responseData is Map && responseData.containsKey('token')) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const CompanyHomePage(),
-              ),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Invalid username or password.')),
-            );
-          }
+        if (responseData.containsKey('token') &&
+            responseData.containsKey('userId')) {
+          int userId = responseData['userId'];
+          var token = responseData['token'];
+// getting User Details
+          var userDetailsResponse =
+              await ApiServices.fetchUserDetails(userId, token);
+
+          print('userData$userDetailsResponse');
+
+          userDetails = userDetailsResponse;
+
+          // Fetching Applicant Data
+          submittedApplicantsData =
+              await ApiServices.fetchSubmittedApplctns(userId, token);
+          selectedApplicantsData =
+              await ApiServices.fetchSelectedApplctns(userId, token);
+
+          print('ApplicantData$submittedApplicantsData');
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CompanyHomePage(),
+            ),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Login failed. Please try again.')),
+            const SnackBar(content: Text('Invalid username or password.')),
           );
         }
       } catch (error) {
@@ -129,8 +131,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
                     ),
                     const SizedBox(height: 30),
                     LoginTextForm(
-                      controller:
-                          _emailConatroller, // Controller for username
+                      controller: _emailConatroller, // Controller for username
                       label: "username",
                       hintlabel: "user_name",
                       obscure: false,
@@ -177,7 +178,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
                     ),
                     const SizedBox(height: 20),
                     GestureDetector(
-                      onTap: company_login,
+                      onTap: companyLogin,
                       child: Container(
                         height: 50,
                         width: double.infinity,
