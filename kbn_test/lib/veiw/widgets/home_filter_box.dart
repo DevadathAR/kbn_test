@@ -5,6 +5,10 @@ import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 
 class HomeFilterBox extends StatefulWidget {
+  final Function(List<dynamic>) onFilterApplied; // Add this
+
+  HomeFilterBox({required this.onFilterApplied}); // Include in constructor
+
   @override
   _HomeFilterBoxState createState() => _HomeFilterBoxState();
 }
@@ -54,9 +58,9 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
                 jobs.map((job) => job['location'].toString()).toSet().toList();
 
             // Explicitly cast salaries to int and group them into ranges
-            salaryRanges = ["Salary"] +
-                getSalaryRanges(
-                    jobs.map((job) => job['salary'] as int).toList());
+            // salaryRanges = ["Salary"] +
+            //     getSalaryRanges(
+            //         jobs.map((job) => job['salary'] as int).toList());
             isLoading = false;
           });
         }
@@ -68,32 +72,8 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
     }
   }
 
-  // Function to create predefined salary ranges
-  List<String> getSalaryRanges(List<int> salaries) {
-    List<String> ranges = [];
-
-    // Define the salary ranges
-    List<Map<String, int>> rangeLimits = [
-      {"min": 10000, "max": 30000},
-      {"min": 30000, "max": 50000},
-      {"min": 50000, "max": 75000},
-      {"min": 100000, "max": 150000}
-    ];
-
-    // Add all ranges regardless of actual salary data
-    for (var range in rangeLimits) {
-      final min = range['min']!;
-      final max = range['max']!;
-
-      ranges.add("\$$min - \$$max");
-    }
-
-    return ranges;
-  }
-
   Future<void> fetchFilteredJobs() async {
     final url = Uri.parse(
-        // 'http://192.168.29.197:5500/job/filter?jobType=${Uri.encodeComponent(selectedJobType)}&minSalary=${_getMinSalary()}&maxSalary=${_getMaxSalary()}&experienceLevel=${Uri.encodeComponent(selectedExperience)}&workMode=${Uri.encodeComponent(selectedWorkMode)}&location=${Uri.encodeComponent(selectedLocation)}');
         'http://192.168.29.197:5500/job/filter?&workMode=${Uri.encodeComponent(selectedWorkMode)}');
 
     try {
@@ -103,12 +83,12 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
         final data = json.decode(response.body);
         print(data);
         if (data['message'] == 'Filter Success') {
-          // Handle the filtered data
           final List<dynamic> jobs = data['data'];
 
+          widget.onFilterApplied(jobs); // Call the callback with filtered jobs
+
           setState(() {
-            // Update the UI with filtered job data if needed
-            // e.g., update a list of jobs to display
+            // Optionally update UI with filtered job data
           });
         }
       } else {
@@ -118,23 +98,6 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
       print("Error fetching filtered jobs: $e");
     }
   }
-
-  // Extract min and max salary from the selected range
-  int _getMinSalary() {
-    if (selectedSalary == "Salary") return 0;
-
-    final parts = selectedSalary.split(" - ");
-    return int.parse(parts[0].replaceAll(',', '').replaceAll('\$', ''));
-  }
-
-  int _getMaxSalary() {
-    if (selectedSalary == "Salary")
-      return 100000000; // Set a high number if no specific range is selected
-
-    final parts = selectedSalary.split(" - ");
-    return int.parse(parts[1].replaceAll(',', '').replaceAll('\$', ''));
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

@@ -7,6 +7,7 @@ List<dynamic> jobs = [];
 
 class ApiServices {
   static const String baseUrl = 'http://192.168.29.37:8000';
+  // static const String baseUrl2 = 'http://192.168.29.37:8000';
   static const String baseUrl2 = 'http://192.168.29.197:5500';
 
   // Login API
@@ -17,8 +18,8 @@ class ApiServices {
     var response = await http.post(
       url,
       body: jsonEncode({
-        'email': "e",
-        'password': "e",
+        'email': "john123@gmail.com",
+        'password': "john@123",
         // 'email': email,
         // 'password': password,
         'loginType': "Applicant",
