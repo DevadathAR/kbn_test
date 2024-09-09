@@ -104,7 +104,7 @@ Widget build(BuildContext context) {
                                     return JobDetails(
                                       jobId: job['jobId'], // Pass jobId
                                       companyId: job['companyId'], // Pass companyId
-                                      firmname: job['company'].toString(),
+                                      firmname: job['company_name'].toString(),
                                       jobTitle: job['title'].toString(),
                                       jobSummary: job['job_summary'].toString(),
                                       expLevel: job['experience_level'].toString(),
@@ -129,7 +129,7 @@ Widget build(BuildContext context) {
                               }
                             },
                             child: LatestJobCard(
-                              firmname: job['company'].toString(),
+                              firmname: job['company_name'].toString(),
                               jobTitle: job['title'].toString(),
                               jobSummary: job['job_summary'].toString(),
                               expLevel: job['experience_level'].toString(),

@@ -272,7 +272,7 @@ class _JobDetailsState extends State<JobDetails> {
                   txt: "${widget.workLocation},${widget.jobMode}"),
               JobSummaryWid(
                   jobicon: salaryPng, txt: "${widget.salary} per month"),
-              JobSummaryWid(jobicon: clockPng, txt: widget.jobMode),
+              JobSummaryWid(jobicon: clockPng, txt: widget.jobType),
               SizedBox(
                 child: Column(
                   children: [

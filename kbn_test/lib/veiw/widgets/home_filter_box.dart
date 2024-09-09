@@ -5,9 +5,9 @@ import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 
 class HomeFilterBox extends StatefulWidget {
-  final Function(List<dynamic>) onFilterApplied; // Add this
+  final Function(List<dynamic>) onFilterApplied;
 
-  HomeFilterBox({required this.onFilterApplied}); // Include in constructor
+  HomeFilterBox({required this.onFilterApplied});
 
   @override
   _HomeFilterBoxState createState() => _HomeFilterBoxState();
@@ -31,7 +31,9 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
   @override
   void initState() {
     super.initState();
-    fetchFilterData();
+    fetchFilterData().then((_) {
+      fetchFilteredJobs(); // Fetch all jobs initially when no filters are applied
+    });
   }
 
   Future<void> fetchFilterData() async {
@@ -41,6 +43,7 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print(data);
         if (data['message'] == 'Filter Success') {
           final List<dynamic> jobs = data['data'];
 
@@ -57,10 +60,6 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
             locations = ["Location"] +
                 jobs.map((job) => job['location'].toString()).toSet().toList();
 
-            // Explicitly cast salaries to int and group them into ranges
-            // salaryRanges = ["Salary"] +
-            //     getSalaryRanges(
-            //         jobs.map((job) => job['salary'] as int).toList());
             isLoading = false;
           });
         }
@@ -73,11 +72,19 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
   }
 
   Future<void> fetchFilteredJobs() async {
-    final url = Uri.parse(
-        'http://192.168.29.197:5500/job/filter?&workMode=${Uri.encodeComponent(selectedWorkMode)}');
+    final queryParameters = {
+      if (selectedWorkMode != "Work Mode") 'workMode': selectedWorkMode,
+      if (selectedJobType != "Job Type") 'jobType': selectedJobType,
+      if (selectedLocation != "Location") 'location': selectedLocation,
+      if (selectedExperience != "Experience") 'experienceLevel': selectedExperience,
+      if (selectedSalary != "Salary") 'salaryRange': selectedSalary, // Assuming salaryRange is implemented
+    };
+
+    final uri = Uri.parse('http://192.168.29.197:5500/job/filter')
+        .replace(queryParameters: queryParameters);
 
     try {
-      final response = await http.get(url);
+      final response = await http.get(uri);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -86,10 +93,6 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
           final List<dynamic> jobs = data['data'];
 
           widget.onFilterApplied(jobs); // Call the callback with filtered jobs
-
-          setState(() {
-            // Optionally update UI with filtered job data
-          });
         }
       } else {
         throw Exception("Failed to fetch filtered jobs");
@@ -98,6 +101,7 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
       print("Error fetching filtered jobs: $e");
     }
   }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -127,7 +131,8 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
                 buildDropdown(salaryRanges, selectedSalary, (newValue) {
                   setState(() {
                     selectedSalary = newValue!;
-                    fetchFilteredJobs(); // Fetch filtered jobs when selection changes
+                    // Uncomment this line once salary filtering is implemented
+                    // fetchFilteredJobs();
                   });
                 }),
                 const Padding(
