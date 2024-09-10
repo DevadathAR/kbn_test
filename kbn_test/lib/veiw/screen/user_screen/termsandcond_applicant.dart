@@ -25,7 +25,7 @@ class TaC extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Center(child: Image(image: AssetImage(kbnLogo))),
-                  HomeAppBarBox(context,T_and_C: TaC(),logOutTo: UserLoginPage(),profileImage: "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}", termscolor: black),
+                  HomeAppBarBox(context,T_and_C: const TaC(),logOutTo: const UserLoginPage(),profileImage: "$baseUrl/${userDetails['user']['profile_image']}", termscolor: black),
                   
                   const SizedBox(
                     height: 10,

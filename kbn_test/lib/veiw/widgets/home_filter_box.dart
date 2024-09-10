@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
+import 'package:kbn_test/service/api_service.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 
 class HomeFilterBox extends StatefulWidget {
-    final Function(List<dynamic>) onFilterApplied;
-      HomeFilterBox({required this.onFilterApplied});
-
+  final Function(List<dynamic>) onFilterApplied;
+  HomeFilterBox({required this.onFilterApplied});
 
   @override
   _HomeFilterBoxState createState() => _HomeFilterBoxState();
@@ -15,15 +16,16 @@ class HomeFilterBox extends StatefulWidget {
 
 class _HomeFilterBoxState extends State<HomeFilterBox> {
   List<String> jobTypes = ["Job Type"];
-List<String> salaryRanges = [
+  List<String> salaryRanges = [
     "Salary",
     "0-25000",
     "25000-50000",
     "50000-75000",
     "75000-100000",
     "100000-300000",
-    "300000-above"
-  ];  List<String> experiences = ["Experience"];
+    // "300000-above"
+  ];
+  List<String> experiences = ["Experience"];
   List<String> workModes = ["Work Mode"];
   List<String> locations = ["Location"];
 
@@ -42,80 +44,31 @@ List<String> salaryRanges = [
   }
 
   Future<void> fetchFilterData() async {
-    final url = Uri.parse('http://192.168.29.197:5500/job/filter');
     try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['message'] == 'Filter Success') {
-          final List<dynamic> jobs = data['data'];
-
-          setState(() {
-            jobTypes = ["Job Type"] +
-                jobs.map((job) => job['job_type'].toString()).toSet().toList();
-            experiences = ["Experience"] +
-                jobs
-                    .map((job) => job['experience_level'].toString())
-                    .toSet()
-                    .toList();
-            workModes = ["Work Mode"] +
-                jobs.map((job) => job['job_mode'].toString()).toSet().toList();
-            locations = ["Location"] +
-                jobs.map((job) => job['location'].toString()).toSet().toList();
-            isLoading = false;
-          });
-        }
-      } else {
-        throw Exception("Failed to load filter data");
-      }
+      final filters = await ApiServices.fetchFilterData();
+      // log(jsonEncode(filters['jobTypes']));
+      setState(() {
+        jobTypes = ["Job Type"] + filters['jobTypes']!;
+        experiences = ["Experience"] + filters['experiences']!;
+        workModes = ["Work Mode"] + filters['workModes']!;
+        locations = ["Location"] + filters['locations']!;
+        isLoading = false;
+      });
     } catch (e) {
-      print("Error fetching filter data: $e");
+      print("Error: $e");
     }
   }
 
-    Future<void> fetchFilteredJobs() async {
-    // Extract min and max salary if a valid salary range is selected
-    int? minSalary;
-    int? maxSalary;
-
-    if (selectedSalary != "Salary") {
-      List<String> salaryParts = selectedSalary.split('-');
-      if (salaryParts.length == 2) {
-        minSalary = int.tryParse(salaryParts[0]);
-        maxSalary = int.tryParse(salaryParts[1]);
-      }
-    }
-
-    final queryParameters = {
-      if (selectedWorkMode != "Work Mode") 'workMode': selectedWorkMode,
-      if (selectedJobType != "Job Type") 'jobType': selectedJobType,
-      if (selectedLocation != "Location") 'location': selectedLocation,
-      if (selectedExperience != "Experience")
-        'experienceLevel': selectedExperience,
-      if (minSalary != null && maxSalary != null)
-        'minSalary': minSalary.toString(),
-      if (minSalary != null && maxSalary != null)
-        'maxSalary': maxSalary.toString(),
-    };
-
-    final uri = Uri.parse('http://192.168.29.197:5500/job/filter')
-        .replace(queryParameters: queryParameters);
-
+  Future<void> fetchFilteredJobs() async {
     try {
-      final response = await http.get(uri);
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        // print(data);
-        if (data['message'] == 'Filter Success') {
-          final List<dynamic> jobs = data['data'];
-
-          widget.onFilterApplied(jobs); // Call the callback with filtered jobs
-        }
-      } else {
-        throw Exception("Failed to fetch filtered jobs");
-      }
+      final jobs = await ApiServices.fetchFilteredJobs(
+        selectedJobType: selectedJobType,
+        selectedSalary: selectedSalary,
+        selectedExperience: selectedExperience,
+        selectedWorkMode: selectedWorkMode,
+        selectedLocation: selectedLocation,
+      );
+      widget.onFilterApplied(jobs);
     } catch (e) {
       print("Error fetching filtered jobs: $e");
     }
@@ -140,7 +93,7 @@ List<String> salaryRanges = [
                 buildDropdown(jobTypes, selectedJobType, (newValue) {
                   setState(() {
                     selectedJobType = newValue!;
-                    fetchFilteredJobs(); // Fetch filtered jobs when selection changes
+                    fetchFilteredJobs();
                   });
                 }),
                 const Padding(
@@ -150,7 +103,7 @@ List<String> salaryRanges = [
                 buildDropdown(salaryRanges, selectedSalary, (newValue) {
                   setState(() {
                     selectedSalary = newValue!;
-                    fetchFilteredJobs(); // Fetch filtered jobs when selection changes
+                    fetchFilteredJobs();
                   });
                 }),
                 const Padding(
@@ -160,7 +113,7 @@ List<String> salaryRanges = [
                 buildDropdown(experiences, selectedExperience, (newValue) {
                   setState(() {
                     selectedExperience = newValue!;
-                    fetchFilteredJobs(); // Fetch filtered jobs when selection changes
+                    fetchFilteredJobs();
                   });
                 }),
                 const Padding(
@@ -170,7 +123,7 @@ List<String> salaryRanges = [
                 buildDropdown(workModes, selectedWorkMode, (newValue) {
                   setState(() {
                     selectedWorkMode = newValue!;
-                    fetchFilteredJobs(); // Fetch filtered jobs when selection changes
+                    fetchFilteredJobs();
                   });
                 }),
                 const Padding(
@@ -180,7 +133,7 @@ List<String> salaryRanges = [
                 buildDropdown(locations, selectedLocation, (newValue) {
                   setState(() {
                     selectedLocation = newValue!;
-                    fetchFilteredJobs(); // Fetch filtered jobs when selection changes
+                    fetchFilteredJobs();
                   });
                 }),
               ],

@@ -39,18 +39,19 @@ class _UserLoginPageState extends State<UserLoginPage> {
   
 Future<void> _login() async {
     try {
-      var responseData = await ApiServices.user_login(
+      var responseData = await ApiServices.userLogin(
         usernameController.text,
         passwordController.text,
+        
       );
 
       if (responseData.containsKey('token') &&
           responseData.containsKey('userId')) {
-        int userId = responseData['userId'];
-        var token = responseData['token'];
+        // int userId = responseData['userId'];
+        // var token = responseData['token'];
 
         var userDetailsResponse =
-            await ApiServices.fetchUserDetails(userId, token);
+            await ApiServices.fetchUserDetails();
 
         userDetails = userDetailsResponse;
 

@@ -1,13 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;
 import 'package:kbn_test/service/api_service.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/user_auth/UserLoginPage.dart';
-import 'package:kbn_test/veiw/screen/user_screen/jobdetails.dart';
+import 'package:kbn_test/veiw/screen/user_screen/JobDetails.dart';
 import 'package:kbn_test/veiw/screen/user_screen/termsandcond_applicant.dart';
+
 import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
 import 'package:kbn_test/veiw/widgets/home_filter_box.dart';
 
@@ -20,6 +23,8 @@ class UserHome extends StatefulWidget {
 
 class _UserHomeState extends State<UserHome> {
   List<dynamic> _jobs = [];
+  int _currentPage = 1;
+  int ?_totalPages =1;
 
   @override
   void initState() {
@@ -32,7 +37,19 @@ class _UserHomeState extends State<UserHome> {
         .fetchJobTitles(); // Call fetchJobTitles from ApiServices
     setState(() {
       _jobs = jobs;
+      _totalPages = ((jobs.length / 8)+1).ceil(); // Calculate total pages
     });
+  }
+
+  Future<List<dynamic>> _fetchFilteredJobs(int pageNumber) async {
+    var filteredJobs = await ApiServices.fetchFilteredJobs(
+      pageNumber: pageNumber,
+      pageSize: 8,
+    );
+    setState(() {
+      _jobs = filteredJobs;
+    });
+    return filteredJobs;
   }
 
   @override
@@ -52,7 +69,7 @@ class _UserHomeState extends State<UserHome> {
                   const Center(child: Image(image: AssetImage(kbnLogo))),
                   HomeAppBarBox(context,
                       profileImage:
-                          "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
+                          "${baseUrl}/${userDetails['user']['profile_image']}",
                       T_and_C: const TaC(),
                       logOutTo: const UserLoginPage(),
                       termscolor: white),
@@ -84,6 +101,7 @@ class _UserHomeState extends State<UserHome> {
                       padding: const EdgeInsets.symmetric(horizontal: 40),
                       child: SizedBox(
                         child: GridView.builder(
+                          // physics: const NeverScrollableScrollPhysics(),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 4,
@@ -157,6 +175,33 @@ class _UserHomeState extends State<UserHome> {
                       ),
                     ),
                   ),
+                  // Add pagination buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      PaginatedButton(
+                        onPressed: () async {
+                          if (_currentPage > 1) {
+                            setState(() => _currentPage--);
+                            await _fetchFilteredJobs(_currentPage);
+                          }
+                        },
+                        child: const Text('Previous'),
+                      ),
+                      const SizedBox(width: 20),
+                      Text('Page $_currentPage of $_totalPages'),
+                      const SizedBox(width: 20),
+                      PaginatedButton(
+                        onPressed: () async {
+                          if (_currentPage < _totalPages!) {
+                            setState(() => _currentPage++);
+                            await _fetchFilteredJobs(_currentPage);
+                          }
+                        },
+                        child: const Text('Next'),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -166,6 +211,86 @@ class _UserHomeState extends State<UserHome> {
     );
   }
 }
+
+// Create a PaginatedButton widget
+class PaginatedButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final Widget child;
+
+  PaginatedButton({required this.onPressed, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: child,
+    );
+  }
+}
+
+//  Future<List<dynamic>> fetchFilteredJobs({
+//   String? selectedJobType,
+//   String? selectedSalary,
+//   String? selectedExperience,
+//   String? selectedWorkMode,
+//   String? selectedLocation,
+//   int? pageNumber,
+//   int pageSize = 8,
+// }) async {
+//   int? minSalary;
+//   int? maxSalary;
+
+//   // Handle salary splitting logic
+//   if (selectedSalary != "Salary" && selectedSalary != null) {
+//     List<String> salaryParts = selectedSalary.split('-');
+//     if (salaryParts.length == 2) {
+//       minSalary = int.tryParse(salaryParts[0]);
+//       maxSalary = int.tryParse(salaryParts[1]);
+//     }
+//   }
+
+//   // Build query parameters for the request
+//   final queryParameters = {
+//     if (selectedWorkMode != "Work Mode" && selectedWorkMode != null)
+//       'workMode': selectedWorkMode,
+//     if (selectedJobType != "Job Type" && selectedJobType != null)
+//       'jobType': selectedJobType,
+//     if (selectedLocation != "Location" && selectedLocation != null)
+//       'location': selectedLocation,
+//     if (selectedExperience != "Experience" && selectedExperience != null)
+//       'experienceLevel': selectedExperience,
+//     if (minSalary != null && maxSalary != null)
+//       'minSalary': minSalary.toString(),
+//     if (minSalary != null && maxSalary != null)
+//       'maxSalary': maxSalary.toString(),
+//     if (pageNumber != null) 'page': pageNumber.toString(),
+//     'pageSize': pageSize.toString(), // Always pass page size
+//   };
+
+//   // Construct URI
+//   final uri = Uri.parse('$baseUrl2/job/filter')
+//       .replace(queryParameters: queryParameters);
+
+//   try {
+//     final response = await http.get(uri);
+
+//     if (response.statusCode == 200) {
+//       final data = json.decode(response.body);
+//       if (data['message'] == 'Filter Success') {
+//         return data['data'];
+//       } else {
+//         print("Unexpected response message: ${data['message']}");
+//         throw Exception("Failed to fetch filtered jobs");
+//       }
+//     } else {
+//       print("Error: ${response.statusCode}, Body: ${response.body}");
+//       throw Exception("Failed to fetch filtered jobs");
+//     }
+//   } catch (e) {
+//     print("Error fetching filtered jobs: $e");
+//     rethrow;
+//   }
+// }
 
 class LatestJobCard extends StatefulWidget {
   final String jobTitle;
@@ -240,8 +365,8 @@ class _LatestJobCardState extends State<LatestJobCard> {
                 children: [
                   CircleAvatar(
                     radius: 25,
-                    backgroundImage: NetworkImage(
-                        '${ApiServices.baseUrl2}${widget.companyImage}'),
+                    backgroundImage:
+                        NetworkImage('$baseUrl2${widget.companyImage}'),
                   ),
                   Column(
                     children: [
@@ -319,6 +444,7 @@ class _LatestJobCardState extends State<LatestJobCard> {
                         padding: EdgeInsets.only(right: 5),
                         child: Image(image: AssetImage(clockPng)),
                       ),
+                      // Text(calculateDaysAgo('2024-09-05T10:34:35.000Z'))
                       Text(calculateDaysAgo(widget.datePosted))
                     ],
                   ),

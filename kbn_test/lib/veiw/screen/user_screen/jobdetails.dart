@@ -69,7 +69,7 @@ class _JobDetailsState extends State<JobDetails> {
                       T_and_C: const TaC(),
                       logOutTo: const UserLoginPage(),
                       profileImage:
-                          "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
+                          "${baseUrl}/${userDetails['user']['profile_image']}",
                       termscolor: white),
                   const SizedBox(height: 10),
                   Container(
@@ -275,37 +275,41 @@ class _JobDetailsState extends State<JobDetails> {
               JobSummaryWid(
                   jobicon: salaryPng, txt: "${widget.salary} per month"),
               JobSummaryWid(jobicon: clockPng, txt: widget.jobType),
-              SizedBox(
-                child: Column(
-                  children: [
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Key Responsibilities",
-                        style: AppTextStyle.abouttxt,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    for (var item in widget.keyResponsibilities)
-                      Align(
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 
+                15),
+                child: SizedBox(
+                  child: Column(
+                    children: [
+                      const Align(
                         alignment: Alignment.centerLeft,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              '• ',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            Expanded(
-                              child: Text(
-                                item.trim(),
-                                style: AppTextStyle.normaltxt,
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          "Key Responsibilities",
+                          style: AppTextStyle.abouttxt,
                         ),
                       ),
-                  ],
+                      const SizedBox(height: 10),
+                      for (var item in widget.keyResponsibilities)
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                '• ',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  item.trim(),
+                                  style: AppTextStyle.normaltxt,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               )
             ],
@@ -317,13 +321,14 @@ class _JobDetailsState extends State<JobDetails> {
 }
 // Import ApiServices
 
+
 class CompanyDetails1 extends StatefulWidget {
   final String jobTitle;
   final String firmname;
   final String companywebsite;
   final String companyImage;
-  final int jobId; // Add jobId here
-  final int userId; // Add userId here
+  final int jobId; // jobId
+  final int userId; // userId
 
   const CompanyDetails1({
     Key? key,
@@ -331,13 +336,15 @@ class CompanyDetails1 extends StatefulWidget {
     required this.firmname,
     required this.companywebsite,
     required this.companyImage,
-    required this.jobId, // Add jobId here
-    required this.userId, // Add userId here
+    required this.jobId,
+    required this.userId,
   }) : super(key: key);
 
   @override
   _CompanyDetails1State createState() => _CompanyDetails1State();
 }
+
+
 
 class _CompanyDetails1State extends State<CompanyDetails1> {
   bool _isApplied = false;
@@ -346,17 +353,44 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
     try {
       final result = await ApiServices.applyForJob(widget.jobId, widget.userId);
 
-      if (result['message'] == 'Success') {
+      // Check if the response has a 'data' field and contains the status
+      if (result['message'] == 'Response Received' && result['data'] != null) {
+        // Loop through the data to find the job with the matching jobId
+        for (var application in result['data']) {
+          if (application['jobId'] == widget.jobId) {
+            // Check the application status
+            if (application['status'] == 'Submitted') {
+              setState(() {
+                _isApplied = true;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Application already submitted!')),
+              );
+            } else {
+              setState(() {
+                _isApplied = false;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('You can still apply for this job')),
+              );
+            }
+            break;
+          }
+        }
+      } else {
+        // If the response doesn't contain valid data, revert the state
         setState(() {
-          _isApplied = true;
+          _isApplied = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Application successful!')),
+          const SnackBar(content: Text('Failed to check application status')),
         );
-      } else {
-        throw Exception('Failed to apply for job');
       }
     } catch (e) {
+      // Revert the state if an error occurred
+      setState(() {
+        _isApplied = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -372,8 +406,7 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
           children: [
             CircleAvatar(
               radius: 60,
-              backgroundImage:
-                  NetworkImage('${ApiServices.baseUrl2}${widget.companyImage}'),
+              backgroundImage: NetworkImage('${baseUrl2}${widget.companyImage}'),
             ),
             const SizedBox(width: 10),
             Column(
@@ -402,8 +435,7 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
                 ),
               ),
               Text(
-                jobDetailsResponse['companyDetails']?['about_company'] ??
-                    "", // Replace with actual about info
+                jobDetailsResponse['companyDetails']?['about_company'] ?? "",
                 style: AppTextStyle.normaltxt,
                 softWrap: true,
               ),
@@ -417,15 +449,15 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
           ),
         ),
         GestureDetector(
-          onTap: _isApplied ? null : _applyForJob,
+          onTap: _isApplied ? null : _applyForJob, // Disable button if already applied
           child: Container(
             height: 60,
             width: 220,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(12)),
               color: _isApplied
-                  ? Colors.green
-                  : Colors.blue, // Change color based on state
+                  ? Colors.blue // Change to blue when applied
+                  : Colors.green, // Default green color
             ),
             child: Center(
               child: Text(
