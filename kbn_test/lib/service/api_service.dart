@@ -133,7 +133,7 @@ class ApiServices {
         jobDetailsResponse = jsonDecode(response.body);
 
         // print(jsonData);
-        // print(jobDetailsResponse);
+        print(jobDetailsResponse);
 
         print("Job details posted successfully.");
       } else {
@@ -143,4 +143,21 @@ class ApiServices {
       print("Error posting job details: $error");
     }
   }
+
+  static Future<Map<String, dynamic>> applyForJob(int jobId, int userId) async {
+    final url = Uri.parse('$baseUrl2/application/create'); // Update to your API endpoint
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'jobId': jobId, 'userId': userId}),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to apply for job');
+    }
+  }
+  
 }

@@ -5,9 +5,9 @@ import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 
 class HomeFilterBox extends StatefulWidget {
-  final Function(List<dynamic>) onFilterApplied;
+    final Function(List<dynamic>) onFilterApplied;
+      HomeFilterBox({required this.onFilterApplied});
 
-  HomeFilterBox({required this.onFilterApplied});
 
   @override
   _HomeFilterBoxState createState() => _HomeFilterBoxState();
@@ -15,8 +15,15 @@ class HomeFilterBox extends StatefulWidget {
 
 class _HomeFilterBoxState extends State<HomeFilterBox> {
   List<String> jobTypes = ["Job Type"];
-  List<String> salaryRanges = ["Salary"];
-  List<String> experiences = ["Experience"];
+List<String> salaryRanges = [
+    "Salary",
+    "0-25000",
+    "25000-50000",
+    "50000-75000",
+    "75000-100000",
+    "100000-300000",
+    "300000-above"
+  ];  List<String> experiences = ["Experience"];
   List<String> workModes = ["Work Mode"];
   List<String> locations = ["Location"];
 
@@ -31,9 +38,7 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
   @override
   void initState() {
     super.initState();
-    fetchFilterData().then((_) {
-      fetchFilteredJobs(); // Fetch all jobs initially when no filters are applied
-    });
+    fetchFilterData();
   }
 
   Future<void> fetchFilterData() async {
@@ -43,7 +48,6 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print(data);
         if (data['message'] == 'Filter Success') {
           final List<dynamic> jobs = data['data'];
 
@@ -59,7 +63,6 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
                 jobs.map((job) => job['job_mode'].toString()).toSet().toList();
             locations = ["Location"] +
                 jobs.map((job) => job['location'].toString()).toSet().toList();
-
             isLoading = false;
           });
         }
@@ -71,13 +74,29 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
     }
   }
 
-  Future<void> fetchFilteredJobs() async {
+    Future<void> fetchFilteredJobs() async {
+    // Extract min and max salary if a valid salary range is selected
+    int? minSalary;
+    int? maxSalary;
+
+    if (selectedSalary != "Salary") {
+      List<String> salaryParts = selectedSalary.split('-');
+      if (salaryParts.length == 2) {
+        minSalary = int.tryParse(salaryParts[0]);
+        maxSalary = int.tryParse(salaryParts[1]);
+      }
+    }
+
     final queryParameters = {
       if (selectedWorkMode != "Work Mode") 'workMode': selectedWorkMode,
       if (selectedJobType != "Job Type") 'jobType': selectedJobType,
       if (selectedLocation != "Location") 'location': selectedLocation,
-      if (selectedExperience != "Experience") 'experienceLevel': selectedExperience,
-      if (selectedSalary != "Salary") 'salaryRange': selectedSalary, // Assuming salaryRange is implemented
+      if (selectedExperience != "Experience")
+        'experienceLevel': selectedExperience,
+      if (minSalary != null && maxSalary != null)
+        'minSalary': minSalary.toString(),
+      if (minSalary != null && maxSalary != null)
+        'maxSalary': maxSalary.toString(),
     };
 
     final uri = Uri.parse('http://192.168.29.197:5500/job/filter')
@@ -88,7 +107,7 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print(data);
+        // print(data);
         if (data['message'] == 'Filter Success') {
           final List<dynamic> jobs = data['data'];
 
@@ -131,8 +150,7 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
                 buildDropdown(salaryRanges, selectedSalary, (newValue) {
                   setState(() {
                     selectedSalary = newValue!;
-                    // Uncomment this line once salary filtering is implemented
-                    // fetchFilteredJobs();
+                    fetchFilteredJobs(); // Fetch filtered jobs when selection changes
                   });
                 }),
                 const Padding(

@@ -110,6 +110,8 @@ class _JobDetailsState extends State<JobDetails> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(15.0),
                                     child: CompanyDetails1(
+                                      jobId: widget.jobId,
+                                      userId: widget.companyId,
                                       jobTitle: widget.jobTitle,
                                       firmname: widget.firmname,
                                       companywebsite: widget.companywebsite,
@@ -154,8 +156,8 @@ class _JobDetailsState extends State<JobDetails> {
         child: SizedBox(
           width: size.width * .25,
           child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          // crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Align(
                 alignment: Alignment.centerLeft,
@@ -313,19 +315,24 @@ class _JobDetailsState extends State<JobDetails> {
     );
   }
 }
+// Import ApiServices
 
 class CompanyDetails1 extends StatefulWidget {
   final String jobTitle;
   final String firmname;
   final String companywebsite;
   final String companyImage;
+  final int jobId; // Add jobId here
+  final int userId; // Add userId here
 
   const CompanyDetails1({
     Key? key,
     required this.jobTitle,
     required this.firmname,
     required this.companywebsite,
-    required this.companyImage
+    required this.companyImage,
+    required this.jobId, // Add jobId here
+    required this.userId, // Add userId here
   }) : super(key: key);
 
   @override
@@ -335,6 +342,27 @@ class CompanyDetails1 extends StatefulWidget {
 class _CompanyDetails1State extends State<CompanyDetails1> {
   bool _isApplied = false;
 
+  Future<void> _applyForJob() async {
+    try {
+      final result = await ApiServices.applyForJob(widget.jobId, widget.userId);
+
+      if (result['message'] == 'Success') {
+        setState(() {
+          _isApplied = true;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Application successful!')),
+        );
+      } else {
+        throw Exception('Failed to apply for job');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -343,9 +371,10 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
         Row(
           children: [
             CircleAvatar(
-                    radius: 60,
-  backgroundImage: NetworkImage('${ApiServices.baseUrl2}${widget.companyImage}'),
-),
+              radius: 60,
+              backgroundImage:
+                  NetworkImage('${ApiServices.baseUrl2}${widget.companyImage}'),
+            ),
             const SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,7 +386,7 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
                 Text(
                   widget.firmname, // Replace with actual company name
                   style: AppTextStyle.googletext,
-                )
+                ),
               ],
             ),
           ],
@@ -378,27 +407,25 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
                 style: AppTextStyle.normaltxt,
                 softWrap: true,
               ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Visit - ${jobDetailsResponse['companyDetails']?['company_website'] ?? ''}",
+                ),
+              ),
             ],
           ),
         ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "Visit - ${jobDetailsResponse['companyDetails']?['company_website'] ?? ''}",
-          ),
-        ),
         GestureDetector(
-          onTap: () {
-            setState(() {
-              _isApplied = true;
-            });
-          },
+          onTap: _isApplied ? null : _applyForJob,
           child: Container(
             height: 60,
             width: 220,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(12)),
-              color: _isApplied ? green : green,
+              color: _isApplied
+                  ? Colors.green
+                  : Colors.blue, // Change color based on state
             ),
             child: Center(
               child: Text(

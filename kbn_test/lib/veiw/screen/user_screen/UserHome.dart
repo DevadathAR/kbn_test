@@ -36,123 +36,135 @@ class _UserHomeState extends State<UserHome> {
   }
 
   @override
-  @override
-Widget build(BuildContext context) {
-  Size size = MediaQuery.of(context).size;
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
 
-  return Scaffold(
-    body: Stack(
-      children: [
-        SingleChildScrollView(
-          child: SizedBox(
-            height: size.height * 1,
-            width: size.width * 1,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Center(child: Image(image: AssetImage(kbnLogo))),
-                HomeAppBarBox(context,
-                    profileImage:
-                        "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
-                    T_and_C: const TaC(),
-                    logOutTo: const UserLoginPage(),
-                    termscolor: white),
-                const SizedBox(
-                  height: 10,
-                ),
-                HomeFilterBox(
-                  onFilterApplied: (filteredJobs) {
-                    setState(() {
-                      _jobs = filteredJobs;
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 50),
-                  child: Text(
-                    latestjob,
-                    style: AppTextStyle.tactexthead,
+    return Scaffold(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: SizedBox(
+              height: size.height * 1,
+              width: size.width * 1,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Center(child: Image(image: AssetImage(kbnLogo))),
+                  HomeAppBarBox(context,
+                      profileImage:
+                          "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
+                      T_and_C: const TaC(),
+                      logOutTo: const UserLoginPage(),
+                      termscolor: white),
+                  const SizedBox(
+                    height: 10,
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: SizedBox(
-                      child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 4,
-                                crossAxisSpacing: 30,
-                                mainAxisSpacing: 10,
-                                childAspectRatio: 261 / 190),
-                        itemCount: _jobs.length,
-                        itemBuilder: (context, index) {
-                          final job = _jobs[index];
-                          return GestureDetector(
-                            onTap: () async {
-                              try {
-                                await ApiServices.postJobDetails(
-                                    job['jobId'], job['companyId']);
-                                Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) {
-                                    return JobDetails(
-                                      jobId: job['jobId'], // Pass jobId
-                                      companyId: job['companyId'], // Pass companyId
-                                      firmname: job['company_name'].toString(),
-                                      jobTitle: job['title'].toString(),
-                                      jobSummary: job['job_summary'].toString(),
-                                      expLevel: job['experience_level'].toString(),
-                                      jobMode: job['job_mode'].toString(),
-                                      jobType: job['job_type'].toString(),
-                                      keyResponsibilities:
-                                          job['key_responsibilities'] as List<dynamic>,
-                                      jobReq: job['job_requirements']
-                                          as Map<String, dynamic>,
-                                      salary: job['salary'],
-                                      currentVacancy: job['vacancy'],
-                                      workLocation: job['location'].toString(),
-                                      companywebsite: job['company_website'].toString(),
-                                      datePosted: job['created_at'].toString(),
-                                      companyImage:
-                                          job['company_profile_image'].toString(),
-                                    );
-                                  },
-                                ));
-                              } catch (error) {
-                                print("Error in onTap: $error");
-                              }
-                            },
-                            child: LatestJobCard(
-                              firmname: job['company_name'].toString(),
-                              jobTitle: job['title'].toString(),
-                              jobSummary: job['job_summary'].toString(),
-                              expLevel: job['experience_level'].toString(),
-                              jobMode: job['job_mode'].toString(),
-                              jobType: job['job_type'].toString(),
-                              datePosted: job['created_at'].toString(),
-                              companyImage: job['company_profile_image'].toString(),
-                            ),
-                          );
-                        },
+                  HomeFilterBox(
+                    onFilterApplied: (filteredJobs) {
+                      setState(() {
+                        _jobs = filteredJobs;
+                      });
+                    },
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 50),
+                    child: Text(
+                      latestjob,
+                      style: AppTextStyle.tactexthead,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: SizedBox(
+                        child: GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 4,
+                                  crossAxisSpacing: 30,
+                                  mainAxisSpacing: 10,
+                                  childAspectRatio: 261 / 190),
+                          itemCount: _jobs.length,
+                          itemBuilder: (context, index) {
+                            final job = _jobs[index];
+                            return GestureDetector(
+                              onTap: () async {
+                                // print(job['companyId']);
+                                try {
+                                  await ApiServices.postJobDetails(
+                                      job['jobId'], job['companyId']);
+
+                                  // Navigate to JobDetails after successfully posting job details
+                                  Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) {
+                                      return JobDetails(
+                                        jobId: job['jobId'], // Pass jobId
+                                        companyId:
+                                            job['companyId'], // Pass companyId
+                                        firmname:
+                                            job['company_name'].toString(),
+                                        jobTitle: job['title'].toString(),
+                                        jobSummary:
+                                            job['job_summary'].toString(),
+                                        expLevel:
+                                            job['experience_level'].toString(),
+                                        jobMode: job['job_mode'].toString(),
+                                        jobType: job['job_type'].toString(),
+                                        keyResponsibilities:
+                                            job['key_responsibilities']
+                                                as List<dynamic>,
+                                        jobReq: job['job_requirements']
+                                            as Map<String, dynamic>,
+                                        salary: job['salary'],
+                                        currentVacancy: job['vacancy'],
+                                        workLocation:
+                                            job['location'].toString(),
+                                        companywebsite:
+                                            job['company_website'].toString(),
+                                        datePosted:
+                                            job['created_at'].toString(),
+                                        companyImage:
+                                            job['company_profile_image']
+                                                .toString(),
+                                      );
+                                    },
+                                  ));
+                                } catch (error) {
+                                  print(
+                                      "Error in onTap: $error"); // Handle navigation errors
+                                }
+                              },
+                              child: LatestJobCard(
+                                firmname: job['company_name'].toString(),
+                                jobTitle: job['title'].toString(),
+                                jobSummary: job['job_summary'].toString(),
+                                expLevel: job['experience_level'].toString(),
+                                jobMode: job['job_mode'].toString(),
+                                jobType: job['job_type'].toString(),
+                                datePosted: job['created_at'].toString(),
+                                companyImage:
+                                    job['company_profile_image'].toString(),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-
+        ],
+      ),
+    );
+  }
 }
 
 class LatestJobCard extends StatefulWidget {
@@ -226,10 +238,11 @@ class _LatestJobCardState extends State<LatestJobCard> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                   CircleAvatar(
+                  CircleAvatar(
                     radius: 25,
-  backgroundImage: NetworkImage('${ApiServices.baseUrl2}${widget.companyImage}'),
-),
+                    backgroundImage: NetworkImage(
+                        '${ApiServices.baseUrl2}${widget.companyImage}'),
+                  ),
                   Column(
                     children: [
                       Text(
@@ -306,7 +319,6 @@ class _LatestJobCardState extends State<LatestJobCard> {
                         padding: EdgeInsets.only(right: 5),
                         child: Image(image: AssetImage(clockPng)),
                       ),
-                      // Text(calculateDaysAgo('2024-09-05T10:34:35.000Z'))
                       Text(calculateDaysAgo(widget.datePosted))
                     ],
                   ),
