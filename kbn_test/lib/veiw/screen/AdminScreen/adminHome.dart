@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
@@ -12,121 +15,172 @@ import 'package:kbn_test/veiw/widgets/normalText.dart';
 
 import '../../widgets/boxBTN.dart';
 
-class AdminHomePage extends StatelessWidget {
+class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
+
+  @override
+  State<AdminHomePage> createState() => _AdminHomePageState();
+}
+
+class _AdminHomePageState extends State<AdminHomePage> {
+  List<dynamic> companyList = [];
+  List<dynamic> approvedCompanies = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _fetchUserData();
+    _fetchCompaniesData();
+    super.initState();
+  }
+
+  Future<void> _fetchUserData() async {
+    var userDetailsResponse = await ApiServices.fetchUserDetails();
+    userDetails = userDetailsResponse;
+  }
+
+  Future<void> _fetchCompaniesData() async {
+    var newApprovedCompanieData = await ApiServices.fetchAprovedCompanies();
+    var newCompaniesData = await ApiServices.fetchPendingCompanie();
+
+    print('CompanyList$newCompaniesData');
+    print('ApprovedList$newApprovedCompanieData');
+
+    setState(() {
+      companyList = newCompaniesData['data'];
+      approvedCompanies = newApprovedCompanieData['data'];
+    });
+  }
+
+  // Method to add selected applicant
+  void addSelectedApplicant(dynamic applicant) {
+    setState(() {
+      if (!approvedCompanies.contains(applicant)) {
+        approvedCompanies.add(applicant);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Column(
-        children: [
-          Image.asset(
-            kbnLogo, // Kbn LoGO
-            height: 40,
-          ),
-          // appbarWidget
-          HomeAppBarBox(context,
-              T_and_C: const AdminTnC(), logOutTo: const AdminLogIn()),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Left Section - Applicant Details
-                Expanded(
-                  flex: 2,
-                  child: CustomTable(
-                    headers: const [
-                      'Date',
-                      'Company name',
-                      'KBN code',
-                      'Website Link',
-                      'LTD.',
-                      'Status'
-                    ],
-                    rows: [
-                      CustomTableRow(
-                        cells: [
-                          '19-08-2024',
-                          'ODAU APPS',
-                          '0369',
-                          'link',
-                          'PVT.ltd',
-                          const CustomStatusColumn(),
-                        ],
-                      ),
-                      CustomTableRow(
-                        cells: [
-                          '19-08-2024',
-                          'ODAU APPS',
-                          '0369',
-                          'link',
-                          'PVT.ltd',
-                          const CustomStatusColumn(),
-                        ],
-                      ),
-                      CustomTableRow(
-                        cells: [
-                          '19-08-2024',
-                          'ODAU APPS',
-                          '0369',
-                          'link',
-                          'PVT.ltd',
-                          const CustomStatusColumn(),
-                        ],
-                      ),
-                      CustomTableRow(
-                        cells: [
-                          '19-08-2024',
-                          'ODAU APPS',
-                          '0369',
-                          'link',
-                          'PVT.ltd',
-                          const CustomStatusColumn(),
-                        ],
-                      ),
-                      // Add more rows here
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                // Right Section - Selected Applicants
-                Expanded(
-                  flex: 1,
-                  child: CustomTable(
-                    headers: const ['Name', 'Websitelink', 'Contact'],
-                    rows: [
-                      CustomTableRow(
-                        cells: [
-                          'Vinu',
-                          'Python Intern',
-                          const CustomContactColumn(),
-                        ],
-                      ),
-                      CustomTableRow(
-                        cells: [
-                          'Vinu',
-                          'Python Intern',
-                          const CustomContactColumn(),
-                        ],
-                      ),
-                      CustomTableRow(
-                        cells: [
-                          'Vinu',
-                          'Python Intern',
-                          const CustomContactColumn(),
-                        ],
-                      ),
-                      // Add more rows here
-                    ],
-                  ),
-                ),
-              ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Image.asset(
+              kbnLogo, // Kbn LoGO
+              height: 40,
             ),
-          ),
-        ],
+            // appbarWidget
+            HomeAppBarBox(context,
+                home: const AdminHomePage(),
+                profileImage:
+                    "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
+                T_and_C: const AdminTnC(),
+                logOutTo: const AdminLogIn()),
+
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  if (constraints.maxWidth > 800) {
+                    // Wide screen layout
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Left Section - Applicant Details
+                        Expanded(
+                          flex: 2,
+                          child: CustomTable(
+                            headers: const [
+                              'Date',
+                              'Company name',
+                              'KBN code',
+                              'Website Link',
+                              'LTD.',
+                              'Status'
+                            ],
+                            // rows:approvedCompanies.map((approved){
+                            //   return CustomTableRow(cells: cells)
+                            // }).toList()
+
+                            rows: [
+                              CustomTableRow(
+                                cells: [
+                                  '19-08-2024',
+                                  'ODAU APPS',
+                                  '0369',
+                                  'link',
+                                  'PVT.ltd',
+                                  const CustomStatusColumn(),
+                                ],
+                              ),
+                              CustomTableRow(
+                                cells: [
+                                  '19-08-2024',
+                                  'ODAU APPS',
+                                  '0369',
+                                  'link',
+                                  'PVT.ltd',
+                                  const CustomStatusColumn(),
+                                ],
+                              ),
+                              CustomTableRow(
+                                cells: [
+                                  '19-08-2024',
+                                  'ODAU APPS',
+                                  '0369',
+                                  'link',
+                                  'PVT.ltd',
+                                  const CustomStatusColumn(),
+                                ],
+                              ),
+                              CustomTableRow(
+                                cells: [
+                                  '19-08-2024',
+                                  'ODAU APPS',
+                                  '0369',
+                                  'link',
+                                  'PVT.ltd',
+                                  const CustomStatusColumn(),
+                                ],
+                              ),
+                              // Add more rows here
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        // Right Section - Selected Applicants
+                        Expanded(
+                          flex: 1,
+                          child: CustomTable(
+                            headers: const ['Name', 'Websitelink', 'Contact'],
+                            rows: companyList.map((company) {
+                              return CustomTableRow(cells: [
+                                company['name'],
+                                company['company_website'],
+                                CustomContactColumn(
+                                  companyId: company['userId'],
+                                ),
+                              ]);
+                            }).toList(),
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [],
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -141,20 +195,24 @@ class CustomTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Table(
-      border: TableBorder.all(),
-      columnWidths: headers.asMap().map((index, _) {
-        return MapEntry(index, const FixedColumnWidth(100));
-      }),
-      children: [
-        // Header Row
-        TableRow(
-          children:
-              headers.map((header) => CustomTableHeader(text: header)).toList(),
-        ),
-        // Data Rows
-        ...rows.map((row) => row.buildRow()),
-      ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Table(
+        border: TableBorder.all(),
+        columnWidths: headers.asMap().map((index, _) {
+          return MapEntry(index, const FixedColumnWidth(100));
+        }),
+        children: [
+          // Header Row
+          TableRow(
+            children: headers
+                .map((header) => CustomTableHeader(text: header))
+                .toList(),
+          ),
+          // Data Rows
+          ...rows.map((row) => row.buildRow()),
+        ],
+      ),
     );
   }
 }
@@ -277,8 +335,41 @@ class _CustomStatusColumnState extends State<CustomStatusColumn> {
   }
 }
 
-class CustomContactColumn extends StatelessWidget {
-  const CustomContactColumn({super.key});
+class CustomContactColumn extends StatefulWidget {
+  final int companyId;
+  const CustomContactColumn({super.key, required this.companyId});
+
+  @override
+  State<CustomContactColumn> createState() => _CustomContactColumnState();
+}
+
+class _CustomContactColumnState extends State<CustomContactColumn> {
+  Map<String, dynamic>? companyDetails; // Stores fetched details
+  bool isLoading = true; // To manage loading state
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  Future<void> fetchCompanyDetails(int companyId) async {
+    try {
+      var details = await ApiServices.fetchCompanyDetails(companyId);
+
+      print('CompanyDetails$details');
+      setState(() {
+        companyDetails = details['data'];
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      // Handle error appropriately
+      print('Failed to load Company details: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -287,7 +378,13 @@ class CustomContactColumn extends StatelessWidget {
       height: 15,
       width: 69,
       child: GestureDetector(
-        onTap: () => showProfileDialog(context), // Adding onTap function
+        onTap: () async {
+          await fetchCompanyDetails(widget.companyId);
+          if (companyDetails != null) {
+            showProfileDialog(context); // Adding onTap function
+          }
+        },
+        //  showProfileDialog(context), // Adding onTap function
         child: Container(
           child: const Center(
             child: Text(
@@ -320,97 +417,102 @@ class CustomContactColumn extends StatelessWidget {
             height: 373,
             child: Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Image and summary row
-                  Row(
-                    children: [
-                      // Profile Image
-                      Container(
-                        width: 210,
-                        height: 210,
-                        decoration: BoxDecoration(
-                          color:
-                              Colors.grey[300], // Background color if no image
-                          borderRadius:
-                              BorderRadius.circular(8), // Square corners
-                          image: const DecorationImage(
-                            image: AssetImage('assets/profile_image.jpg'),
-                            fit: BoxFit
-                                .cover, // Adjusts image to cover the container
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 20), // Space between image and text
-
-                      // Summary and Skills
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+              child: isLoading == true
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Image and summary row
+                        Row(
                           children: [
-                            const SizedBox(height: 10),
-                            boldText(text: 'Summary', size: 16),
-                            // Summary description
-                            normalText(text: profileSum),
-                            const SizedBox(height: 10),
-
-                            box(
-                                width: 215,
-                                height: 70,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    boldText(text: 'Skills', size: 13),
-                                  ],
-                                ))
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  // applicant name and designation
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          boldText(text: 'Applicant Name', size: 15),
-                          const SizedBox(height: 5),
-                          boldText(text: 'Designation', size: 15),
-                        ],
-                      ),
-                      const Spacer(),
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-                  Row(
-                    children: [
-                      const Spacer(),
-                      box(
-                        width: 105,
-                        height: 25,
-                        child: GestureDetector(
-                          onTap: () => (), // Adding onTap function
-                          child: const Center(
-                            child: Text(
-                              'APPROVE VIA MAIL',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: tealblue,
-                                fontSize: 10,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
+                            // Profile Image
+                            Container(
+                              width: 210,
+                              height: 210,
+                              decoration: BoxDecoration(
+                                color: Colors
+                                    .grey[300], // Background color if no image
+                                borderRadius:
+                                    BorderRadius.circular(8), // Square corners
+                                image: DecorationImage(
+                                  image: companyDetails?['profile_image'] !=
+                                          null
+                                      ? NetworkImage(
+                                          "${ApiServices.baseUrl}/${companyDetails?['profile_image']}")
+                                      : const AssetImage(compnyLogo)
+                                          as ImageProvider, // Use a placeholder if image is null
+                                  fit: BoxFit
+                                      .cover, // Adjusts image to cover the container
+                                ),
                               ),
                             ),
-                          ),
+                            const SizedBox(
+                                width: 20), // Space between image and text
+
+                            // Summary and Skills
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 10),
+                                  boldText(
+                                      text: companyDetails?['about_company'],
+                                      size: 16),
+                                  // Summary description
+                                  normalText(text: profileSum),
+                                  const SizedBox(height: 10),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
+                        const SizedBox(height: 10),
+                        // applicant name and designation
+                        Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                boldText(
+                                    text: companyDetails?['name'], size: 15),
+                                const SizedBox(height: 5),
+                                boldText(
+                                    text: companyDetails?['company_website'],
+                                    size: 15),
+                              ],
+                            ),
+                            const Spacer(),
+                          ],
+                        ),
+                        const SizedBox(height: 25),
+                        Row(
+                          children: [
+                            const Spacer(),
+                            box(
+                              width: 105,
+                              height: 25,
+                              child: GestureDetector(
+                                onTap: () => (), // Adding onTap function
+                                child: const Center(
+                                  child: Text(
+                                    'APPROVE',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: tealblue,
+                                      fontSize: 10,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
             ),
           ),
         );

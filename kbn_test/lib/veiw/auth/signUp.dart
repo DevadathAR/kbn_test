@@ -2,10 +2,14 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
+import 'package:kbn_test/veiw/auth/user_auth/userLogin.dart';
+import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets/bg_widg.dart';
 import 'package:kbn_test/veiw/widgets/loginTextFeild.dart';
@@ -106,14 +110,20 @@ class _SignupPageState extends State<SignupPage> {
     var response = await request.send();
 
     if (response.statusCode == 201) {
-      // Account created successfully
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const UserHome(),
-          // Pass the uploaded image here
-        ),
-      );
+      if (role == "Company") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CompanyLoginPage(),
+            // Pass the uploaded image here
+          ),
+        );
+      } else if (role == "Applicant") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const UserLoginPage()),
+        );
+      }
     } else {
       // Error creating account
       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:kbn_test/service/apiServices.dart';
 import 'dart:convert';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
 import 'package:kbn_test/veiw/screen/AdminScreen/adminHome.dart';
 import 'package:kbn_test/veiw/widgets/error.dart';
 import 'package:kbn_test/veiw/widgets/loginTextFeild.dart';
@@ -12,6 +14,7 @@ import 'package:kbn_test/veiw/widgets/bg_widg.dart';
 
 import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminLogIn extends StatefulWidget {
   const AdminLogIn({super.key});
@@ -21,56 +24,52 @@ class AdminLogIn extends StatefulWidget {
 }
 
 class _AdminLogInState extends State<AdminLogIn> {
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailConatroller = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   bool _isChecked = true;
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _emailConatroller.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  Future<void> Admin_login() async {
+  Future<void> adminLogin() async {
     if (_isChecked) {
-      String username = _usernameController.text;
-      String password = _passwordController.text;
+      // String email = _emailConatroller.text;
+      // String password = _passwordController.text;
+      String email = "admin";
+      String password = "admin@123";
 
       try {
-        var url = Uri.parse('http://192.168.29.37:8000/user/login');
+        var responseData = await ApiServices.adminLogIn(email, password);
 
-        var response = await http.post(
-          url,
-          body: jsonEncode({
-            // 'username': username,
-            // 'password': password,
-            'email': "john123@gmail.com",
-            'password': "john@123",
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        );
-        // Check if the login was successful
-        if (response.statusCode == 200) {
-          var responseData = jsonDecode(response.body);
-          if (responseData is Map && responseData.containsKey('token')) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AdminHomePage(),
-              ),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Invalid username or password.')),
-            );
-          }
+        if (responseData.containsKey('token')) {
+          var token = responseData['token'];
+          ApiServices.headers['Authorization'] = "Bearer $token";
+
+          print("Token$token");
+
+          var userDetailsResponse = await ApiServices.fetchUserDetails();
+          print("Admin Details$userDetailsResponse");
+
+          userDetails = userDetailsResponse;
+
+          // Store login state in shared preferences
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', token);
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AdminHomePage(),
+            ),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Login failed. Please try again.')),
+            const SnackBar(content: Text('Invalid username or password.')),
           );
         }
       } catch (error) {
@@ -91,12 +90,12 @@ class _AdminLogInState extends State<AdminLogIn> {
     return Scaffold(
       body: Stack(
         children: [
-         peoplebgWIdget(img: companyBg),
+          peoplebgWIdget(img: companyBg),
           SingleChildScrollView(
             child: Align(
               alignment: Alignment.centerRight,
               child: Container(
-                width: size.width * 0.5,
+                width: size.width * 0.4,
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -106,7 +105,7 @@ class _AdminLogInState extends State<AdminLogIn> {
                     const SizedBox(height: 10),
                     const Text(firmName, style: AppTextStyle.companyName),
                     const SizedBox(height: 40),
-                    const Text(welcome, style: AppTextStyle.headertext),
+                    const Text("welcome Admin", style: AppTextStyle.headertext),
                     const SizedBox(height: 30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -130,8 +129,7 @@ class _AdminLogInState extends State<AdminLogIn> {
                     ),
                     const SizedBox(height: 30),
                     LoginTextForm(
-                      controller:
-                          _usernameController, // Controller for username
+                      controller: _emailConatroller, // Controller for username
                       label: "username",
                       hintlabel: "user_name",
                       obscure: false,
@@ -178,7 +176,7 @@ class _AdminLogInState extends State<AdminLogIn> {
                     ),
                     const SizedBox(height: 20),
                     GestureDetector(
-                      onTap: Admin_login,
+                      onTap: adminLogin,
                       child: Container(
                         height: 50,
                         width: double.infinity,

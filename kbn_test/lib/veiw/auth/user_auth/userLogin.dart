@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:kbn_test/service/apiServices.dart';
 import 'dart:convert';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
@@ -13,8 +14,6 @@ import 'package:kbn_test/veiw/auth/signUp.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets/bg_widg.dart';
 import 'package:kbn_test/veiw/widgets/loginTextFeild.dart';
-
-// Map<String, dynamic> userDetails = {};
 
 class UserLoginPage extends StatefulWidget {
   const UserLoginPage({super.key});
@@ -37,50 +36,34 @@ class _UserLoginPageState extends State<UserLoginPage> {
 
   Future<void> _login() async {
     try {
-      var url = Uri.parse('http://192.168.29.37:8000/user/login');
-
-      var response = await http.post(
-        url,
-        body: jsonEncode({
-          'email': usernameController.text,
-          'password': passwordController.text,
-          'loginType': "Applicant",
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      var responseData = await ApiServices.user_login(
+        usernameController.text,
+        passwordController.text,
       );
 
-      print('Login response: ${response.body}'); // Log response for debugging
+      if (responseData.containsKey('token') &&
+          responseData.containsKey('userId')) {
+        int userId = responseData['userId'];
+        var token = responseData['token'];
+        ApiServices.headers['Authorization'] = "Bearer $token";
 
-      if (response.statusCode == 200) {
-        var responseData = jsonDecode(response.body);
+        var userDetailsResponse = await ApiServices.fetchUserDetails();
 
-        if (responseData is Map && responseData.containsKey('data')) {
-          var userDetails = responseData['data'];
+        userDetails = userDetailsResponse;
 
-          print('User details: $userDetails'); // Log user details
-
-          // Navigate to the next page and pass userDetails
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TestPAge(userDetails: userDetails),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Invalid username or password.')),
-          );
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const UserHome(),
+          ),
+        );
       } else {
-        print('Login failed: ${response.body}'); // Log error message
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login failed. Please try again.')),
+          const SnackBar(content: Text('Invalid username or password.')),
         );
       }
     } catch (error) {
-      print('Error: $error'); // Log errors
+      print('Error: $error');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $error')),
       );

@@ -1,109 +1,126 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
-import 'package:kbn_test/veiw/screen/companyScreen/T_&_C.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
-import 'package:kbn_test/veiw/screen/companyScreen/companyProfile.dart';
-import 'package:kbn_test/veiw/screen/userScreen/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-Widget HomeAppBarBox(context, {T_and_C, logOutTo, profileImage}) {
+Widget HomeAppBarBox(BuildContext context,
+    {Widget? T_and_C,
+    Widget? logOutTo,
+    Widget? profilePage,
+    String? profileImage,
+    Widget? home}) {
+  Size size = MediaQuery.of(context).size;
+  double screenWidth = size.width;
+
   return Container(
-    height: 80,
+    height: screenWidth < 600 ? 60 : 80, // Adjust height based on screen size
     decoration: const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(2)),
       color: tealblue,
     ),
-    width: double.infinity, // Makes the container fill the width of the screen
-    child: Row(
-      children: [
-        const Spacer(),
-        const Spacer(),
-        const Padding(
-          padding: EdgeInsets.only(left: 20),
-          child: Text(
+    width: double.infinity,
+    child: Padding(
+      padding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.05), // Responsive padding
+      child: Row(
+        children: [
+          Text(
             firmName,
-            style: AppTextStyle.hoomeSubhead,
+            style: AppTextStyle.hoomeSubhead
+                .copyWith(fontSize: screenWidth < 600 ? 16 : 20),
           ),
-        ),
-        const Spacer(), // Pushes the buttons to the right side
-        Padding(
-          padding: const EdgeInsets.only(right: 20),
-          child: Row(
+          const Spacer(),
+          Row(
             children: [
-              // terms and conditions
+              //Terms and Conditions
               AppBarButtons(
                 context,
                 icon: termsPng,
                 nextPage: T_and_C,
                 iconcolor: Colors.transparent,
               ),
-              const SizedBox(width: 20), // Space between buttons
-              // profilePage
+              SizedBox(width: screenWidth * 0.02),
+              //profileButton
               AppBarButtons(context,
                   icon: unknownPng,
-                  uploadedImage: profileImage, // Pass the uploaded image here
-                  nextPage: const CompanyProfilePage()),
-              const SizedBox(width: 20), // Space between buttons
-              //LogOut
-              AppBarButtons(
-                context,
-                icon: logOutPng,
-                nextPage: logOutTo,
-                iconcolor: Colors.transparent,
-                isLogout: true,
-              ),
+                  uploadedImage: profileImage,
+                  nextPage: profilePage),
+              SizedBox(width: screenWidth * 0.02),
+              // LogOut
+              AppBarButtons(context,
+                  icon: logOutPng,
+                  iconcolor: Colors.transparent,
+                  isLogout: true,
+                  logOutTo: logOutTo,
+                  backHome: home),
             ],
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
 
-Widget AppBarButtons(BuildContext context,
-    {required String icon,
-    String? uploadedImage, // Add this parameter to accept the image
-    required Widget nextPage,
-    Color? iconcolor,
-    bool isLogout = false}) {
+Widget AppBarButtons(
+  BuildContext context, {
+  required String icon,
+  String? uploadedImage,
+  Widget? nextPage,
+  Color? iconcolor,
+  bool isLogout = false,
+  Widget? logOutTo,
+  Widget? backHome,
+}) {
+  Size size = MediaQuery.of(context).size;
+  double screenWidth = size.width;
+
   return TextButton(
     onPressed: () {
       if (isLogout) {
-        showLogoutConfirmation(context);
+        showLogoutConfirmation(context, logOutTo, backHome);
       } else {
-        Navigator.push(context, MaterialPageRoute(
-          builder: (context) {
-            return nextPage;
-          },
-        ));
+        if (nextPage != null) {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => nextPage));
+        }
       }
     },
-    child: uploadedImage != null // Check if an image is uploaded
+    child: uploadedImage != null
         ? CircleAvatar(
-            backgroundImage:
-                NetworkImage(uploadedImage), // Use the uploaded image
-            radius: 20,
+            backgroundImage: NetworkImage(uploadedImage),
+            radius: screenWidth < 600 ? 15 : 20, // Adjust avatar size
           )
         : Image(
             image: AssetImage(icon),
             color: iconcolor,
+            width: screenWidth < 600 ? 20 : 30, // Adjust icon size
           ),
   );
 }
 
-void showLogoutConfirmation(BuildContext context) {
+void showLogoutConfirmation(
+    BuildContext context, Widget? logOutTo, Widget? backHome) {
+  void onLogout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clear the login status
+    if (logOutTo != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => logOutTo),
+      );
+    }
+  }
+
   showDialog(
     context: context,
     barrierColor: semitransp,
     builder: (BuildContext context) {
       return AlertDialog(
         backgroundColor: none, // Set the background color to none
-
         actions: <Widget>[
           Column(
             crossAxisAlignment:
@@ -113,9 +130,10 @@ void showLogoutConfirmation(BuildContext context) {
                 width: 500,
                 height: 200,
                 decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(12)),
-                    color: none,
-                    border: Border.all(color: white, width: 2)),
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
+                  color: none,
+                  border: Border.all(color: white, width: 2),
+                ),
                 child: Column(
                   children: [
                     const Text(
@@ -141,12 +159,7 @@ void showLogoutConfirmation(BuildContext context) {
                           ),
                           onPressed: () {
                             Navigator.of(context).pop(); // Close the dialog
-                            Navigator.pushReplacement(context,
-                                MaterialPageRoute(
-                              builder: (context) {
-                                return const CompanyLoginPage(); // Navigate to the login page
-                              },
-                            ));
+                            onLogout();
                           },
                         ),
                       ),
@@ -154,19 +167,22 @@ void showLogoutConfirmation(BuildContext context) {
                   ],
                 ),
               ),
-              Center(
+              if (backHome != null)
+                Center(
                   child: TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) {
-                          return const UserHome();
-                        }));
-                      },
-                      child: Text(
-                        "Back to home",
-                        style: AppTextStyle.bodytextwhiteunderline,
-                      )))
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => backHome),
+                      );
+                    },
+                    child: Text(
+                      "Back to home",
+                      style: AppTextStyle.bodytextwhiteunderline,
+                    ),
+                  ),
+                )
             ],
           )
         ],

@@ -33,13 +33,13 @@ class AppTextStyle {
     fontWeight: FontWeight.w600,
     color: black,
   );
-   static const TextStyle firmHead= TextStyle(
+  static const TextStyle firmHead = TextStyle(
     fontSize: 25,
     fontFamily: "Popppins",
     fontWeight: FontWeight.w500,
     color: black,
   );
-  static const TextStyle abouttxt= TextStyle(
+  static const TextStyle abouttxt = TextStyle(
     fontSize: 13,
     fontFamily: "Popppins",
     fontWeight: FontWeight.w500,
@@ -131,8 +131,25 @@ class AppTextStyle {
     fontWeight: FontWeight.w400,
     color: black,
   );
+   static const TextStyle normalTextGrey = TextStyle(
+    fontSize: 10,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w400,
+    color: textGrey,
+  );
   static const TextStyle normalHeading = TextStyle(
     fontSize: 15,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w400,
+    color: black,
+  );
+  static TextStyle labelText = const TextStyle(
+      fontSize: 15,
+      fontFamily: "Poppins",
+      fontWeight: FontWeight.w400,
+      color: textGrey);
+  static const TextStyle smallText = TextStyle(
+    fontSize: 5,
     fontFamily: "Poppins",
     fontWeight: FontWeight.w400,
     color: black,

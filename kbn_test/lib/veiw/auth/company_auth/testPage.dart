@@ -1,35 +1,56 @@
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
+// import 'package:intl/intl.dart';
+// import 'package:kbn_test/service/apiServices.dart';
+// import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
 
-class TestPAge extends StatelessWidget {
-  final Map<String, dynamic> userDetails;
+// class ApplicantPage extends StatelessWidget {
+//   const ApplicantPage({
+//     super.key,
+//   });
 
-  const TestPAge({super.key, required this.userDetails});
+//   @override
+//   Widget build(BuildContext context) {
+//     List<dynamic> applications = submittedApplicantsData[
+//         'data']; // Fetching the data list from the response
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Welcome, ${userDetails['name']}"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Name: ${userDetails['name']}"),
-            Text("Email: ${userDetails['email']}"),
-            Text("Contact: ${userDetails['contact'] ?? 'N/A'}"),
-            Text("Address: ${userDetails['address'] ?? 'N/A'}"),
-            // Add more fields as needed
-            Image.network(
-              'http://192.168.29.37:8000${userDetails['profile_image']}',
-              errorBuilder: (context, error, stackTrace) {
-                return const Text('Failed to load image');
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Applicant Details'),
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: ListView.builder(
+//           itemCount: applications.length, // Number of applications to display
+//           itemBuilder: (context, index) {
+//             var application = applications[index]; // Access each application
+
+//             // Formatting the date
+//             String formattedDate = DateFormat('yyyy-MM-dd').format(
+//               DateTime.parse(application['created_at']),
+//             );
+
+//             return Card(
+//               child: ListTile(
+//                 title: Text('Application ID: ${application['applicationId']}'),
+//                 subtitle: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text('Date: $formattedDate'), // Display the formatted date
+
+//                     Text('CompanyName: ${application['companyName']}'),
+//                     Text('applicantName: ${application['applicantName']}'),
+//                     Text('location: ${application['location']}'),
+//                     Text('designation: ${application['designation']}'),
+//                     Text(
+//                         'Status: ${application['status']}'), // Status is now correctly treated as String
+//                     Text('resumeLink: ${application['resumeLink']}'),
+//                   ],
+//                 ),
+//               ),
+//             );
+//           },
+//         ),
+//       ),
+//     );
+//   }
+// }

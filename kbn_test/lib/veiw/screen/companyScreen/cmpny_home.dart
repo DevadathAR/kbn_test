@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
-import 'package:kbn_test/veiw/screen/AdminScreen/adminHome.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/T_&_C.dart';
+import 'package:kbn_test/veiw/screen/companyScreen/companyProfile.dart';
 import 'package:kbn_test/veiw/widgets/boldText.dart';
 import 'package:kbn_test/veiw/widgets/boxBTN.dart';
 import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
@@ -21,10 +20,40 @@ class CompanyHomePage extends StatefulWidget {
 }
 
 class _CompanyHomePageState extends State<CompanyHomePage> {
-  List<dynamic> applicationsList = submittedApplicantsData['data'];
-  // Fetching the data list from the response
-  List<dynamic> selectedApplicants =
-      selectedApplicantsData['data']; // List to store selected applicants
+  List<dynamic> applicationsList = [];
+  List<dynamic> selectedApplicants = [];
+
+  @override
+  void initState() {
+    // _fetchUserData();
+    _fetchApplicantsData(); // Fetch data when widget is initialized
+
+    super.initState();
+  }
+
+  Future<void> _fetchUserData() async {
+    var userDetailsResponse = await ApiServices.fetchUserDetails();
+    userDetails = userDetailsResponse;
+  }
+
+  // Method to fetch applicants data
+  Future<void> _fetchApplicantsData() async {
+    try {
+      // print(userDetails);
+
+      // Fetch the latest submitted and selected applicants data
+      var newSelectedApplicantsData = await ApiServices.fetchSelectedApplctns();
+      var newSubmittedApplicantsData =
+          await ApiServices.fetchSubmittedApplctns();
+
+      setState(() {
+        applicationsList = newSubmittedApplicantsData['data'];
+        selectedApplicants = newSelectedApplicantsData['data'];
+      });
+    } catch (e) {
+      print('Error fetching applicant data: $e');
+    }
+  }
 
   // Method to add selected applicant
   void addSelectedApplicant(dynamic applicant) {
@@ -54,6 +83,8 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
               context,
               T_and_C: const companyT_n_C(),
               logOutTo: const CompanyLoginPage(),
+              profilePage: const CompanyProfilePage(),
+              home: const CompanyHomePage(),
               profileImage:
                   "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
             ),
@@ -97,9 +128,12 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                                   CustomStatusColumn(
                                     status: application['status'],
                                     applicationId: application['applicationId'],
-                                    onSelect: () => addSelectedApplicant(
-                                        application), // Handle select
-                                  ), // Status
+                                    onSelect: () {
+                                      addSelectedApplicant(
+                                          application['applicationId']);
+                                    },
+                                    onStatusChange: _fetchApplicantsData,
+                                  ) // Status
                                 ],
                               );
                             }).toList(),
@@ -116,7 +150,10 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                                 cells: [
                                   applicant['applicantName'],
                                   applicant['designation'],
-                                  const CustomContactColumn(),
+                                  CustomContactColumn(
+                                    designation: applicant['designation'],
+                                    applicantId: applicant['userId'],
+                                  ),
                                 ],
                               );
                             }).toList(),
@@ -156,8 +193,11 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                                 CustomStatusColumn(
                                   status: application['status'],
                                   applicationId: application['applicationId'],
-                                  onSelect: () => addSelectedApplicant(
-                                      application), // Handle select
+                                  onSelect: () {
+                                    addSelectedApplicant(
+                                        application['applicationId']);
+                                  },
+                                  onStatusChange: _fetchApplicantsData,
                                 ), // Status
                               ],
                             );
@@ -171,7 +211,9 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                               cells: [
                                 applicant['applicantName'],
                                 applicant['designation'],
-                                const CustomContactColumn(),
+                                CustomContactColumn(
+                                    designation: applicant['designation'],
+                                    applicantId: applicant['userId']),
                               ],
                             );
                           }).toList(),
@@ -198,20 +240,24 @@ class CustomTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Table(
-      border: TableBorder.all(),
-      columnWidths: headers.asMap().map((index, _) {
-        return MapEntry(index, const FixedColumnWidth(100));
-      }),
-      children: [
-        // Header Row
-        TableRow(
-          children:
-              headers.map((header) => CustomTableHeader(text: header)).toList(),
-        ),
-        // Data Rows
-        ...rows.map((row) => row.buildRow()),
-      ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Table(
+        border: TableBorder.all(),
+        columnWidths: headers.asMap().map((index, _) {
+          return MapEntry(index, const FixedColumnWidth(100));
+        }),
+        children: [
+          // Header Row
+          TableRow(
+            children: headers
+                .map((header) => CustomTableHeader(text: header))
+                .toList(),
+          ),
+          // Data Rows
+          ...rows.map((row) => row.buildRow()),
+        ],
+      ),
     );
   }
 }
@@ -261,12 +307,16 @@ class CustomStatusColumn extends StatefulWidget {
   final String status;
   final VoidCallback onSelect; // Callback for when Select is pressed
   final int applicationId; // Add the applicationId as a parameter
+  final VoidCallback onStatusChange; // Callback to refresh data
+
+  // final Function ()?
 
   const CustomStatusColumn({
     super.key,
     required this.status,
     required this.onSelect,
     required this.applicationId,
+    required this.onStatusChange,
   });
 
   @override
@@ -282,29 +332,31 @@ class _CustomStatusColumnState extends State<CustomStatusColumn> {
     status = widget.status;
   }
 
-  void _setStatus(String newStatus) {
+  void _setStatus(String newStatus) async {
     setState(() {
       status = newStatus;
-
-      if (newStatus == 'SELECTED' || newStatus == 'REJECTED') {
-        _updateApplicationStatus(
-            widget.applicationId); // Call the update API with applicationId
-      }
-      if (newStatus == 'SELECTED') {
-        widget.onSelect(); // Trigger onSelect when selected
-      }
     });
+    // Proceed with the API call
+    try {
+      await ApiServices.updateApplication(newStatus, widget.applicationId);
+      widget.onStatusChange();
+    } catch (e) {
+      print('Error updating status: $e');
+    }
   }
 
-  void _updateApplicationStatus(int applicantionId) async {
+  Future<void> _updateApplicationStatus(int applicantionId) async {
     try {
-      String newStatus = status; // Example status
+      String newStatus = status;
       var result =
           await ApiServices.updateApplication(newStatus, applicantionId);
-      // Handle the result, for example, show a success message
-      print('Application status: $result');
+      widget.onStatusChange(); // Refresh data
+
+      print('Application status updated: $result');
+//............................................................................................
     } catch (e) {
-      // Handle the error, for example, show an error message
+      // SnackBar(content: Text('Failed to update application: $e')),
+
       print('Failed to update application: $e');
     }
   }
@@ -314,66 +366,92 @@ class _CustomStatusColumnState extends State<CustomStatusColumn> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (status != 'REJECTED')
-          GestureDetector(
-            onTap: () => _setStatus('SELECTED'),
-            child: Container(
-              width: 80,
-              height: 15,
-              decoration: BoxDecoration(
-                border: Border.all(
-                    color: Colors.black,
-                    width: status == 'SELECTED' ? 0.01 : 0.5),
-                borderRadius: BorderRadius.circular(1.0),
-              ),
-              child: Text(
-                status == 'SELECTED' ? 'SELECTED' : 'SELECT',
-                textAlign: TextAlign.center,
-                style: TextStyle(
+        GestureDetector(
+          onTap: () => _setStatus('SELECTED'),
+          child: Container(
+            width: 80,
+            height: 15, // Simplified button height
+            alignment: Alignment.center, // Center align the text
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black),
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: const Text(
+              'SELECT', // Static text for the button
+              textAlign: TextAlign.center,
+              style: TextStyle(
                   fontSize: 10,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w500,
-                  height: 1.5,
-                  color: status == 'SELECTED' ? tealblue : tealblue,
-                ),
-              ),
+                  color: tealblue),
             ),
           ),
+        ),
         const SizedBox(height: 10),
-        if (status != 'SELECTED')
-          GestureDetector(
-            onTap: () => _setStatus('REJECTED'),
-            child: Container(
-              width: 80,
-              height: 15,
-              decoration: BoxDecoration(
-                border: Border.all(
-                    color: Colors.black,
-                    width: status == 'SELECTED' ? 0.01 : 0.5),
-                borderRadius: BorderRadius.circular(1.0),
-              ),
-              child: Text(
-                status == 'REJECTED' ? 'REJECTED' : 'REJECT',
-                textAlign: TextAlign.center,
-                style: TextStyle(
+        GestureDetector(
+          onTap: () => _setStatus('REJECTED'),
+          child: Container(
+            width: 80,
+            height: 15, // Simplified button height
+            alignment: Alignment.center, // Center align the text
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black),
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: const Text(
+              'REJECT', // Static text for the button
+              textAlign: TextAlign.center,
+              style: TextStyle(
                   fontSize: 10,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w500,
-                  height: 1.5,
-                  color: status == 'REJECTED'
-                      ? Colors.red
-                      : const Color(0xFFEB1D1D), // Color when selected,
-                ),
-              ),
+                  color: Colors.red),
             ),
           ),
+        ),
       ],
     );
   }
 }
 
-class CustomContactColumn extends StatelessWidget {
-  const CustomContactColumn({super.key});
+class CustomContactColumn extends StatefulWidget {
+  final int applicantId;
+  final String designation;
+  const CustomContactColumn(
+      {super.key, required this.applicantId, required this.designation});
+
+  @override
+  State<CustomContactColumn> createState() => _CustomContactColumnState();
+}
+
+class _CustomContactColumnState extends State<CustomContactColumn> {
+  Map<String, dynamic>? applicantDetails; // Stores fetched details
+  bool isLoading = true; // To manage loading state
+
+  @override
+  void initState() {
+    super.initState();
+    // Moved fetchDetails call to be triggered initially
+    fetchDetails();
+  }
+
+  Future<void> fetchDetails() async {
+    try {
+      var details = await ApiServices.fetchApplicantDetails(widget.applicantId);
+
+      print('viewsdDetails$details');
+      setState(() {
+        applicantDetails = details;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      // Handle error appropriately
+      print('Failed to load applicant details: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -402,6 +480,8 @@ class CustomContactColumn extends StatelessWidget {
   }
 
   void showProfileDialog(BuildContext context) {
+    // Fetch applicant details when the dialog is shown
+    // ApiServices.fetchApplicantDetails(widget.applicantId);
     showDialog(
       context: context,
       barrierColor: semitransp,
@@ -410,123 +490,102 @@ class CustomContactColumn extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          child: SizedBox(
-            width: 516,
-            height: 373,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Image and summary row
-                  Row(
-                    children: [
-                      // Profile Image
-                      Container(
-                        width: 210,
-                        height: 210,
-                        decoration: BoxDecoration(
-                          color:
-                              Colors.grey[300], // Background color if no image
-                          borderRadius:
-                              BorderRadius.circular(8), // Square corners
-                          image: const DecorationImage(
-                            image: AssetImage('assets/profile_image.jpg'),
-                            fit: BoxFit
-                                .cover, // Adjusts image to cover the container
+          child: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SizedBox(
+                  width: 400,
+                  height: 248,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        // Image and summary row
+                        Container(
+                          width: 202.82,
+                          height: 202.82,
+                          decoration: BoxDecoration(
+                            color: Colors
+                                .grey[300], // Background color if no image
+                            borderRadius:
+                                BorderRadius.circular(8), // Square corners
+                            image: DecorationImage(
+                              image: applicantDetails?['user']
+                                          ['profile_image'] !=
+                                      null
+
+                                  ? NetworkImage(
+                                      "${ApiServices.baseUrl}/${applicantDetails?['user']['profile_image']}")
+                                  : const AssetImage(compnyLogo)
+                                      as ImageProvider, // Use a placeholder if image is null
+                              fit: BoxFit
+                                  .cover, // Adjusts image to cover the container
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 20), // Space between image and text
 
-                      // Summary and Skills
-                      Expanded(
-                        child: Column(
+                        const SizedBox(width: 10),
+                        // applicant name and designation
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 10),
-                            boldText(text: 'Summary', size: 16),
-                            // Summary description
-                            normalText(text: profileSum),
-                            const SizedBox(height: 10),
-
+                            boldText(
+                                text:
+                                    applicantDetails?['user']['name'] ?? 'N/A',
+                                size: 15),
+                            const SizedBox(height: 5),
+                            boldText(text: widget.designation, size: 15),
+                            const SizedBox(height: 5),
+                            normalText(
+                                text: applicantDetails?['user']['contact'] ??
+                                    'N/A'),
+                            const Spacer(),
                             box(
-                                width: 215,
-                                height: 70,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    boldText(text: 'Skills', size: 13),
-                                  ],
-                                ))
+                              width: 118,
+                              height: 28,
+                              child: GestureDetector(
+                                onTap: () => (), // Adding onTap function
+                                child: const Center(
+                                  child: Text(
+                                    'RESUME',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 10,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            box(
+                              width: 118,
+                              height: 28,
+                              child: GestureDetector(
+                                onTap: () => (), // Adding onTap function
+                                child: const Center(
+                                  child: Text(
+                                    'CONTACT VIA MAIL',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: tealblue,
+                                      fontSize: 10,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  // applicant name and designation
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          boldText(text: 'Applicant Name', size: 15),
-                          const SizedBox(height: 5),
-                          boldText(text: 'Designation', size: 15),
-                        ],
-                      ),
-                      const Spacer(),
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-                  Row(
-                    children: [
-                      box(
-                        width: 105,
-                        height: 25,
-                        child: GestureDetector(
-                          onTap: () => (), // Adding onTap function
-                          child: const Center(
-                            child: Text(
-                              'RESUME',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 10,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      box(
-                        width: 105,
-                        height: 25,
-                        child: GestureDetector(
-                          onTap: () => (), // Adding onTap function
-                          child: const Center(
-                            child: Text(
-                              'CONTACT VIA MAIL',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: tealblue,
-                                fontSize: 10,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
+                ),
         );
       },
     );

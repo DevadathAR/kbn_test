@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
 import 'package:kbn_test/veiw/screen/AdminScreen/admin_T_n_C.dart';
+import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
+import 'package:kbn_test/veiw/screen/companyScreen/companyProfile.dart';
 import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
 
 class companyT_n_C extends StatelessWidget {
@@ -25,9 +28,14 @@ class companyT_n_C extends StatelessWidget {
                 //KBN LOgO
                 const Center(child: Image(image: AssetImage(kbnLogo))),
                 // APP BAR
-                HomeAppBarBox(context,
-                    T_and_C: const companyT_n_C(),
-                    logOutTo: const CompanyLoginPage()),
+                HomeAppBarBox(
+                  context,
+                  logOutTo: const CompanyLoginPage(),
+                  profilePage: const CompanyProfilePage(),
+                  home: const CompanyHomePage(),
+                  profileImage:
+                      "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
+                ),
                 const SizedBox(
                   height: 10,
                 ),

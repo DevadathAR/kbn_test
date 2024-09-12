@@ -12,6 +12,7 @@ const none = Color.fromARGB(0, 0, 0, 0);
 const tealblue = Color.fromRGBO(19, 131, 149, 1);
 const semitransp = Color.fromARGB(222, 18, 18, 18);
 const shadowblack = Color.fromARGB(138, 18, 18, 18);
+const textGrey = Color.fromARGB(136, 68, 68, 68);
 
 const loginbutton = [
   Color.fromRGBO(88, 186, 78, 1),

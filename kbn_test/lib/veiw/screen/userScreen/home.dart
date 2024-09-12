@@ -6,6 +6,7 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
 import 'package:kbn_test/veiw/auth/user_auth/userLogin.dart';
 import 'package:kbn_test/veiw/screen/userScreen/jobDetails.dart';
 import 'package:kbn_test/veiw/screen/userScreen/userT_n_C.dart';
@@ -34,8 +35,8 @@ class UserHome extends StatelessWidget {
                   const Center(child: Image(image: AssetImage(kbnLogo))),
                   HomeAppBarBox(context,
                       T_and_C: const user_T_n_C(),
-                      profileImage:{},
-                          // "${ApiServices.baseUrl}/${userDetails['profile_image']}",
+                      profileImage:
+                          "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
                       logOutTo: const UserLoginPage()),
                   const SizedBox(
                     height: 10,
