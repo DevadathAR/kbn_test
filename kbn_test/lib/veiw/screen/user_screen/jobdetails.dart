@@ -25,6 +25,7 @@ class JobDetails extends StatefulWidget {
   final String companywebsite;
   final String datePosted;
   final String companyImage;
+  final String status;
   final Map<String, dynamic> jobReq;
 
   const JobDetails(
@@ -44,6 +45,7 @@ class JobDetails extends StatefulWidget {
       required this.companywebsite,
       required this.datePosted,
       required this.companyImage,
+      required this.status,
       required this.jobReq})
       : super(key: key);
 
@@ -111,9 +113,11 @@ class _JobDetailsState extends State<JobDetails> {
                                     padding: const EdgeInsets.all(15.0),
                                     child: CompanyDetails1(
                                       jobId: widget.jobId,
+                                      aboutCompany: widget.jobSummary,
                                       userId: widget.companyId,
                                       jobTitle: widget.jobTitle,
                                       firmname: widget.firmname,
+                                      status: widget.status,
                                       companywebsite: widget.companywebsite,
                                       companyImage: widget.companyImage,
                                     ),
@@ -276,8 +280,7 @@ class _JobDetailsState extends State<JobDetails> {
                   jobicon: salaryPng, txt: "${widget.salary} per month"),
               JobSummaryWid(jobicon: clockPng, txt: widget.jobType),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 
-                15),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 child: SizedBox(
                   child: Column(
                     children: [
@@ -321,12 +324,13 @@ class _JobDetailsState extends State<JobDetails> {
 }
 // Import ApiServices
 
-
 class CompanyDetails1 extends StatefulWidget {
   final String jobTitle;
   final String firmname;
   final String companywebsite;
+  final String aboutCompany;
   final String companyImage;
+  final String status;
   final int jobId; // jobId
   final int userId; // userId
 
@@ -336,15 +340,15 @@ class CompanyDetails1 extends StatefulWidget {
     required this.firmname,
     required this.companywebsite,
     required this.companyImage,
+    required this.aboutCompany,
     required this.jobId,
     required this.userId,
+    required this.status,
   }) : super(key: key);
 
   @override
   _CompanyDetails1State createState() => _CompanyDetails1State();
 }
-
-
 
 class _CompanyDetails1State extends State<CompanyDetails1> {
   bool _isApplied = false;
@@ -371,7 +375,8 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
                 _isApplied = false;
               });
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('You can still apply for this job')),
+                const SnackBar(
+                    content: Text('You can still apply for this job')),
               );
             }
             break;
@@ -406,7 +411,8 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
           children: [
             CircleAvatar(
               radius: 60,
-              backgroundImage: NetworkImage('${baseUrl2}${widget.companyImage}'),
+              backgroundImage:
+                  NetworkImage('${baseUrl2}${widget.companyImage}'),
             ),
             const SizedBox(width: 10),
             Column(
@@ -435,33 +441,33 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
                 ),
               ),
               Text(
-                jobDetailsResponse['companyDetails']?['about_company'] ?? "",
+                widget.aboutCompany,
                 style: AppTextStyle.normaltxt,
                 softWrap: true,
               ),
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Visit - ${jobDetailsResponse['companyDetails']?['company_website'] ?? ''}",
+                  "Visit - ${widget.companywebsite}",
                 ),
               ),
             ],
           ),
         ),
         GestureDetector(
-          onTap: _isApplied ? null : _applyForJob, // Disable button if already applied
+          onTap: _isApplied
+              ? null
+              : _applyForJob, // Disable button if already applied
           child: Container(
             height: 60,
             width: 220,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(12)),
-              color: _isApplied
-                  ? Colors.blue // Change to blue when applied
-                  : Colors.green, // Default green color
+              color:getStatusColor(widget.status), // Default green color
             ),
             child: Center(
               child: Text(
-                _isApplied ? "Applied" : "Apply for this job",
+                widget.status,
                 style: AppTextStyle.applytxt,
               ),
             ),

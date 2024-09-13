@@ -8,7 +8,7 @@ import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/user_auth/UserLoginPage.dart';
 import 'package:kbn_test/veiw/screen/user_screen/UserHome.dart';
 
-Widget HomeAppBarBox(context, {T_and_C, logOutTo, profileImage,termscolor}) {
+Widget HomeAppBarBox(context, {T_and_C, logOutTo, profileImage, termscolor}) {
   return Container(
     height: 80,
     decoration: const BoxDecoration(

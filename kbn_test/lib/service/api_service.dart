@@ -9,25 +9,64 @@ String? token; // Token should be nullable to check its presence
 
 const String baseUrl = 'http://192.168.29.37:8000';
 const String baseUrl2 = 'http://192.168.29.197:5500';
+//   baseUrl2/job/dropbox
 
 class ApiServices {
+  static Future<Map<String, List<String>>> fetchDropdownBoxItems() async {
+    final url = Uri.parse('http://192.168.29.197:5500/job/dropbox');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final dropBox = data['dropBox'];
+
+        if (dropBox == null) {
+          throw Exception('Invalid response format');
+        }
+
+        return {
+          'jobTypes': List<String>.from(dropBox['jobType'] ?? []),
+          'experiences': List<String>.from(dropBox['experience'] ?? []),
+          'locations': List<String>.from(dropBox['location'] ?? []),
+          'workModes': List<String>.from(dropBox['workMode'] ?? []),
+        };
+      } else {
+        throw Exception("Failed to fetch dropdown box items");
+      }
+    } catch (e) {
+      print('Error: $e');
+      rethrow;
+    }
+  }
 
   // Login API
-  static Future<Map<String, dynamic>> userLogin(String email, String password) async {
+  static Future<Map<String, dynamic>> userLogin(
+      String email, String password) async {
     var url = Uri.parse('$baseUrl/user/login');
-
+    // print(url);
     var response = await http.post(
       url,
-      
       body: jsonEncode({
-        'email': email,
-        'password': password,
+        // 'email': "q",
+        // 'password': "q",
+        'email': "applicant8@gmail.com",
+        'password': "123",
+        // 'email': email,
+        // 'password': password,
         'loginType': "Applicant",
       }),
       headers: {'Content-Type': 'application/json'},
     );
 
-    print("Login response: ${response.body}");
+    // print("Login response: ${response.statusCode}");
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
@@ -39,7 +78,8 @@ class ApiServices {
   }
 
   // Company login API
-  static Future<Map<String, dynamic>> companyLogin(String email, String password) async {
+  static Future<Map<String, dynamic>> companyLogin(
+      String email, String password) async {
     var url = Uri.parse('$baseUrl/user/login');
 
     var response = await http.post(
@@ -83,21 +123,6 @@ class ApiServices {
   }
 
   // Fetch Job Titles API
-  static Future<List<dynamic>> fetchJobTitles() async {
-    var url = Uri.parse('$baseUrl2/job/filter');
-
-    var response = await http.get(url,
-          headers: {'Authorization': 'Bearer $token'},
-);
-
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      log(jsonEncode(data));
-      return data['data'] as List;
-    } else {
-      throw Exception('Failed to fetch job titles');
-    }
-  }
 
   // Post Job Details API
   static Future<void> postJobDetails(int jobId, int companyId) async {
@@ -151,20 +176,27 @@ class ApiServices {
   static Future<Map<String, List<String>>> fetchFilterData() async {
     final url = Uri.parse('$baseUrl2/job/filter');
 
-    final response = await http.get(url,
-          headers: {'Authorization': 'Bearer $token'},
-);
+    final response = await http.get(
+      url,
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
-print(jsonEncode(response.body));
+    // print(jsonEncode(response.body));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final List<dynamic> jobs = data['data'];
 
       // Parse distinct filter values
-      final jobTypes = jobs.map((job) => job['job_type'].toString()).toSet().toList();
-      final experiences = jobs.map((job) => job['experience_level'].toString()).toSet().toList();
-      final workModes = jobs.map((job) => job['job_mode'].toString()).toSet().toList();
-      final locations = jobs.map((job) => job['location'].toString()).toSet().toList();
+      final jobTypes =
+          jobs.map((job) => job['job_type'].toString()).toSet().toList();
+      final experiences = jobs
+          .map((job) => job['experience_level'].toString())
+          .toSet()
+          .toList();
+      final workModes =
+          jobs.map((job) => job['job_mode'].toString()).toSet().toList();
+      final locations =
+          jobs.map((job) => job['location'].toString()).toSet().toList();
 
       return {
         'jobTypes': jobTypes,
@@ -177,8 +209,25 @@ print(jsonEncode(response.body));
     }
   }
 
+  static Future<List<dynamic>> fetchJobTitles() async {
+    var url = Uri.parse('$baseUrl2/job/filter');
+
+    var response = await http.get(
+      url,
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      // log(jsonEncode(data));
+      return data['data'] as List;
+    } else {
+      throw Exception('Failed to fetch job titles');
+    }
+  }
+
   // Fetch Filtered Jobs
-  static Future<List<dynamic>> fetchFilteredJobs({
+  static Future<Map<String, dynamic>> fetchFilteredJobs({
     String? selectedJobType,
     String? selectedSalary,
     String? selectedExperience,
@@ -212,17 +261,28 @@ print(jsonEncode(response.body));
       if (minSalary != null) 'minSalary': minSalary.toString(),
       if (maxSalary != null) 'maxSalary': maxSalary.toString(),
       if (pageNumber != null) 'page': pageNumber.toString(),
-      'pageSize': pageSize.toString(), // Always pass page size
+      // 'pageSize': pageSize.toString(), // Always pass page size
     };
 
-    final uri = Uri.parse('$baseUrl2/job/filter').replace(queryParameters: queryParameters);
+    final uri = Uri.parse('$baseUrl2/job/filter')
+        .replace(queryParameters: queryParameters);
 
-    final response = await http.get(uri,
-     headers: {'Authorization': 'Bearer $token'},);
+    final response = await http.get(
+      uri,
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      return data['data'] as List;
+      final totalJobs =
+          data["total_jobs"]; // Get the total jobs from the response
+      // print(data);
+
+      // Return both the jobs data and total_jobs count
+      return {
+        'data': data['data'] as List,
+        'total_jobs': totalJobs,
+      };
     } else {
       throw Exception("Failed to fetch filtered jobs");
     }

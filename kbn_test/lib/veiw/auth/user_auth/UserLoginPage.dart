@@ -1,16 +1,12 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
 import 'package:kbn_test/service/api_service.dart';
-import 'dart:convert';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/user_auth/forgetpswd.dart';
 import 'package:kbn_test/veiw/auth/user_auth/signup.dart';
-import 'package:kbn_test/veiw/screen/check.dart';
 import 'package:kbn_test/veiw/screen/user_screen/UserHome.dart';
 import 'package:kbn_test/veiw/widgets/bg_widg.dart';
 import 'package:kbn_test/veiw/widgets/loginTextFile.dart';
@@ -38,6 +34,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
 
   
 Future<void> _login() async {
+  // print("ho");
     try {
       var responseData = await ApiServices.userLogin(
         usernameController.text,
@@ -45,10 +42,7 @@ Future<void> _login() async {
         
       );
 
-      if (responseData.containsKey('token') &&
-          responseData.containsKey('userId')) {
-        // int userId = responseData['userId'];
-        // var token = responseData['token'];
+      if (responseData.containsKey('token')) {
 
         var userDetailsResponse =
             await ApiServices.fetchUserDetails();

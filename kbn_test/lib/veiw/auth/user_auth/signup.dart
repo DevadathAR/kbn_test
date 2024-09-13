@@ -6,6 +6,7 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/user_auth/UserLoginPage.dart';
 import 'package:kbn_test/veiw/screen/user_screen/UserHome.dart';
 import 'package:kbn_test/veiw/widgets/bg_widg.dart';
 import 'package:kbn_test/veiw/widgets/loginTextFile.dart';
@@ -37,14 +38,20 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   void _signin() {
-    if (_ischeck) {
+  if (_ischeck) {
+    if (_selectedImage != null) {
       _signup();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please check the box to proceed.')),
+        const SnackBar(content: Text('Please select an image')),
       );
     }
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please check the box to proceed')),
+    );
   }
+}
 
   Future<void> _selectImage() async {
     final picker = ImagePicker();
@@ -114,7 +121,7 @@ filename: _imageFilename!,        ),
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const UserHome(
+          builder: (context) => const UserLoginPage(
             
           ),
         ),

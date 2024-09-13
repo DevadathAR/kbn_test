@@ -24,7 +24,7 @@ class UserHome extends StatefulWidget {
 class _UserHomeState extends State<UserHome> {
   List<dynamic> _jobs = [];
   int _currentPage = 1;
-  int ?_totalPages =1;
+  int? _totalPages = 1;
 
   @override
   void initState() {
@@ -37,19 +37,39 @@ class _UserHomeState extends State<UserHome> {
         .fetchJobTitles(); // Call fetchJobTitles from ApiServices
     setState(() {
       _jobs = jobs;
-      _totalPages = ((jobs.length / 8)+1).ceil(); // Calculate total pages
+      _totalPages = ((jobs.length / 8) + 1).ceil(); // Calculate total pages
     });
   }
 
   Future<List<dynamic>> _fetchFilteredJobs(int pageNumber) async {
-    var filteredJobs = await ApiServices.fetchFilteredJobs(
-      pageNumber: pageNumber,
-      pageSize: 8,
-    );
-    setState(() {
-      _jobs = filteredJobs;
-    });
-    return filteredJobs;
+    try {
+      // Call the API service to fetch filtered jobs
+      var response = await ApiServices.fetchFilteredJobs(
+        pageNumber: pageNumber,
+        pageSize: 8,
+      );
+
+      // Check if the response contains the expected data structure
+      if (response != null && response is Map<String, dynamic>) {
+        // Extract the job list from the response map
+        List<dynamic> filteredJobs = response['data'] as List<dynamic>;
+
+        setState(() {
+          _jobs = filteredJobs; // Update jobs list
+          // Calculate total pages if 'total_jobs' is available
+          int totalJobs =
+              response['total_jobs'] ?? 0; // Default to 0 if not present
+          _totalPages = (totalJobs / 8).ceil(); // Calculate total pages
+        });
+
+        return filteredJobs;
+      } else {
+        throw Exception('Unexpected response format');
+      }
+    } catch (e) {
+      print("Error fetching filtered jobs: $e");
+      return [];
+    }
   }
 
   @override
@@ -148,8 +168,10 @@ class _UserHomeState extends State<UserHome> {
                                         datePosted:
                                             job['created_at'].toString(),
                                         companyImage:
-                                            job['company_profile_image']
-                                                .toString(),
+                                            job['company_profile_image'],
+
+                                        status: job['application_status']
+                                            .toString(),
                                       );
                                     },
                                   ));
@@ -168,6 +190,7 @@ class _UserHomeState extends State<UserHome> {
                                 datePosted: job['created_at'].toString(),
                                 companyImage:
                                     job['company_profile_image'].toString(),
+                                status: job['application_status'].toString(),
                               ),
                             );
                           },
@@ -228,70 +251,6 @@ class PaginatedButton extends StatelessWidget {
   }
 }
 
-//  Future<List<dynamic>> fetchFilteredJobs({
-//   String? selectedJobType,
-//   String? selectedSalary,
-//   String? selectedExperience,
-//   String? selectedWorkMode,
-//   String? selectedLocation,
-//   int? pageNumber,
-//   int pageSize = 8,
-// }) async {
-//   int? minSalary;
-//   int? maxSalary;
-
-//   // Handle salary splitting logic
-//   if (selectedSalary != "Salary" && selectedSalary != null) {
-//     List<String> salaryParts = selectedSalary.split('-');
-//     if (salaryParts.length == 2) {
-//       minSalary = int.tryParse(salaryParts[0]);
-//       maxSalary = int.tryParse(salaryParts[1]);
-//     }
-//   }
-
-//   // Build query parameters for the request
-//   final queryParameters = {
-//     if (selectedWorkMode != "Work Mode" && selectedWorkMode != null)
-//       'workMode': selectedWorkMode,
-//     if (selectedJobType != "Job Type" && selectedJobType != null)
-//       'jobType': selectedJobType,
-//     if (selectedLocation != "Location" && selectedLocation != null)
-//       'location': selectedLocation,
-//     if (selectedExperience != "Experience" && selectedExperience != null)
-//       'experienceLevel': selectedExperience,
-//     if (minSalary != null && maxSalary != null)
-//       'minSalary': minSalary.toString(),
-//     if (minSalary != null && maxSalary != null)
-//       'maxSalary': maxSalary.toString(),
-//     if (pageNumber != null) 'page': pageNumber.toString(),
-//     'pageSize': pageSize.toString(), // Always pass page size
-//   };
-
-//   // Construct URI
-//   final uri = Uri.parse('$baseUrl2/job/filter')
-//       .replace(queryParameters: queryParameters);
-
-//   try {
-//     final response = await http.get(uri);
-
-//     if (response.statusCode == 200) {
-//       final data = json.decode(response.body);
-//       if (data['message'] == 'Filter Success') {
-//         return data['data'];
-//       } else {
-//         print("Unexpected response message: ${data['message']}");
-//         throw Exception("Failed to fetch filtered jobs");
-//       }
-//     } else {
-//       print("Error: ${response.statusCode}, Body: ${response.body}");
-//       throw Exception("Failed to fetch filtered jobs");
-//     }
-//   } catch (e) {
-//     print("Error fetching filtered jobs: $e");
-//     rethrow;
-//   }
-// }
-
 class LatestJobCard extends StatefulWidget {
   final String jobTitle;
   final String jobSummary;
@@ -301,6 +260,7 @@ class LatestJobCard extends StatefulWidget {
   final String jobType;
   final String companyImage;
   final String datePosted;
+  final String status;
 
   LatestJobCard({
     required this.jobTitle,
@@ -311,6 +271,7 @@ class LatestJobCard extends StatefulWidget {
     required this.jobType,
     required this.companyImage,
     required this.datePosted,
+    required this.status,
   });
 
   @override
@@ -415,25 +376,19 @@ class _LatestJobCardState extends State<LatestJobCard> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isApplied = true;
-                      });
-                    },
-                    child: Container(
-                      height: 50,
-                      width: 150,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(4)),
-                        color: _isApplied ? green : green,
-                      ),
-                      child: Center(
-                        child: Text(
-                          _isApplied ? "Applied" : "Apply for this job",
-                          style: AppTextStyle.applytxt,
-                        ),
+                  Container(
+                    height: 50,
+                    width: 150,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(4)),
+                      color: getStatusColor(widget.status),
+                    ),
+                    child: Center(
+                      child: Text(
+                        widget.status,
+                        // style: AppTextStyle.applytxt,
+                        style: AppTextStyle.applytxt
+                            .copyWith(color: getTxtColor(widget.status)),
                       ),
                     ),
                   ),

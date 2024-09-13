@@ -1,219 +1,163 @@
-// import 'package:flutter/material.dart';
-// // import 'package:http/http.dart' as http;
-// import 'package:kbn_test/service/api_service.dart';
-// import 'package:kbn_test/utilities/assets_path.dart';
-// import 'package:kbn_test/utilities/colors.dart';
-// import 'package:kbn_test/utilities/const.dart';
-// import 'package:kbn_test/utilities/text_style.dart';
-// import 'package:kbn_test/veiw/auth/user_auth/UserLoginPage.dart';
-// import 'package:kbn_test/veiw/screen/user_screen/JobDetails.dart';
-// import 'package:kbn_test/veiw/screen/user_screen/termsandcond_applicant.dart';
+// import 'dart:convert';
+// import 'package:http/http.dart' as http;
 
-// import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
-// import 'package:kbn_test/veiw/widgets/home_filter_box.dart';
+// Map<String, dynamic> userDetails = {};
+// Map<String, dynamic> jobDetailsResponse = {};
+// List<dynamic> jobs = [];
 
-// class UserHome extends StatefulWidget {
-//   const UserHome({super.key});
+// class ApiServices {
+//   static const String baseUrl = 'http://192.168.29.37:8000';
+//   // static const String baseUrl2 = 'http://192.168.29.37:8000';
+//   static const String baseUrl2 = 'http://192.168.29.197:5500';
 
-//   @override
-//   _UserHomeState createState() => _UserHomeState();
-// }
+//   // Login API
+//   static Future<Map<String, dynamic>> user_login(
+//       String email, String password) async {
+//     var url = Uri.parse('$baseUrl/user/login');
 
-// class _UserHomeState extends State<UserHome> {
-//   List<dynamic> _jobs = [];
-//   int _currentPage = 1;
-//   int _totalPages = 10;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _fetchJobTitles();
-//   }
-
-//   Future<void> _fetchJobTitles() async {
-//     var jobs = await ApiServices
-//         .fetchJobTitles(); // Call fetchJobTitles from ApiServices
-//     setState(() {
-//       _jobs = jobs;
-//       _totalPages = (jobs.length / 8).ceil(); // Calculate total pages
-//     });
-//   }
-
-//   Future<void> _fetchFilteredJobs(int pageNumber) async {
-//     var filteredJobs = await ApiServices.fetchFilteredJobs(
-//       pageNumber: pageNumber,
-//       pageSize: 8,
+//     var response = await http.post(
+//       url,
+//       body: jsonEncode({
+//         'email': "john123@gmail.com",
+//         'password': "john@123",
+//         // 'email': email,
+//         // 'password': password,
+//         'loginType': "Applicant",
+//       }),
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
 //     );
-//     setState(() {
-//       _jobs = filteredJobs;
-//     });
+
+//     if (response.statusCode == 200) {
+//       return jsonDecode(response.body);
+//     } else {
+//       throw Exception('Failed to login');
+//     }
 //   }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     Size size = MediaQuery.of(context).size;
+//   // Company login API
+//   static Future<Map<String, dynamic>> company_login(
+//       String email, String password) async {
+//     var url = Uri.parse('$baseUrl/user/login');
 
-//     return Scaffold(
-//       body: Stack(
-//         children: [
-//           SingleChildScrollView(
-//             child: SizedBox(
-//               height: size.height * 1,
-//               width: size.width * 1,
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   const Center(child: Image(image: AssetImage(kbnLogo))),
-//                   HomeAppBarBox(context,
-//                       profileImage:
-//                           "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
-//                       T_and_C: const TaC(),
-//                       logOutTo: const UserLoginPage(),
-//                       termscolor: white),
-//                   const SizedBox(
-//                     height: 10,
-//                   ),
-//                   HomeFilterBox(
-//                     onFilterApplied: (filteredJobs) {
-//                       setState(() {
-//                         _jobs = filteredJobs;
-//                       });
-//                     },
-//                   ),
-//                   const SizedBox(
-//                     height: 10,
-//                   ),
-//                   const Padding(
-//                     padding: EdgeInsets.only(left: 50),
-//                     child: Text(
-//                       latestjob,
-//                       style: AppTextStyle.tactexthead,
-//                     ),
-//                   ),
-//                   const SizedBox(
-//                     height: 10,
-//                   ),
-//                   Expanded(
-//                     child: Padding(
-//                       padding: const EdgeInsets.symmetric(horizontal: 40),
-//                       child: SizedBox(
-//                         child: GridView.builder(
-//                           physics: const NeverScrollableScrollPhysics(),
-//                           gridDelegate:
-//                               const SliverGridDelegateWithFixedCrossAxisCount(
-//                                   crossAxisCount: 4,
-//                                   crossAxisSpacing: 30,
-//                                   mainAxisSpacing: 10,
-//                                   childAspectRatio: 261 / 190),
-//                           itemCount: _jobs.length,
-//                           itemBuilder: (context, index) {
-//                             final job = _jobs[index];
-//                             return GestureDetector(
-//                               onTap: () async {
-//                                 // print(job['companyId']);
-//                                 try {
-//                                   await ApiServices.postJobDetails(
-//                                       job['jobId'], job['companyId']);
-
-//                                   // Navigate to JobDetails after successfully posting job details
-//                                   Navigator.push(context, MaterialPageRoute(
-//                                     builder: (context) {
-//                                       return JobDetails(
-//                                         jobId: job['jobId'], // Pass jobId
-//                                         companyId:
-//                                             job['companyId'], // Pass companyId
-//                                         firmname:
-//                                             job['company_name'].toString(),
-//                                         jobTitle: job['title'].toString(),
-//                                         jobSummary:
-//                                             job['job_summary'].toString(),
-//                                         expLevel:
-//                                             job['experience_level'].toString(),
-//                                         jobMode: job['job_mode'].toString(),
-//                                         jobType: job['job_type'].toString(),
-//                                         keyResponsibilities:
-//                                             job['key_responsibilities']
-//                                                 as List<dynamic>,
-//                                         jobReq: job['job_requirements']
-//                                             as Map<String, dynamic>,
-//                                         salary: job['salary'],
-//                                         currentVacancy: job['vacancy'],
-//                                         workLocation:
-//                                             job['location'].toString(),
-//                                         companywebsite:
-//                                             job['company_website'].toString(),
-//                                         datePosted:
-//                                             job['created_at'].toString(),
-//                                         companyImage:
-//                                             job['company_profile_image']
-//                                                 .toString(),
-//                                       );
-//                                     },
-//                                   ));
-//                                 } catch (error) {
-//                                   print(
-//                                       "Error in onTap: $error"); // Handle navigation errors
-//                                 }
-//                               },
-//                               child: LatestJobCard(
-//                                 firmname: job['company_name'].toString(),
-//                                 jobTitle: job['title'].toString(),
-//                                 jobSummary: job['job_summary'].toString(),
-//                                 expLevel: job['experience_level'].toString(),
-//                                 jobMode: job['job_mode'].toString(),
-//                                 jobType: job['job_type'].toString(),
-//                                 datePosted: job['created_at'].toString(),
-//                                 companyImage:
-//                                     job['company_profile_image'].toString(),
-//                               ),
-//                             );
-//                           },
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-// //           Align(
-// //   alignment: Alignment.bottomCenter,
-// //   child: Container(
-// //     color: Colors.black,
-// //     height: 50,
-// //     width: 200,
-// //     child: Row(
-// //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-// //       children: [
-// //         // Display previous page button if we're not on the first page
-// //         if (_currentPage > 1) // Ensure it doesn't show when on the first page
-// //           TextButton(
-// //             onPressed: () {
-// //               setState(() {
-// //                 _currentPage--;  // Go to previous page
-// //               });
-// //               _fetchFilteredJobs(_currentPage);
-// //             },
-// //             child: const Text("<<"),
-// //           ),
-
-// //         // Display next page button if there are more pages
-// //         if (_currentPage < _totalPages)
-// //           TextButton(
-// //             onPressed: () {
-// //               setState(() {
-// //                 _currentPage++;  // Go to next page
-// //               });
-// //               _fetchFilteredJobs(_currentPage);
-// //             },
-// //             child: const Text(">>"),
-// //           ),
-// //       ],
-// //     ),
-// //   ),
-// // )
-//         ],
-//       ),
+//     var response = await http.post(
+//       url,
+//       body: jsonEncode({
+//         'email': email,
+//         'password': password,
+//         'loginType': "Company",
+//       }),
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
 //     );
+
+//     if (response.statusCode == 200) {
+//       return jsonDecode(response.body);
+//     } else {
+//       throw Exception('Login failed');
+//     }
 //   }
+
+//   // Fetch User Details API
+//   static Future<Map<String, dynamic>> fetchUserDetails(
+//       int userId, String token) async {
+//     var url = Uri.parse('$baseUrl/user/$userId');
+
+//     var response = await http.get(
+//       url,
+//       headers: {
+//         'Authorization': 'Bearer $token',
+//       },
+//     );
+//     // print(response);
+
+//     if (response.statusCode == 200) {
+//       return jsonDecode(response.body);
+//     } else {
+//       throw Exception('Failed to fetch user details');
+//     }
+//   }
+
+//   // Fetch Job Titles API
+//   static Future<List<dynamic>> fetchJobTitles() async {
+//     try {
+//       var url = Uri.parse('$baseUrl2/job');
+//       var response = await http.get(url);
+
+//       if (response.statusCode == 200) {
+//         var jsonData = jsonDecode(response.body);
+//         // print(jsonData);
+//         var data = jsonData['data'];
+
+//         if (data is List) {
+//           return data;
+//         } else {
+//           print('Unexpected structure: "data" is not a list');
+//           return [];
+//         }
+//       } else {
+//         print('Failed to load job titles');
+//         return [];
+//       }
+//     } catch (error) {
+//       print('Error: $error');
+//       return [];
+//     }
+//   }
+
+//   // Post Job Details API - post jobId as param and companyId in the body
+//   static Future<void> postJobDetails(
+//     int jobId,
+//     int companyId,
+//   ) async {
+//     // Construct the URL with the dynamic jobId
+//     var url = Uri.parse('$baseUrl2/job/$jobId');
+
+//     try {
+//       var response = await http.post(
+//         url,
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization':
+//               'Bearer ${userDetails['token']}', // Ensure token is set
+//         },
+//         body: jsonEncode({
+//           'companyId': companyId, // Send companyId in the request body
+//         }),
+//       );
+
+//       if (response.statusCode == 200) {
+//         var jsonData = jsonDecode(response.body);
+//         jobDetailsResponse = jsonDecode(response.body);
+
+//         // print(jsonData);
+//         print(jobDetailsResponse);
+
+//         print("Job details posted successfully.");
+//       } else {
+//         print("Failed to post job details: ${response.statusCode}");
+//       }
+//     } catch (error) {
+//       print("Error posting job details: $error");
+//     }
+//   }
+
+//   static Future<Map<String, dynamic>> applyForJob(int jobId, int userId) async {
+//     final url = Uri.parse('$baseUrl2/application/create'); // Update to your API endpoint
+
+//     final response = await http.post(
+//       url,
+//       headers: {'Content-Type': 'application/json'},
+//       body: jsonEncode({'jobId': jobId, 'userId': userId}),
+//     );
+
+//     if (response.statusCode == 200) {
+//       return jsonDecode(response.body);
+//     } else {
+//       throw Exception('Failed to apply for job');
+//     }
+//   }
+  
 // }

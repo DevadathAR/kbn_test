@@ -15,3 +15,32 @@ const none = Color.fromARGB(0, 0, 0, 0);
 const tealblue =Color.fromRGBO(19, 131, 149, 1) ;
 const loginbutton = [Color.fromRGBO(88, 186, 78, 1),Color.fromRGBO(19, 131, 149, 1)];
 const InnactiveLoginbutton = [Color.fromRGBO(89, 186, 78, 0.242),Color.fromRGBO(19, 131, 149, 0.242)];
+Color getStatusColor(String status) {
+  switch (status) {
+    case "Selected":
+      return const Color.fromARGB(255, 118, 198, 109);
+    case "Apply for this Job":
+      return Colors.teal;
+    case "Rejected":
+      return Colors.red;
+    case "Submitted":
+      return Colors.teal;
+    default:
+      return const Color.fromARGB(198, 0, 0, 0); // Default color if none of the cases match
+  }
+}
+
+Color getTxtColor(String status) {
+  switch (status) {
+    case "Selected":
+      return black;
+    case "Apply for this Job":
+      return white;
+    case "Rejected":
+      return black;
+    case "Submitted":
+      return black;
+    default:
+      return white;
+  }
+}
