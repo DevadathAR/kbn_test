@@ -1,9 +1,14 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/api_service.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/date.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:kbn_test/veiw/auth/user_auth/UserLoginPage.dart';
 import 'package:kbn_test/veiw/screen/user_screen/termsandcond_applicant.dart';
 import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
@@ -111,7 +116,7 @@ class _JobDetailsState extends State<JobDetails> {
                                   width: size.width * 0.4,
                                   child: Padding(
                                     padding: const EdgeInsets.all(15.0),
-                                    child: CompanyDetails1(
+                                    child: CompanyDetailsRow1(
                                       jobId: widget.jobId,
                                       aboutCompany: widget.jobSummary,
                                       userId: widget.companyId,
@@ -127,12 +132,12 @@ class _JobDetailsState extends State<JobDetails> {
                                   padding: EdgeInsets.symmetric(vertical: 25),
                                   child: VerticalDivider(color: shadowblack),
                                 ),
-                                CompanyDetails2(size),
+                                CompanyDetailsRow2(size),
                                 const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 25),
                                   child: VerticalDivider(color: shadowblack),
                                 ),
-                                CompanyDetails3(size),
+                                CompanyDetailsRow3(size),
                               ],
                             ),
                           ),
@@ -152,7 +157,7 @@ class _JobDetailsState extends State<JobDetails> {
     );
   }
 
-  SingleChildScrollView CompanyDetails3(Size size) {
+  SingleChildScrollView CompanyDetailsRow3(Size size) {
     Map<String, dynamic> reqlist = widget.jobReq;
     return SingleChildScrollView(
       child: Padding(
@@ -248,7 +253,7 @@ class _JobDetailsState extends State<JobDetails> {
     );
   }
 
-  SingleChildScrollView CompanyDetails2(Size size) {
+  SingleChildScrollView CompanyDetailsRow2(Size size) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15),
@@ -324,7 +329,7 @@ class _JobDetailsState extends State<JobDetails> {
 }
 // Import ApiServices
 
-class CompanyDetails1 extends StatefulWidget {
+class CompanyDetailsRow1 extends StatefulWidget {
   final String jobTitle;
   final String firmname;
   final String companywebsite;
@@ -334,7 +339,7 @@ class CompanyDetails1 extends StatefulWidget {
   final int jobId; // jobId
   final int userId; // userId
 
-  const CompanyDetails1({
+  const CompanyDetailsRow1({
     Key? key,
     required this.jobTitle,
     required this.firmname,
@@ -347,18 +352,21 @@ class CompanyDetails1 extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CompanyDetails1State createState() => _CompanyDetails1State();
+  _CompanyDetailsRow1State createState() => _CompanyDetailsRow1State();
 }
 
-class _CompanyDetails1State extends State<CompanyDetails1> {
+class _CompanyDetailsRow1State extends State<CompanyDetailsRow1> {
   bool _isApplied = false;
+List<dynamic> _jobs = [];
 
   Future<void> _applyForJob() async {
     try {
       final result = await ApiServices.applyForJob(widget.jobId, widget.userId);
 
       // Check if the response has a 'data' field and contains the status
-      if (result['message'] == 'Response Received' && result['data'] != null) {
+      if (result['message'] == 'Job added successfully' && result['data'] != null) {
+
+        // log(result['data']);
         // Loop through the data to find the job with the matching jobId
         for (var application in result['data']) {
           if (application['jobId'] == widget.jobId) {
@@ -401,6 +409,14 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
       );
     }
   }
+
+
+  void _refreshDataAndPostJobDetails() async {
+    // await ApiServices.postJobDetails(_jobs['jobId'], _jobs['companyId']); // Replace with actual job ID and company ID
+    await _applyForJob();
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -457,7 +473,7 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
         GestureDetector(
           onTap: _isApplied
               ? null
-              : _applyForJob, // Disable button if already applied
+              : _refreshDataAndPostJobDetails,
           child: Container(
             height: 60,
             width: 220,
@@ -468,7 +484,7 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
             child: Center(
               child: Text(
                 widget.status,
-                style: AppTextStyle.applytxt,
+                style: AppTextStyle.applytxt.copyWith(color: getTxtColor(widget.status)),
               ),
             ),
           ),

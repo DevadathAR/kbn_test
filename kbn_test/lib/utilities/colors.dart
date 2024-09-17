@@ -33,11 +33,11 @@ Color getStatusColor(String status) {
 Color getTxtColor(String status) {
   switch (status) {
     case "Selected":
-      return black;
+      return white;
     case "Apply for this Job":
       return white;
     case "Rejected":
-      return black;
+      return white;
     case "Submitted":
       return black;
     default:

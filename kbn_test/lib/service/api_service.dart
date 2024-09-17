@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 Map<String, dynamic> userDetails = {};
@@ -8,12 +9,13 @@ List<dynamic> jobs = [];
 String? token; // Token should be nullable to check its presence
 
 const String baseUrl = 'http://192.168.29.37:8000';
-const String baseUrl2 = 'http://192.168.29.197:5500';
+const String baseUrl2 = 'http://192.168.29.37:8000';
+// const String baseUrl2 = 'http://192.168.29.197:5500';
 //   baseUrl2/job/dropbox
 
 class ApiServices {
   static Future<Map<String, List<String>>> fetchDropdownBoxItems() async {
-    final url = Uri.parse('http://192.168.29.197:5500/job/dropbox');
+    final url = Uri.parse('$baseUrl2/job/dropbox');
 
     try {
       final response = await http.get(
@@ -27,6 +29,8 @@ class ApiServices {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final dropBox = data['dropBox'];
+        // print(data);
+        // print(dropBox);
 
         if (dropBox == null) {
           throw Exception('Invalid response format');
@@ -55,12 +59,12 @@ class ApiServices {
     var response = await http.post(
       url,
       body: jsonEncode({
-        // 'email': "q",
-        // 'password': "q",
-        'email': "applicant8@gmail.com",
-        'password': "123",
-        // 'email': email,
-        // 'password': password,
+        // 'email': "random",
+        // 'password': "random",
+        // 'email': "applicant8@gmail.com",
+        // 'password': "123",
+        'email': email,
+        'password': password,
         'loginType': "Applicant",
       }),
       headers: {'Content-Type': 'application/json'},
@@ -99,6 +103,32 @@ class ApiServices {
     }
   }
 
+
+  static Future<void> uploadResume(Uint8List fileBytes, String fileName) async {
+    if (token == null) {
+      throw Exception('Token is not available, please login first.');
+    }
+
+    final uri = Uri.parse('$baseUrl/user/resume'); 
+    final request = http.MultipartRequest('POST', uri);
+
+    request.files.add(http.MultipartFile.fromBytes(
+      'resume', 
+      fileBytes,
+      filename: fileName,
+    ));
+
+    // Add authorization header
+    request.headers['Authorization'] = 'Bearer $token';
+
+    // Send the request
+    final response = await request.send();
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to upload file with status: ${response.statusCode}');
+    }
+  }
+
   // Fetch User Details API
   static Future<Map<String, dynamic>> fetchUserDetails() async {
     if (token == null) {
@@ -116,6 +146,8 @@ class ApiServices {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
+      // print(data);
+      // log(jsonEncode(data));
       return data;
     } else {
       throw Exception('Failed to fetch user details: ${response.body}');
@@ -138,7 +170,7 @@ class ApiServices {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode({'companyId': companyId}),
+      body: jsonEncode({'companyId': jobId}),
     );
 
     if (response.statusCode == 200) {
@@ -162,10 +194,10 @@ class ApiServices {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode({'jobId': jobId, 'userId': userId}),
+      body: jsonEncode({'jobId': jobId,}),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       return jsonDecode(response.body);
     } else {
       throw Exception('Failed to apply for job: ${response.body}');
@@ -173,41 +205,42 @@ class ApiServices {
   }
 
   // Fetch Filter Data
-  static Future<Map<String, List<String>>> fetchFilterData() async {
-    final url = Uri.parse('$baseUrl2/job/filter');
+  // static Future<Map<String, List<String>>> fetchFilterData() async {
+  //   final url = Uri.parse('$baseUrl2/job/filter');
 
-    final response = await http.get(
-      url,
-      headers: {'Authorization': 'Bearer $token'},
-    );
+  //   final response = await http.get(
+  //     url,
+  //     headers: {'Authorization': 'Bearer $token'},
+  //   );
 
-    // print(jsonEncode(response.body));
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final List<dynamic> jobs = data['data'];
+  //   // print(jsonEncode(response.body));
+  //   if (response.statusCode == 200) {
+  //     final data = json.decode(response.body);
+  //     final List<dynamic> jobs = data['data'];
+  //     print(jobs);
 
-      // Parse distinct filter values
-      final jobTypes =
-          jobs.map((job) => job['job_type'].toString()).toSet().toList();
-      final experiences = jobs
-          .map((job) => job['experience_level'].toString())
-          .toSet()
-          .toList();
-      final workModes =
-          jobs.map((job) => job['job_mode'].toString()).toSet().toList();
-      final locations =
-          jobs.map((job) => job['location'].toString()).toSet().toList();
+  //     // Parse distinct filter values
+  //     final jobTypes =
+  //         jobs.map((job) => job['job_type'].toString()).toSet().toList();
+  //     final experiences = jobs
+  //         .map((job) => job['experience_level'].toString())
+  //         .toSet()
+  //         .toList();
+  //     final workModes =
+  //         jobs.map((job) => job['job_mode'].toString()).toSet().toList();
+  //     final locations =
+  //         jobs.map((job) => job['location'].toString()).toSet().toList();
 
-      return {
-        'jobTypes': jobTypes,
-        'experiences': experiences,
-        'workModes': workModes,
-        'locations': locations,
-      };
-    } else {
-      throw Exception("Failed to load filter data");
-    }
-  }
+  //     return {
+  //       'jobTypes': jobTypes,
+  //       'experiences': experiences,
+  //       'workModes': workModes,
+  //       'locations': locations,
+  //     };
+  //   } else {
+  //     throw Exception("Failed to load filter data");
+  //   }
+  // }
 
   static Future<List<dynamic>> fetchJobTitles() async {
     var url = Uri.parse('$baseUrl2/job/filter');
