@@ -13,6 +13,7 @@ import 'package:kbn_test/veiw/widgets_common/boxBTN.dart';
 import 'package:kbn_test/veiw/widgets_common/home_appbar_box.dart';
 import 'package:kbn_test/veiw/widgets_common/normalText.dart';
 import 'package:kbn_test/veiw/widgets_common/statusUpdate.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CompanyHomePage extends StatefulWidget {
   const CompanyHomePage({super.key});
@@ -27,16 +28,36 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
 
   @override
   void initState() {
-    // _fetchUserData();
+    _checkAndShowDialog();
+
     _fetchApplicantsData(); // Fetch data when widget is initialized
 
     super.initState();
   }
 
-  // Future<void> _fetchUserData() async {
-  //   var userDetailsResponse = await ApiServices.fetchUserDetails();
-  //   userDetails = userDetailsResponse;
-  // }
+  Future<void> setDialogShown(bool shown) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('warning_dialog_shown', shown);
+  }
+
+  Future<bool> isDialogShown() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('warning_dialog_shown') ?? false;
+  }
+
+  Future<void> _checkAndShowDialog() async {
+    bool dialogShown = await isDialogShown();
+
+    if (!dialogShown) {
+      var kbnCode = userDetails['user']['kbn_code'];
+      bool isApproved = kbnCode != null;
+
+      if (!isApproved) {
+        approvalWarning(context);
+        await setDialogShown(true); // Mark the dialog as shown
+      }
+    }
+  }
 
   // Method to fetch applicants data
   Future<void> _fetchApplicantsData() async {
@@ -562,4 +583,57 @@ class _CustomContactColumnState extends State<CustomContactColumn> {
       },
     );
   }
+}
+
+void approvalWarning(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierColor: semitransp,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return Dialog(
+        backgroundColor: none, // Transparent dialog background
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(12)),
+            color: Colors.transparent, // Transparent dialog content background
+            border: Border.all(color: Colors.transparent), // No border color
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                'If you are new here, you must have approval for your company from the admin side.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white, // Text color
+                ),
+              ),
+              const SizedBox(height: 60.0), // 30 dp gap
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: none, // Button background color
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0), // Adjust padding as needed
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        8.0), // Adjust border radius as needed
+                  ),
+                ),
+                child: const Text('Back Home'),
+              )
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

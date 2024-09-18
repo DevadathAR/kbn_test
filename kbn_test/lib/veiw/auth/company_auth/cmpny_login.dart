@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/apiServices.dart';
-import 'package:kbn_test/service/userApiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
@@ -246,7 +245,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
   }
 }
 
-void warningMessage(BuildContext context) {
+void approvalWarning(BuildContext context) {
   showDialog(
     context: context,
     barrierColor: semitransp,
@@ -271,8 +270,8 @@ void warningMessage(BuildContext context) {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                      'If you want to start a new company,.\n'
-                      'you must have approval from the admin side.',
+                      'If you are new here,you must have.\n'
+                      'approval for your company from the admin side.',
                       textAlign: TextAlign.center,
                       style: AppTextStyle.flitertxt),
                   const SizedBox(height: 200.0), // 20 dp space

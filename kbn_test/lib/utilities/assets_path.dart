@@ -20,4 +20,6 @@ const locattionPng = "assets/location.png";
 const upimagPng = "assets/upImage.png";
 const loginbg = "assets/logInbg.png";
 const resumePng = "assets/resume.png";
+const tickMark = "assets/tickMark.png";
+
 

@@ -6,7 +6,6 @@ import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'veiw/auth/company_auth/testPage.dart';
 
 void main() {
   runApp(const MainApp());
@@ -42,11 +41,7 @@ class MainApp extends StatelessWidget {
           }
         },
       ),
-      // routes: {
-      //   '/home': (context) => const CompanyHomePage(),
-      //   '/login': (context) => const CompanyLoginPage(),
-      //   // Add other routes here
-      // },
+   
     );
   }
 

@@ -13,26 +13,58 @@ class ApiServices {
   };
   static const String baseUrl = 'http://192.168.29.37:8000';
 
-  static Future<Map<String, dynamic>> company_login(
+  // Login API
+  static Future<Map<String, dynamic>> userLogin(
       String email, String password) async {
     var url = Uri.parse('$baseUrl/user/login');
+    // print(url);
+    var response = await http.post(
+      url,
+      body: jsonEncode({
+        'email': "company2@gmail.com",
+        'password': "123",
+        // 'email': "applicant8@gmail.com",
+        // 'password': "123",
+        // 'email': email,
+        // 'password': password,
+        // 'loginType': "Applicant",
+      }),
+      headers: {'Content-Type': 'application/json'},
+    );
 
-    var response = await http.post(url,
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-          // 'loginType': "Company",
-        }),
-        headers: headers);
-
-    print('LpgIn Response${response.body}');
+    // print("Login response: ${response.statusCode}");
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      var data = jsonDecode(response.body);
+      var token = data['token']; // Save the token for future requests
+      headers['Authorization'] = 'Bearer $token';
+
+      return data;
     } else {
-      throw Exception('Login failed');
+      throw Exception('Login failed: ${response.body}');
     }
   }
+
+  // static Future<Map<String, dynamic>> company_login(
+  //     String email, String password) async {
+  //   var url = Uri.parse('$baseUrl/user/login');
+
+  //   var response = await http.post(url,
+  //       body: jsonEncode({
+  //         'email': email,
+  //         'password': password,
+  //         // 'loginType': "Company",
+  //       }),
+  //       headers: headers);
+
+  //   print('LpgIn Response${response.body}');
+
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body);
+  //   } else {
+  //     throw Exception('Login failed');
+  //   }
+  // }
 
   // Fetch User Details API
   static Future<Map<String, dynamic>> fetchUserDetails() async {
@@ -322,38 +354,6 @@ class ApiServices {
     }
   }
 
-  // Login API
-  static Future<Map<String, dynamic>> userLogin(
-      String email, String password) async {
-    var url = Uri.parse('$baseUrl/user/login');
-    // print(url);
-    var response = await http.post(
-      url,
-      body: jsonEncode({
-        // 'email': "random",
-        // 'password': "random",
-        // 'email': "applicant8@gmail.com",
-        // 'password': "123",
-        'email': email,
-        'password': password,
-        // 'loginType': "Applicant",
-      }),
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    // print("Login response: ${response.statusCode}");
-
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      var token = data['token']; // Save the token for future requests
-      headers['Authorization'] = 'Bearer $token';
-
-      return data;
-    } else {
-      throw Exception('Login failed: ${response.body}');
-    }
-  }
-
   static Future<void> uploadResume(Uint8List fileBytes, String fileName) async {
     final uri = Uri.parse('$baseUrl/user/resume');
     final request = http.MultipartRequest('POST', uri);
@@ -375,30 +375,6 @@ class ApiServices {
           'Failed to upload file with status: ${response.statusCode}');
     }
   }
-
-  // // Fetch User Details API
-  // static Future<Map<String, dynamic>> fetchUserDetails() async {
-  //   if (token == null) {
-  //     throw Exception('Token is not available, please login first.');
-  //   }
-
-  //   var url = Uri.parse('$baseUrl/user/loggedIn');
-
-  //   print("Fetching user details with token: $token");
-
-  //   var response = await http.get(
-  //     url,
-  //     headers: {'Authorization': 'Bearer $token'},
-  //   );
-
-  //   if (response.statusCode == 200) {
-  //     var data = jsonDecode(response.body);
-
-  //     return data;
-  //   } else {
-  //     throw Exception('Failed to fetch user details: ${response.body}');
-  //   }
-  // }
 
   // Fetch Job Titles API
 

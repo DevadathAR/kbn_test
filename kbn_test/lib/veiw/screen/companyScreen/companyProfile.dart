@@ -48,6 +48,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
   String? selectedEmploymentType;
   String? selectedJobMode;
   String? selectedExperience;
+  bool isApproved = false;
 
   final List<String> employmentTypes = ['Full-Time', 'Part-Time', 'Contract'];
   final List<String> jobModes = ['On-site', 'Remote', 'Hybrid'];
@@ -256,22 +257,48 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
   Widget _companyInfoSection(double width) {
     var kbnCode = userDetails['user']['kbn_code'];
 
+    // Corrected assignment of isApproved
+    isApproved = kbnCode == null ? false : true;
+
     return Expanded(
       flex: width > 1200 ? 1 : 2,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: width * 0.08, // Responsive image size
-            width: width * 0.08,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(10.0),
-              image: const DecorationImage(
-                image: AssetImage(compnyLogo),
-                fit: BoxFit.cover,
+          Stack(
+            children: [
+              Container(
+                height: width * 0.08, // Responsive image size
+                width: width * 0.08,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10.0),
+                  image: const DecorationImage(
+                    image: AssetImage(compnyLogo),
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ),
+              // The tickMark icon positioned at the bottom-right corner
+              isApproved
+                  ? Positioned(
+                      bottom: 1,
+                      right: 1,
+                      child: Container(
+                        height: width *
+                            0.02, // Adjust size of the tickMark icon as per need
+                        width: width * 0.02,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                                tickMark), // Use the tickMark image from assets
+                            // fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container(),
+            ],
           ),
           const SizedBox(height: 10),
           Text(userDetails['user']['name'], style: AppTextStyle.normalHeading),

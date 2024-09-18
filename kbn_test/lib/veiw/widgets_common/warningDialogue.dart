@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kbn_test/utilities/colors.dart';
 
 class WarningDialog extends StatelessWidget {
   final String title;
@@ -19,6 +20,7 @@ class WarningDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: none,
       title: Text(title),
       content: Text(content),
       actions: [
