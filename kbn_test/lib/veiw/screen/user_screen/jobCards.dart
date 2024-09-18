@@ -167,16 +167,19 @@ class _LatestJobCardState extends State<LatestJobCard> {
 
 Widget Requirments({required String txt}) {
   return Container(
-    height: 20,
+    height: 23,
     width: 90,
     decoration: const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(4)),
       color: green,
     ),
     child: Center(
-        child: Text(
-      txt,
-      style: AppTextStyle.buttontxt,
-    )),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          child: Text(
+                txt,
+                style: AppTextStyle.buttontxt,
+              ),
+        )),
   );
 }

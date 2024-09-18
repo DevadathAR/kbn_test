@@ -9,6 +9,7 @@ import 'package:kbn_test/veiw/auth/user_auth/UserLoginPage.dart';
 import 'package:kbn_test/veiw/screen/user_screen/UserHome.dart';
 
 Widget HomeAppBarBox(context, {T_and_C, logOutTo, profileImage, termscolor}) {
+  
   return Container(
     height: 80,
     decoration: const BoxDecoration(
@@ -99,7 +100,7 @@ void showLogoutConfirmation(BuildContext context) {
     barrierColor: semitransp,
     builder: (BuildContext context) {
       return AlertDialog(
-        backgroundColor: none, // Set the background color to none
+        backgroundColor: white, // Set the background color to none
 
         actions: <Widget>[
           Column(
@@ -110,14 +111,17 @@ void showLogoutConfirmation(BuildContext context) {
                 width: 500,
                 height: 200,
                 decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(12)),
+                    borderRadius: const BorderRadius.all(Radius.circular(12),),
                     color: none,
                     border: Border.all(color: white, width: 2)),
                 child: Column(
                   children: [
-                    const Text(
-                      "Do you want to logout?",
-                      style: AppTextStyle.flitertxt,
+                 const Padding(
+                      padding: const EdgeInsets.only(top: 35),
+                      child: const Text(
+                        "Do you want to logout?",
+                        style: AppTextStyle.postheadtxt,
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 25, bottom: 50),
@@ -127,7 +131,7 @@ void showLogoutConfirmation(BuildContext context) {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             shadowColor: black,
-                            shape: const RoundedRectangleBorder(
+                            shape: const RoundedRectangleBorder(side: BorderSide(color: black),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(12)),
                             ),
@@ -136,7 +140,9 @@ void showLogoutConfirmation(BuildContext context) {
                             "Logout",
                             style: AppTextStyle.googletext,
                           ),
-                          onPressed: () {
+                          onPressed: 
+                          
+                          () {
                             Navigator.of(context).pop(); // Close the dialog
                             Navigator.pushReplacement(context,
                                 MaterialPageRoute(

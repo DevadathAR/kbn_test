@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/api_service.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
@@ -13,9 +12,10 @@ import 'package:kbn_test/veiw/screen/user_screen/termsandcond_applicant.dart';
 import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
 import 'package:kbn_test/veiw/widgets/home_filter_box.dart';
 import 'package:kbn_test/veiw/widgets/upload_resume.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserHome extends StatefulWidget {
-  const UserHome({super.key});
+  const  UserHome({super.key});
 
   @override
   _UserHomeState createState() => _UserHomeState();
@@ -27,20 +27,32 @@ class _UserHomeState extends State<UserHome> {
   int? _totalPages = 1;
 
   bool _shouldShowUploadResume = false; // Boolean to track resume availability
+  Map<String, dynamic>? userDetails; // Nullable userDetails
 
   @override
   void initState() {
     super.initState();
     _fetchJobTitles();
     _checkResumeLink(); // Check if the resume link exists when initializing
+    _fetchUserDetails(); // Fetch user details to use in the UI
+  }
+
+  Future<void> _fetchUserDetails() async {
+    try {
+      var response = await ApiServices.fetchUserDetails();
+      setState(() {
+        userDetails = response;
+      });
+    } catch (e) {
+      print('Error fetching user details: $e');
+    }
   }
 
   // Method to check if user has a resume link
   Future<void> _checkResumeLink() async {
     try {
-      var userDetails =
-          await ApiServices.fetchUserDetails(); // Fetch user details
-      var resumeLink = userDetails['user']['resumeLink'];
+      var userDetailsResponse = await ApiServices.fetchUserDetails();
+      var resumeLink = userDetailsResponse['user']['resumeLink'];
 
       setState(() {
         _shouldShowUploadResume = resumeLink == null || resumeLink.isEmpty;
@@ -57,8 +69,7 @@ class _UserHomeState extends State<UserHome> {
 
   Future<void> _fetchJobTitles() async {
     try {
-      var jobs = await ApiServices
-          .fetchJobTitles(); // Call fetchJobTitles from ApiServices
+      var jobs = await ApiServices.fetchJobTitles();
       setState(() {
         _jobs = jobs;
         _totalPages = ((jobs.length / 8) + 1).ceil(); // Calculate total pages
@@ -67,6 +78,9 @@ class _UserHomeState extends State<UserHome> {
       print('Error fetching job titles: $e');
     }
   }
+
+ 
+
 
   Future<List<dynamic>> _fetchFilteredJobs(int pageNumber) async {
     try {
@@ -80,8 +94,7 @@ class _UserHomeState extends State<UserHome> {
 
         setState(() {
           _jobs = filteredJobs;
-          int totalJobs =
-              response['total_jobs'] ?? 0; // Default to 0 if not present
+          int totalJobs = response['total_jobs'] ?? 0; // Default to 0 if not present
           _totalPages = (totalJobs / 8).ceil(); // Calculate total pages
         });
 
@@ -112,8 +125,9 @@ class _UserHomeState extends State<UserHome> {
                   const Center(child: Image(image: AssetImage(kbnLogo))),
                   HomeAppBarBox(
                     context,
-                    profileImage:
-                        "${baseUrl}/${userDetails['user']['profile_image']}",
+                    profileImage: userDetails != null && userDetails!['user'] != null
+                        ? "${baseUrl}/${userDetails!['user']['profile_image']}"
+                        : '', // Check for null before using
                     T_and_C: const TaC(),
                     logOutTo: const UserLoginPage(),
                     termscolor: white,
@@ -139,8 +153,7 @@ class _UserHomeState extends State<UserHome> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40),
                       child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
                           crossAxisSpacing: 30,
                           mainAxisSpacing: 10,
@@ -162,25 +175,18 @@ class _UserHomeState extends State<UserHome> {
                                       firmname: job['company_name'].toString(),
                                       jobTitle: job['title'].toString(),
                                       jobSummary: job['job_summary'].toString(),
-                                      expLevel:
-                                          job['experience_level'].toString(),
+                                      expLevel: job['experience_level'].toString(),
                                       jobMode: job['job_mode'].toString(),
                                       jobType: job['job_type'].toString(),
-                                      keyResponsibilities:
-                                          job['key_responsibilities']
-                                              as List<dynamic>,
-                                      jobReq: job['job_requirements']
-                                          as Map<String, dynamic>,
+                                      keyResponsibilities: job['key_responsibilities'] as List<dynamic>,
+                                      jobReq: job['job_requirements'] as Map<String, dynamic>,
                                       salary: job['salary'],
                                       currentVacancy: job['vacancy'],
                                       workLocation: job['location'].toString(),
-                                      companywebsite:
-                                          job['company_website'].toString(),
+                                      companywebsite: job['company_website'].toString(),
                                       datePosted: job['created_at'].toString(),
-                                      companyImage:
-                                          job['company_profile_image'],
-                                      status:
-                                          job['application_status'].toString(),
+                                      companyImage: job['company_profile_image'],
+                                      status: job['application_status'].toString(),
                                     );
                                   },
                                 ));
@@ -195,8 +201,7 @@ class _UserHomeState extends State<UserHome> {
                               expLevel: job['experience_level'].toString(),
                               jobMode: job['job_mode'].toString(),
                               jobType: job['job_type'].toString(),
-                              companyImage:
-                                  job['company_profile_image'].toString(),
+                              companyImage: job['company_profile_image'].toString(),
                               datePosted: job['created_at'].toString(),
                               status: job['application_status'].toString(),
                             ),
@@ -235,7 +240,6 @@ class _UserHomeState extends State<UserHome> {
               ),
             ),
           ),
-
           // Conditionally show UploadMyResume based on resume availability
           if (_shouldShowUploadResume)
             UploadMyResume(

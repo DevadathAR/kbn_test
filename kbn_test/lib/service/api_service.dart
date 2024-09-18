@@ -63,6 +63,9 @@ class ApiServices {
         // 'password': "random",
         // 'email': "applicant8@gmail.com",
         // 'password': "123",
+        
+        // 'email': "deva",
+        // 'password': "deva",
         'email': email,
         'password': password,
         'loginType': "Applicant",
@@ -252,7 +255,7 @@ class ApiServices {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      // log(jsonEncode(data));
+      log(jsonEncode(data));
       return data['data'] as List;
     } else {
       throw Exception('Failed to fetch job titles');

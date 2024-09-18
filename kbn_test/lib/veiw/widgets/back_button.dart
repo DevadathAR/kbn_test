@@ -1,24 +1,20 @@
-// import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
-// Widget GoBack(context, {backpage}) {
-//   Size size = MediaQuery.of(context).size;
+Widget GoBack(BuildContext context) {
+  Size size = MediaQuery.of(context).size;
 
-//   return Column(
-//     children: [
-//       SizedBox(
-//         height: size.height * 0.2,
-//       ),
-//       Padding(
-//           padding: const EdgeInsets.only(left: 20),
-//           child: GestureDetector(
-//               onTap: () {
-//                 Navigator.push(context, MaterialPageRoute(
-//                   builder: (context) {
-//                     return backpage;
-//                   },
-//                 ));
-//               },
-//               child: const Icon(Icons.arrow_back_ios_sharp))),
-//     ],
-//   );
-// }
+  return Positioned(
+    top: size.height * 0.4, // Adjust position as needed
+    left: 20, // Adjust position as needed
+    child: GestureDetector(
+      onTap: () {
+        Navigator.pop(context); // Navigate back to the previous page
+      },
+      child: const Icon(
+        Icons.arrow_back_ios_sharp,
+        size: 30, // Adjust icon size as needed
+        color: Colors.black, // Adjust icon color as needed
+      ),
+    ),
+  );
+}

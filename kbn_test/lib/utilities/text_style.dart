@@ -39,10 +39,10 @@ class AppTextStyle{
     color: white,
   );
   static  TextStyle bodytextwhiteunderline= const TextStyle(
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: "Inter",
     fontWeight: FontWeight.w400,
-    color: white,
+    color: black,
     decoration: TextDecoration.underline,decorationColor: white
   );
   static const TextStyle logintext= TextStyle(

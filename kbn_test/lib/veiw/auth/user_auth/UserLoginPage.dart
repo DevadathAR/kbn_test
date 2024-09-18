@@ -10,6 +10,7 @@ import 'package:kbn_test/veiw/auth/user_auth/signup.dart';
 import 'package:kbn_test/veiw/screen/user_screen/UserHome.dart';
 import 'package:kbn_test/veiw/widgets/bg_widg.dart';
 import 'package:kbn_test/veiw/widgets/loginTextFile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Map<String, dynamic> userDetails = {};
 
@@ -25,16 +26,15 @@ class _UserLoginPageState extends State<UserLoginPage> {
   final TextEditingController passwordController = TextEditingController();
   bool _isChecked = false;
 
-  @override
-  void dispose() {
-    usernameController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   usernameController.dispose();
+  //   passwordController.dispose();
+  //   super.dispose();
+  // }
 
   
 Future<void> _login() async {
-  // print("ho");
     try {
       var responseData = await ApiServices.userLogin(
         usernameController.text,
@@ -44,12 +44,15 @@ Future<void> _login() async {
 
       if (responseData.containsKey('token')) {
 
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', responseData['token']);
+
         var userDetailsResponse =
             await ApiServices.fetchUserDetails();
 
-        userDetails = userDetailsResponse;
+        // userDetails = userDetailsResponse;
 
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const UserHome(),
