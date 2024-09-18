@@ -11,9 +11,9 @@ import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
 import 'package:kbn_test/veiw/auth/user_auth/userLogin.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
-import 'package:kbn_test/veiw/widgets/bg_widg.dart';
-import 'package:kbn_test/veiw/widgets/loginTextFeild.dart';
-import 'package:kbn_test/veiw/widgets/userSelection.dart';
+import 'package:kbn_test/veiw/widgets_common/bg_widg.dart';
+import 'package:kbn_test/veiw/widgets_common/loginTextFeild.dart';
+import 'package:kbn_test/veiw/screen/userScreen/userWidgets/userSelection.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -110,24 +110,12 @@ class _SignupPageState extends State<SignupPage> {
     var response = await request.send();
 
     if (response.statusCode == 201) {
-      if (role == "Company") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const CompanyLoginPage(),
-            // Pass the uploaded image here
-          ),
-        );
-      } else if (role == "Applicant") {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const UserLoginPage()),
-        );
-      }
-    } else {
-      // Error creating account
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error creating account')),
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const CompanyLoginPage(),
+          // Pass the uploaded image here
+        ),
       );
     }
   }

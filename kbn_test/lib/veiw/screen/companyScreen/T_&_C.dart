@@ -7,7 +7,7 @@ import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
 import 'package:kbn_test/veiw/screen/AdminScreen/admin_T_n_C.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/companyProfile.dart';
-import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
+import 'package:kbn_test/veiw/widgets_common/home_appbar_box.dart';
 
 class companyT_n_C extends StatelessWidget {
   const companyT_n_C({super.key});

@@ -97,3 +97,6 @@ Limitation of Liability: KBN is not liable for any direct, indirect, incidental,
 Termination: We reserve the right to terminate or suspend your access to our services at any time, with or without notice, if you violate these terms.
 Changes to Terms: We may update these terms and conditions from time to time. Continued use of our services after any changes indicates your acceptance of the new terms.
 Contact Information: If you have any questions about these terms and conditions, please contact us at [Your Contact Information].''';
+//.................................................................
+
+

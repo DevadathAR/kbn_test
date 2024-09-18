@@ -22,3 +22,36 @@ const InnactiveLoginbutton = [
   Color.fromRGBO(89, 186, 78, 0.242),
   Color.fromRGBO(19, 131, 149, 0.242)
 ];
+//...................................................................................
+
+const bluee = Color.fromARGB(255, 32, 236, 236);
+Color getStatusColor(String status) {
+  switch (status) {
+    case "SELECTED":
+      return const Color.fromARGB(255, 118, 198, 109);
+    case "Apply for this Job":
+      return Colors.teal;
+    case "REJECTED":
+      return Colors.red;
+    case "Submitted":
+      return Colors.teal;
+    default:
+      return const Color.fromARGB(
+          198, 0, 0, 0); // Default color if none of the cases match
+  }
+}
+
+Color getTxtColor(String status) {
+  switch (status) {
+    case "SELECTED":
+      return white;
+    case "Apply for this Job":
+      return white;
+    case "REJECTED":
+      return white;
+    case "Submitted":
+      return black;
+    default:
+      return white;
+  }
+}

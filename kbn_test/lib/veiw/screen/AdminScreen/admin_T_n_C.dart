@@ -3,7 +3,7 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/screen/AdminScreen/adminLogin.dart';
-import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
+import 'package:kbn_test/veiw/widgets_common/home_appbar_box.dart';
 
 class AdminTnC extends StatelessWidget {
   const AdminTnC({super.key});

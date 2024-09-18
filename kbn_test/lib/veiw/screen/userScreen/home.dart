@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/apiServices.dart';
@@ -6,233 +6,272 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
-import 'package:kbn_test/veiw/auth/user_auth/userLogin.dart';
 import 'package:kbn_test/veiw/screen/userScreen/jobDetails.dart';
 import 'package:kbn_test/veiw/screen/userScreen/userT_n_C.dart';
-import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
-import 'package:kbn_test/veiw/widgets/home_filter_box.dart';
+import 'package:kbn_test/veiw/screen/userScreen/userWidgets/home_filter_box.dart';
+import 'package:kbn_test/veiw/screen/userScreen/userWidgets/upload_resume.dart';
+import 'package:kbn_test/veiw/widgets_common/home_appbar_box.dart';
+import 'package:kbn_test/veiw/screen/userScreen/jobCards.dart';
 
-class UserHome extends StatelessWidget {
-  const UserHome({
-    super.key,
-  });
+class UserHome extends StatefulWidget {
+  const UserHome({super.key});
+
+  @override
+  _UserHomeState createState() => _UserHomeState();
+}
+
+class _UserHomeState extends State<UserHome> {
+  List<dynamic> _jobs = [];
+  int _currentPage = 1;
+  int? _totalPages = 1;
+
+  bool _shouldShowUploadResume = false; // Boolean to track resume availability
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchJobTitles();
+    _checkResumeLink(); // Check if the resume link exists when initializing
+  }
+
+  // Method to check if user has a resume link
+  Future<void> _checkResumeLink() async {
+    try {
+      userDetails = await ApiServices.fetchUserDetails(); // Fetch user details
+      var resumeLink = userDetails['user']['resumeLink'];
+
+      setState(() {
+        _shouldShowUploadResume = resumeLink == null || resumeLink.isEmpty;
+      });
+    } catch (e) {
+      print('Error fetching user details: $e');
+    }
+  }
+
+  // Method to recheck resume link after resume is uploaded
+  Future<void> _recheckResumeLink() async {
+    await _checkResumeLink(); // Recheck the resume link
+  }
+
+  bool _isLoading = true; // Initial loading state
+
+  Future<void> _fetchJobTitles() async {
+    try {
+      var jobs = await ApiServices
+          .fetchJobTitles(); // Call fetchJobTitles from ApiServices
+
+      print("Fetched jobs: $jobs");
+
+      setState(() {
+        _jobs = jobs;
+        _totalPages = ((jobs.length / 8) + 1).ceil(); // Calculate total pages
+      });
+    } catch (e) {
+      print('Error fetching job titles: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<List<dynamic>> _fetchFilteredJobs(int pageNumber) async {
+    try {
+      var response = await ApiServices.fetchFilteredJobs(
+        pageNumber: pageNumber,
+        pageSize: 8,
+      );
+
+      List<dynamic> filteredJobs = response['data'] as List<dynamic>;
+
+      setState(() {
+        _jobs = filteredJobs;
+        int totalJobs =
+            response['total_jobs'] ?? 0; // Default to 0 if not present
+        _totalPages = (totalJobs / 8).ceil(); // Calculate total pages
+      });
+
+      return filteredJobs;
+    } catch (e) {
+      print('Error fetching filtered jobs: $e');
+      return [];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Row(
-        children: [
-          SingleChildScrollView(
-            child: SizedBox(
-              height: size.height,
-              width: size.width * 1,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Center(child: Image(image: AssetImage(kbnLogo))),
-                  HomeAppBarBox(context,
-                      T_and_C: const user_T_n_C(),
-                      profileImage:
-                          "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
-                      // logOutTo: const UserLoginPage(),
-                      ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  HomeFilterBox(context),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 50),
-                    child: Text(
-                      latestjob,
-                      style: AppTextStyle.tactexthead,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 40),
-                      child: SizedBox(
-                        child: GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 4,
-                                  crossAxisSpacing: 30,
-                                  mainAxisSpacing: 10,
-                                  childAspectRatio: 261 / 190),
-                          itemCount: 8,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) {
-                                      return const JobDetails();
-                                    },
-                                  ));
-                                },
-                                child: const LatestJobCard());
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator()) // Show loading indicator
+          : Stack(
+              children: [
+                SingleChildScrollView(
+                  child: SizedBox(
+                    height: size.height,
+                    width: size.width,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Center(child: Image(image: AssetImage(kbnLogo))),
+                        HomeAppBarBox(
+                          context,
+                          profileImage:
+                              "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
+                          T_and_C: const user_T_n_C(),
+                          termscolor: white,
+                        ),
+                        const SizedBox(height: 10),
+                        HomeFilterBox(
+                          onFilterApplied: (filteredJobs) {
+                            setState(() {
+                              _jobs = filteredJobs;
+                            });
                           },
                         ),
-                      ),
+                        const SizedBox(height: 10),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 50),
+                          child: Text(
+                            latestjob,
+                            style: AppTextStyle.tactexthead,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 40),
+                            child: GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4,
+                                crossAxisSpacing: 30,
+                                mainAxisSpacing: 10,
+                                childAspectRatio: 261 / 190,
+                              ),
+                              itemCount: _jobs.length,
+                              itemBuilder: (context, index) {
+                                final job = _jobs[index];
+                                return GestureDetector(
+                                  onTap: () async {
+                                    try {
+                                      await ApiServices.postJobDetails(
+                                          job['jobId']);
+                                      Navigator.push(context, MaterialPageRoute(
+                                        builder: (context) {
+                                          return JobDetails(
+                                            jobId: job['jobId'],
+                                            companyId: job['companyId'],
+                                            firmname:
+                                                job['company_name'].toString(),
+                                            jobTitle: job['title'].toString(),
+                                            jobSummary:
+                                                job['job_summary'].toString(),
+                                            expLevel: job['experience_level']
+                                                .toString(),
+                                            jobMode: job['job_mode'].toString(),
+                                            jobType: job['job_type'].toString(),
+                                            keyResponsibilities:
+                                                job['key_responsibilities']
+                                                    as List<dynamic>,
+                                            jobReq: job['job_requirements']
+                                                as Map<String, dynamic>,
+                                            salary: job['salary'],
+                                            currentVacancy: job['vacancy'],
+                                            workLocation:
+                                                job['location'].toString(),
+                                            companywebsite:
+                                                job['company_website']
+                                                    .toString(),
+                                            datePosted:
+                                                job['created_at'].toString(),
+                                            companyImage:
+                                                job['company_profile_image'],
+                                            status: job['application_status']
+                                                .toString(),
+                                          );
+                                        },
+                                      ));
+                                    } catch (error) {
+                                      print('Error in onTap: $error');
+                                    }
+                                  },
+                                  child: LatestJobCard(
+                                    firmname: job['company_name'].toString(),
+                                    jobTitle: job['title'].toString(),
+                                    jobSummary: job['job_summary'].toString(),
+                                    expLevel:
+                                        job['experience_level'].toString(),
+                                    jobMode: job['job_mode'].toString(),
+                                    jobType: job['job_type'].toString(),
+                                    companyImage:
+                                        job['company_profile_image'].toString(),
+                                    datePosted: job['created_at'].toString(),
+                                    status:
+                                        job['application_status'].toString(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            PaginatedButton(
+                              onPressed: () async {
+                                if (_currentPage > 1) {
+                                  setState(() => _currentPage--);
+                                  await _fetchFilteredJobs(_currentPage);
+                                }
+                              },
+                              child: const Text('Previous'),
+                            ),
+                            const SizedBox(width: 20),
+                            Text('Page $_currentPage of $_totalPages'),
+                            const SizedBox(width: 20),
+                            PaginatedButton(
+                              onPressed: () async {
+                                if (_currentPage < _totalPages!) {
+                                  setState(() => _currentPage++);
+                                  await _fetchFilteredJobs(_currentPage);
+                                }
+                              },
+                              child: const Text('Next'),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+                if (_shouldShowUploadResume)
+                  UploadMyResume(
+                    onResumeUploaded: () async {
+                      await _recheckResumeLink(); // Call to recheck resume link after upload
+                    },
+                  ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }
 
-class LatestJobCard extends StatefulWidget {
-  const LatestJobCard({super.key});
+// Create a PaginatedButton widget
+class PaginatedButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final Widget child;
 
-  @override
-  _LatestJobCardState createState() => _LatestJobCardState();
-}
-
-class _LatestJobCardState extends State<LatestJobCard> {
-  bool _isApplied = false;
+  const PaginatedButton(
+      {super.key, required this.onPressed, required this.child});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 10, bottom: 20, left: 10),
-      child: Container(
-        decoration: const BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: black,
-            )
-          ],
-          borderRadius: BorderRadius.all(
-            Radius.circular(8),
-          ),
-          color: white,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Image(
-                    image: AssetImage(unknownPng),
-                    color: green,
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        "position",
-                        style: AppTextStyle.postheadtxt,
-                      ),
-                      Text(
-                        "name",
-                        style: AppTextStyle.tactext,
-                      ),
-                    ],
-                  ),
-                  Image(
-                    image: AssetImage(likePng),
-                    color: black,
-                  )
-                ],
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              child: Text(
-                cardcontent, maxLines: 3, // Limit the text to 3 lines
-                overflow: TextOverflow
-                    .ellipsis, // Show ellipsis if the text exceeds 3 lines
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Requirments(txt: "Requirments 1"),
-                Requirments(txt: "Requirments 2"),
-                Requirments(txt: "Requirments 3"),
-              ],
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              child: Divider(),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, bottom: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isApplied = true; // set to true only once
-                      });
-                    },
-                    child: Container(
-                      height: 50,
-                      width: 150,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(4)),
-                        color: _isApplied
-                            ? green
-                            : green, // update the color based on the state
-                      ),
-                      child: Center(
-                        child: Text(
-                          _isApplied
-                              ? "Applied"
-                              : "Apply for this job", // update the text based on the state
-                          style: AppTextStyle.applytxt,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(right: 5),
-                        child: Image(image: AssetImage(clockPng)),
-                      ),
-                      Text("posted X days ago")
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: child,
     );
   }
-}
-
-Widget Requirments({txt}) {
-  return Container(
-    height: 20,
-    width: 90,
-    decoration: const BoxDecoration(
-      borderRadius: BorderRadius.all(Radius.circular(4)),
-      color: green,
-    ),
-    child: Center(
-        child: Text(
-      txt,
-      style: AppTextStyle.buttontxt,
-    )),
-  );
 }

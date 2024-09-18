@@ -12,8 +12,8 @@ import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/T_&_C.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
-import 'package:kbn_test/veiw/widgets/boxBTN.dart';
-import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
+import 'package:kbn_test/veiw/widgets_common/boxBTN.dart';
+import 'package:kbn_test/veiw/widgets_common/home_appbar_box.dart';
 
 class CompanyProfilePage extends StatefulWidget {
   const CompanyProfilePage({super.key});

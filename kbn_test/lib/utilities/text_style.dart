@@ -24,14 +24,14 @@ class AppTextStyle {
       fontSize: 12,
       fontFamily: "Inter",
       fontWeight: FontWeight.w400,
-      color: white,
+      color: black,
       decoration: TextDecoration.underline,
-      decorationColor: white);
+      decorationColor: black);
   static const TextStyle logoNameText = TextStyle(
     fontSize: 20,
     fontFamily: "Poppins",
     fontWeight: FontWeight.w600,
-    color: black,
+    color: white,
   );
   static const TextStyle firmHead = TextStyle(
     fontSize: 25,
@@ -131,7 +131,7 @@ class AppTextStyle {
     fontWeight: FontWeight.w400,
     color: black,
   );
-   static const TextStyle normalTextGrey = TextStyle(
+  static const TextStyle normalTextGrey = TextStyle(
     fontSize: 10,
     fontFamily: "Poppins",
     fontWeight: FontWeight.w400,

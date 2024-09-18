@@ -8,11 +8,11 @@ import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/T_&_C.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/companyProfile.dart';
-import 'package:kbn_test/veiw/widgets/boldText.dart';
-import 'package:kbn_test/veiw/widgets/boxBTN.dart';
-import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
-import 'package:kbn_test/veiw/widgets/normalText.dart';
-import 'package:kbn_test/veiw/widgets/statusUpdate.dart';
+import 'package:kbn_test/veiw/widgets_common/boldText.dart';
+import 'package:kbn_test/veiw/widgets_common/boxBTN.dart';
+import 'package:kbn_test/veiw/widgets_common/home_appbar_box.dart';
+import 'package:kbn_test/veiw/widgets_common/normalText.dart';
+import 'package:kbn_test/veiw/widgets_common/statusUpdate.dart';
 
 class CompanyHomePage extends StatefulWidget {
   const CompanyHomePage({super.key});

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/apiServices.dart';
+import 'package:kbn_test/service/userApiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
@@ -8,8 +9,8 @@ import 'package:kbn_test/veiw/auth/forgotPass.dart';
 import 'package:kbn_test/veiw/auth/signUp.dart';
 import 'package:kbn_test/veiw/screen/AdminScreen/adminHome.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
-import 'package:kbn_test/veiw/widgets/loginTextFeild.dart';
-import 'package:kbn_test/veiw/widgets/bg_widg.dart';
+import 'package:kbn_test/veiw/widgets_common/loginTextFeild.dart';
+import 'package:kbn_test/veiw/widgets_common/bg_widg.dart';
 
 import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,13 +45,13 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
       String password = _passwordController.text;
 
       try {
-        var responseData = await ApiServices.company_login(email, password);
+        var responseData = await ApiServices.userLogin(email, password);
 
         if (responseData.containsKey('token') &&
             responseData.containsKey('role')) {
           var token = responseData['token'];
           var role = responseData['role'];
-          ApiServices.headers['Authorization'] = "Bearer $token";
+          // ApiServices.headers['Authorization'] = "Bearer $token";
           // getting User Details
           var userDetailsResponse = await ApiServices.fetchUserDetails();
           userDetails = userDetailsResponse;
@@ -58,6 +59,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
           // Store login state in shared preferences
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token);
+          await prefs.setString('role', role); // Save the role
 
           if (role == 'Company') {
             Navigator.pushReplacement(

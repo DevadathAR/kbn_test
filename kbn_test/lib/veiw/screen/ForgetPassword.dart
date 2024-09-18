@@ -5,9 +5,9 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/widgets/bg_widg.dart';
+import 'package:kbn_test/veiw/widgets_common/bg_widg.dart';
 import 'package:http/http.dart' as http;
-import 'package:kbn_test/veiw/widgets/loginTextFeild.dart';
+import 'package:kbn_test/veiw/widgets_common/loginTextFeild.dart';
 
 class FrogetPswd extends StatefulWidget {
   const FrogetPswd({super.key});
