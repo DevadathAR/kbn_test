@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
@@ -12,6 +13,8 @@ import 'package:kbn_test/veiw/widgets/boldText.dart';
 import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets/normalText.dart';
+import 'package:kbn_test/veiw/widgets/statusUpdate.dart';
+import 'package:kbn_test/veiw/widgets/warningDialogue.dart';
 
 import '../../widgets/boxBTN.dart';
 
@@ -25,6 +28,7 @@ class AdminHomePage extends StatefulWidget {
 class _AdminHomePageState extends State<AdminHomePage> {
   List<dynamic> companyList = [];
   List<dynamic> approvedCompanies = [];
+  // List<dynamic> selectedCompanies = [];
 
   @override
   void initState() {
@@ -52,15 +56,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
     });
   }
 
-  // Method to add selected applicant
-  void addSelectedApplicant(dynamic applicant) {
-    setState(() {
-      if (!approvedCompanies.contains(applicant)) {
-        approvedCompanies.add(applicant);
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -79,7 +74,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 profileImage:
                     "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
                 T_and_C: const AdminTnC(),
-                logOutTo: const AdminLogIn()),
+                // logOutTo: const AdminLogIn(),
+                ),
 
             Container(
               padding: const EdgeInsets.all(16.0),
@@ -94,62 +90,39 @@ class _AdminHomePageState extends State<AdminHomePage> {
                         Expanded(
                           flex: 2,
                           child: CustomTable(
-                            headers: const [
-                              'Date',
-                              'Company name',
-                              'KBN code',
-                              'Website Link',
-                              'LTD.',
-                              'Status'
-                            ],
-                            // rows:approvedCompanies.map((approved){
-                            //   return CustomTableRow(cells: cells)
-                            // }).toList()
+                              headers: const [
+                                'Date',
+                                'Company name',
+                                'KBN code',
+                                'Website Link',
+                                'LTD.',
+                                'Status'
+                              ],
+                              rows: approvedCompanies.map((approved) {
+                                // Format the date
+                                String formattedDate =
+                                    approved['last_admin_status'] != null
+                                        ? DateFormat('yyyy-MM-dd').format(
+                                            DateTime.parse(
+                                                approved['last_admin_status']))
+                                        : "N/A";
 
-                            rows: [
-                              CustomTableRow(
-                                cells: [
-                                  '19-08-2024',
-                                  'ODAU APPS',
-                                  '0369',
-                                  'link',
-                                  'PVT.ltd',
-                                  const CustomStatusColumn(),
-                                ],
-                              ),
-                              CustomTableRow(
-                                cells: [
-                                  '19-08-2024',
-                                  'ODAU APPS',
-                                  '0369',
-                                  'link',
-                                  'PVT.ltd',
-                                  const CustomStatusColumn(),
-                                ],
-                              ),
-                              CustomTableRow(
-                                cells: [
-                                  '19-08-2024',
-                                  'ODAU APPS',
-                                  '0369',
-                                  'link',
-                                  'PVT.ltd',
-                                  const CustomStatusColumn(),
-                                ],
-                              ),
-                              CustomTableRow(
-                                cells: [
-                                  '19-08-2024',
-                                  'ODAU APPS',
-                                  '0369',
-                                  'link',
-                                  'PVT.ltd',
-                                  const CustomStatusColumn(),
-                                ],
-                              ),
-                              // Add more rows here
-                            ],
-                          ),
+                                return CustomTableRow(cells: [
+                                  formattedDate,
+                                  approved['name'] ?? "N?A",
+                                  approved['kbn_code'] ?? "N/A",
+                                  approved['company_website'] ?? "N/A",
+                                  approved['business_type'] ?? "N/A",
+                                  CustomStatusColumn(
+                                    status: approved['admin_status'],
+                                    companyId: approved['userId'],
+                                    onSelect: () {},
+                                    onStatusChange: () {
+                                      _fetchCompaniesData();
+                                    },
+                                  )
+                                ]);
+                              }).toList()),
                         ),
                         const SizedBox(width: 16),
                         // Right Section - Selected Applicants
@@ -163,6 +136,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                 company['company_website'],
                                 CustomContactColumn(
                                   companyId: company['userId'],
+                                  onApproval: _fetchCompaniesData,
                                 ),
                               ]);
                             }).toList(),
@@ -258,7 +232,17 @@ class CustomTableHeader extends StatelessWidget {
 }
 
 class CustomStatusColumn extends StatefulWidget {
-  const CustomStatusColumn({super.key});
+  final String status;
+  final VoidCallback onSelect; // Callback for when Select is pressed
+  final int companyId; // Add the applicationId as a parameter
+  final VoidCallback onStatusChange; // Callback to refresh data
+  const CustomStatusColumn({
+    super.key,
+    required this.status,
+    required this.onSelect,
+    required this.companyId,
+    required this.onStatusChange,
+  });
 
   @override
   _CustomStatusColumnState createState() => _CustomStatusColumnState();
@@ -267,10 +251,32 @@ class CustomStatusColumn extends StatefulWidget {
 class _CustomStatusColumnState extends State<CustomStatusColumn> {
   String status = '';
 
-  void _setStatus(String newStatus) {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // status = widget.status;
+  }
+
+  void _setStatus(String newStatus) async {
     setState(() {
       status = newStatus;
     });
+    // Proceed with the API call
+    try {
+      await ApiServices.updateAdminStatus(newStatus, widget.companyId);
+      // Display a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Status updated to $newStatus successfully!')),
+      );
+      widget.onStatusChange();
+    } catch (e) {
+      print('Error updating status: $e');
+      // Handle the error case
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating status: $e')),
+      );
+    }
   }
 
   @override
@@ -278,66 +284,27 @@ class _CustomStatusColumnState extends State<CustomStatusColumn> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (status != 'REJECTED')
-          _buildStatusText(
-            'SELECT', // shortText
-            'SELECTED', // long TExt
-            const Color(0xFF138395), // Color when selected
-            'Select status',
-            initialColor: const Color(0xFF138395), // Initial color for SELECT
-          ),
+        StatusButton(
+          text: 'SELECT',
+          textColor: const Color(0xFF138395), // tealblue color
+          onTap: () => _setStatus('SELECTED'),
+        ),
         const SizedBox(height: 10),
-        if (status != 'SELECTED')
-          _buildStatusText(
-            'REJECT',
-            'REJECTED',
-            const Color(0xFFEB1D1D), // Color when selected
-            'Reject status',
-            initialColor: Colors.red, // Initial color for REJECT
-          ),
+        StatusButton(
+          text: 'REJECT',
+          textColor: Colors.red,
+          onTap: () => _setStatus('REJECTED'),
+        ),
       ],
-    );
-  }
-
-  Widget _buildStatusText(
-    String shortText,
-    String longText,
-    Color color,
-    String semanticLabel, {
-    required Color initialColor,
-  }) {
-    return GestureDetector(
-      onTap: () => _setStatus(longText),
-      child: Container(
-        width: 80,
-        height: 15,
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.black, // Border color
-            width: status == longText ? 0.01 : 0.5, // Border width
-          ),
-          borderRadius: BorderRadius.circular(1.0), // Optional: Rounded corners
-        ),
-        child: Text(
-          status == longText ? longText : shortText,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: status == longText ? color : initialColor,
-            fontSize: 10,
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w500,
-            height: 1.5,
-          ),
-          semanticsLabel: semanticLabel,
-        ),
-      ),
     );
   }
 }
 
 class CustomContactColumn extends StatefulWidget {
+  final VoidCallback onApproval;
   final int companyId;
-  const CustomContactColumn({super.key, required this.companyId});
+  const CustomContactColumn(
+      {super.key, required this.companyId, required this.onApproval});
 
   @override
   State<CustomContactColumn> createState() => _CustomContactColumnState();
@@ -381,7 +348,8 @@ class _CustomContactColumnState extends State<CustomContactColumn> {
         onTap: () async {
           await fetchCompanyDetails(widget.companyId);
           if (companyDetails != null) {
-            showProfileDialog(context); // Adding onTap function
+            showProfileDialog(
+                context, widget.onApproval); // Adding onTap function
           }
         },
         //  showProfileDialog(context), // Adding onTap function
@@ -403,7 +371,7 @@ class _CustomContactColumnState extends State<CustomContactColumn> {
     );
   }
 
-  void showProfileDialog(BuildContext context) {
+  void showProfileDialog(BuildContext context, VoidCallback onApproval) {
     showDialog(
       context: context,
       barrierColor: semitransp,
@@ -457,11 +425,12 @@ class _CustomContactColumnState extends State<CustomContactColumn> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const SizedBox(height: 10),
-                                  boldText(
-                                      text: companyDetails?['about_company'],
-                                      size: 16),
+                                  boldText(text: "About Company", size: 16),
                                   // Summary description
-                                  normalText(text: profileSum),
+                                  normalText(
+                                    text: companyDetails?['about_company'] ??
+                                        "N/A",
+                                  ),
                                   const SizedBox(height: 10),
                                 ],
                               ),
@@ -476,10 +445,12 @@ class _CustomContactColumnState extends State<CustomContactColumn> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 boldText(
-                                    text: companyDetails?['name'], size: 15),
+                                    text: companyDetails?['name'] ?? "N/A",
+                                    size: 15),
                                 const SizedBox(height: 5),
                                 boldText(
-                                    text: companyDetails?['company_website'],
+                                    text: companyDetails?['company_website'] ??
+                                        "N/A",
                                     size: 15),
                               ],
                             ),
@@ -494,7 +465,20 @@ class _CustomContactColumnState extends State<CustomContactColumn> {
                               width: 105,
                               height: 25,
                               child: GestureDetector(
-                                onTap: () => (), // Adding onTap function
+                                onTap: () async {
+                                  await showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return WarningDialog(
+                                            title: "Confirm Approval",
+                                            content:
+                                                'Are you sure you want to approve this company?',
+                                            onConfirm: () {
+                                              approveCompany(onApproval);
+                                            });
+                                        // Adding onTap function
+                                      });
+                                },
                                 child: const Center(
                                   child: Text(
                                     'APPROVE',
@@ -518,5 +502,34 @@ class _CustomContactColumnState extends State<CustomContactColumn> {
         );
       },
     );
+  }
+
+  bool isApproving = false;
+
+  void approveCompany(VoidCallback onApproval) async {
+    setState(() {
+      isApproving = true; // Start loading
+    });
+    try {
+      await ApiServices.approveCompany(widget.companyId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Company approved successfully!'),
+        ),
+      );
+      onApproval();
+      // Dismiss the dialog after success
+      Navigator.of(context).pop();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to approve company: $e'),
+        ),
+      );
+    } finally {
+      setState(() {
+        isApproving = false; // Stop loading
+      });
+    }
   }
 }

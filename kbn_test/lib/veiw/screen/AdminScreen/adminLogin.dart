@@ -7,8 +7,8 @@ import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
+import 'package:kbn_test/veiw/auth/forgotPass.dart';
 import 'package:kbn_test/veiw/screen/AdminScreen/adminHome.dart';
-import 'package:kbn_test/veiw/widgets/error.dart';
 import 'package:kbn_test/veiw/widgets/loginTextFeild.dart';
 import 'package:kbn_test/veiw/widgets/bg_widg.dart';
 
@@ -53,7 +53,7 @@ class _AdminLogInState extends State<AdminLogIn> {
           print("Token$token");
 
           var userDetailsResponse = await ApiServices.fetchUserDetails();
-          print("Admin Details$userDetailsResponse");
+          // print("Admin Details$userDetailsResponse");
 
           userDetails = userDetailsResponse;
 
@@ -148,7 +148,7 @@ class _AdminLogInState extends State<AdminLogIn> {
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
-                              return ErrorPage("Forget");
+                              return FrogetPswd();
                             },
                           ));
                         },

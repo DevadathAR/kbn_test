@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kbn_test/service/apiServices.dart';
@@ -11,6 +12,7 @@ import 'package:kbn_test/veiw/widgets/boldText.dart';
 import 'package:kbn_test/veiw/widgets/boxBTN.dart';
 import 'package:kbn_test/veiw/widgets/home_appbar_box.dart';
 import 'package:kbn_test/veiw/widgets/normalText.dart';
+import 'package:kbn_test/veiw/widgets/statusUpdate.dart';
 
 class CompanyHomePage extends StatefulWidget {
   const CompanyHomePage({super.key});
@@ -31,10 +33,10 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
     super.initState();
   }
 
-  Future<void> _fetchUserData() async {
-    var userDetailsResponse = await ApiServices.fetchUserDetails();
-    userDetails = userDetailsResponse;
-  }
+  // Future<void> _fetchUserData() async {
+  //   var userDetailsResponse = await ApiServices.fetchUserDetails();
+  //   userDetails = userDetailsResponse;
+  // }
 
   // Method to fetch applicants data
   Future<void> _fetchApplicantsData() async {
@@ -69,38 +71,105 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: SingleChildScrollView(
-        // Enables scrolling for smaller screens
-        child: Column(
-          children: [
-            Image.asset(
-              kbnLogo, // Kbn Logo
-              height: size.width < 600
-                  ? 30
-                  : 40, // Adjust logo size for small screens
-            ),
-            HomeAppBarBox(
-              context,
-              T_and_C: const companyT_n_C(),
-              logOutTo: const CompanyLoginPage(),
-              profilePage: const CompanyProfilePage(),
-              home: const CompanyHomePage(),
-              profileImage:
-                  "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  if (constraints.maxWidth > 800) {
-                    // Wide screen layout
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Left Section - Applicant Details
-                        Expanded(
-                          flex: 2,
-                          child: CustomTable(
+      body: Column(
+        children: [
+          Image.asset(
+            kbnLogo, // Kbn Logo
+            height: size.width < 600
+                ? 30
+                : 40, // Adjust logo size for small screens
+          ),
+          HomeAppBarBox(
+            context,
+            T_and_C: const companyT_n_C(),
+            // logOutTo: const CompanyLoginPage(),
+            profilePage: const CompanyProfilePage(),
+            home: const CompanyHomePage(),
+            profileImage:
+                "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (constraints.maxWidth > 800) {
+                      // Wide screen layout
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Left Section - Applicant Details
+                          Expanded(
+                            flex: 2,
+                            child: CustomTable(
+                              headers: const [
+                                'Date',
+                                'Applicant name',
+                                'Location',
+                                'Designation',
+                                'Resume',
+                                'Status'
+                              ],
+                              rows: applicationsList.map((application) {
+                                // Format the date
+                                String formattedDate =
+                                    DateFormat('yyyy-MM-dd').format(
+                                  DateTime.parse(application['created_at']),
+                                );
+
+                                return CustomTableRow(
+                                  cells: [
+                                    formattedDate, // Application date
+                                    application[
+                                        'applicantName'], // Applicant name
+                                    application['location'], // Location
+                                    application['designation'], // Designation
+                                    application['resumeLink'] ??
+                                        'N/A', // Resume link
+                                    CustomStatusColumn(
+                                      status: application['status'],
+                                      applicationId:
+                                          application['applicationId'],
+                                      onSelect: () {
+                                        addSelectedApplicant(
+                                            application['applicationId']);
+                                      },
+                                      onStatusChange: _fetchApplicantsData,
+                                    ) // Status
+                                  ],
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          // Right Section - Selected Applicants
+                          Expanded(
+                            flex: 1,
+                            child: CustomTable(
+                              headers: const ['Name', 'Designation', 'Contact'],
+                              rows: selectedApplicants.map((applicant) {
+                                return CustomTableRow(
+                                  cells: [
+                                    applicant['applicantName'],
+                                    applicant['designation'],
+                                    CustomContactColumn(
+                                      designation: applicant['designation'],
+                                      applicantId: applicant['userId'],
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      // Small screen layout
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomTable(
                             headers: const [
                               'Date',
                               'Applicant name',
@@ -133,17 +202,13 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                                           application['applicationId']);
                                     },
                                     onStatusChange: _fetchApplicantsData,
-                                  ) // Status
+                                  ), // Status
                                 ],
                               );
                             }).toList(),
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        // Right Section - Selected Applicants
-                        Expanded(
-                          flex: 1,
-                          child: CustomTable(
+                          const SizedBox(height: 16),
+                          CustomTable(
                             headers: const ['Name', 'Designation', 'Contact'],
                             rows: selectedApplicants.map((applicant) {
                               return CustomTableRow(
@@ -151,81 +216,21 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                                   applicant['applicantName'],
                                   applicant['designation'],
                                   CustomContactColumn(
-                                    designation: applicant['designation'],
-                                    applicantId: applicant['userId'],
-                                  ),
+                                      designation: applicant['designation'],
+                                      applicantId: applicant['userId']),
                                 ],
                               );
                             }).toList(),
                           ),
-                        ),
-                      ],
-                    );
-                  } else {
-                    // Small screen layout
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomTable(
-                          headers: const [
-                            'Date',
-                            'Applicant name',
-                            'Location',
-                            'Designation',
-                            'Resume',
-                            'Status'
-                          ],
-                          rows: applicationsList.map((application) {
-                            // Format the date
-                            String formattedDate =
-                                DateFormat('yyyy-MM-dd').format(
-                              DateTime.parse(application['created_at']),
-                            );
-
-                            return CustomTableRow(
-                              cells: [
-                                formattedDate, // Application date
-                                application['applicantName'], // Applicant name
-                                application['location'], // Location
-                                application['designation'], // Designation
-                                application['resumeLink'] ??
-                                    'N/A', // Resume link
-                                CustomStatusColumn(
-                                  status: application['status'],
-                                  applicationId: application['applicationId'],
-                                  onSelect: () {
-                                    addSelectedApplicant(
-                                        application['applicationId']);
-                                  },
-                                  onStatusChange: _fetchApplicantsData,
-                                ), // Status
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                        const SizedBox(height: 16),
-                        CustomTable(
-                          headers: const ['Name', 'Designation', 'Contact'],
-                          rows: selectedApplicants.map((applicant) {
-                            return CustomTableRow(
-                              cells: [
-                                applicant['applicantName'],
-                                applicant['designation'],
-                                CustomContactColumn(
-                                    designation: applicant['designation'],
-                                    applicantId: applicant['userId']),
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    );
-                  }
-                },
+                        ],
+                      );
+                    }
+                  },
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -366,48 +371,16 @@ class _CustomStatusColumnState extends State<CustomStatusColumn> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        GestureDetector(
+        StatusButton(
+          text: 'SELECT',
+          textColor: const Color(0xFF138395), // tealblue color
           onTap: () => _setStatus('SELECTED'),
-          child: Container(
-            width: 80,
-            height: 15, // Simplified button height
-            alignment: Alignment.center, // Center align the text
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-              borderRadius: BorderRadius.circular(4.0),
-            ),
-            child: const Text(
-              'SELECT', // Static text for the button
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 10,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w500,
-                  color: tealblue),
-            ),
-          ),
         ),
         const SizedBox(height: 10),
-        GestureDetector(
+        StatusButton(
+          text: 'REJECT',
+          textColor: Colors.red,
           onTap: () => _setStatus('REJECTED'),
-          child: Container(
-            width: 80,
-            height: 15, // Simplified button height
-            alignment: Alignment.center, // Center align the text
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-              borderRadius: BorderRadius.circular(4.0),
-            ),
-            child: const Text(
-              'REJECT', // Static text for the button
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 10,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w500,
-                  color: Colors.red),
-            ),
-          ),
         ),
       ],
     );
@@ -439,7 +412,7 @@ class _CustomContactColumnState extends State<CustomContactColumn> {
     try {
       var details = await ApiServices.fetchApplicantDetails(widget.applicantId);
 
-      print('viewsdDetails$details');
+      // print('viewsdDetails$details');
       setState(() {
         applicantDetails = details;
         isLoading = false;
@@ -514,7 +487,6 @@ class _CustomContactColumnState extends State<CustomContactColumn> {
                               image: applicantDetails?['user']
                                           ['profile_image'] !=
                                       null
-
                                   ? NetworkImage(
                                       "${ApiServices.baseUrl}/${applicantDetails?['user']['profile_image']}")
                                   : const AssetImage(compnyLogo)

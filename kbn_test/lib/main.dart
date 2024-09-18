@@ -30,10 +30,21 @@ class MainApp extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
-          } else if (snapshot.data == true) {
-            return const AdminHomePage();
+          } else if (snapshot.hasData && snapshot.data is String) {
+            return const CompanyLoginPage();
           } else {
-            return const AdminLogIn();
+            //Role Based navigation
+            switch (snapshot.data) {
+              case 'Company':
+                return const CompanyHomePage();
+              case 'Applicant':
+                return const UserHome();
+              case 'Admin':
+                return const AdminHomePage();
+              default:
+                return const CompanyLoginPage();
+            }
+            // return const CompanyLoginPage();
           }
         },
       ),
@@ -45,19 +56,35 @@ class MainApp extends StatelessWidget {
     );
   }
 
-  Future<bool> _checkLoginStatus() async {
+  // Future<String?> _checkLoginStatus() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   var token = prefs.getString('token');
+  //   if (token == null) {
+  //     return null;
+  //   } else {
+  //     ApiServices.headers['Authorization'] = "Bearer $token";
+
+  //     // print('token:-$token');
+  //     var userDetailsResponse = await ApiServices.fetchUserDetails();
+  //     userDetails = userDetailsResponse;
+
+  //     return null;
+  //   }
+  // }
+
+  Future<String?> _checkLoginStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString('token');
+    String? token = prefs.getString('token');
+
     if (token == null) {
-      return false;
+      return null; // Not logged in
     } else {
       ApiServices.headers['Authorization'] = "Bearer $token";
 
-      // print('token:-$token');
       var userDetailsResponse = await ApiServices.fetchUserDetails();
       userDetails = userDetailsResponse;
 
-      return true;
+      return null;
     }
   }
 }

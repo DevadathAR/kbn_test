@@ -4,12 +4,13 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Widget HomeAppBarBox(BuildContext context,
     {Widget? T_and_C,
-    Widget? logOutTo,
+    // Widget? logOutTo,
     Widget? profilePage,
     String? profileImage,
     Widget? home}) {
@@ -55,7 +56,7 @@ Widget HomeAppBarBox(BuildContext context,
                   icon: logOutPng,
                   iconcolor: Colors.transparent,
                   isLogout: true,
-                  logOutTo: logOutTo,
+                  logOutTo: const CompanyLoginPage(),
                   backHome: home),
             ],
           ),

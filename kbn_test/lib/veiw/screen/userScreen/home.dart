@@ -37,7 +37,8 @@ class UserHome extends StatelessWidget {
                       T_and_C: const user_T_n_C(),
                       profileImage:
                           "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
-                      logOutTo: const UserLoginPage()),
+                      // logOutTo: const UserLoginPage(),
+                      ),
                   const SizedBox(
                     height: 10,
                   ),

@@ -26,9 +26,11 @@ class JobDetails extends StatelessWidget {
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Center(child: Image(image: AssetImage(kbnLogo))),
-                  HomeAppBarBox(context,
-                      T_and_C: const user_T_n_C(),
-                      logOutTo: const UserLoginPage()),
+                  HomeAppBarBox(
+                    context,
+                    T_and_C: const user_T_n_C(),
+                    // logOutTo: const UserLoginPage(),
+                  ),
                   const SizedBox(
                     height: 10,
                   ),

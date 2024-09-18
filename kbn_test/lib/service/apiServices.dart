@@ -42,11 +42,11 @@ class ApiServices {
         body: jsonEncode({
           'email': email,
           'password': password,
-          'loginType': "Company",
+          // 'loginType': "Company",
         }),
         headers: headers);
 
-    print(response.body);
+    print('LpgIn Response${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -64,7 +64,6 @@ class ApiServices {
       body: jsonEncode({
         'email': email,
         'password': password,
-        'loginType': "Admin",
       }),
       headers: headers,
     );
@@ -82,7 +81,7 @@ class ApiServices {
 
     var response = await http.get(url, headers: headers);
 
-    print('userDetails${response.body}');
+    // print('userDetails${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -136,6 +135,35 @@ class ApiServices {
         'newStatus': status
       }),
     );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to update application');
+    }
+  }
+
+  // Update AddressDetails Data API
+  static Future<Map<String, dynamic>> updateAddressDetails(
+    String address,
+    String contact,
+    String businessType,
+    String website,
+  ) async {
+    var url = Uri.parse('$baseUrl/user/');
+
+    var response = await http.patch(
+      url,
+      headers: headers,
+      body: jsonEncode({
+        // Correct key-value format
+        'address': address,
+        'contact': contact,
+        'business_type': businessType,
+        'company_website': website
+      }),
+    );
+    // print('Address Updated${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -219,12 +247,12 @@ class ApiServices {
     var url = Uri.parse('$baseUrl/admin/c/pending');
 
     var response = await http.get(url, headers: headers);
-    // print('Selected${response.body}');
+    // print('Pending${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to fetch user details');
+      throw Exception('Failed to fetch pending details');
     }
   }
 
@@ -233,12 +261,12 @@ class ApiServices {
     var url = Uri.parse('$baseUrl/admin/c/approved');
 
     var response = await http.get(url, headers: headers);
-    // print('Selected${response.body}');
+    // print('Approved${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to fetch user details');
+      throw Exception('Failed to fetch Approved CompanyList');
     }
   }
 
@@ -246,7 +274,7 @@ class ApiServices {
     var url = Uri.parse('$baseUrl/admin/c/$companyId');
 
     var response = await http.get(url, headers: headers);
-    print('CompanyDetails...........${response.body}');
+    // print('CompanyDetails...........${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -257,19 +285,16 @@ class ApiServices {
 
   // Updating Approval
   static Future<Map<String, dynamic>> approveCompany(
-    String status,
-    int applicationId,
+    // String status,
+    int companyId,
   ) async {
-    var url = Uri.parse('$baseUrl/admin/c/approve');
+    var url = Uri.parse('$baseUrl/admin/c/approve/$companyId');
 
     var response = await http.patch(
       url,
       headers: headers,
-      body: jsonEncode({
-        // Correct key-value format
-        'newStatus': status
-      }),
     );
+    print(response.body);
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -279,18 +304,16 @@ class ApiServices {
   }
 
   // Updating Approval
-  static Future<Map<String, dynamic>> select_reject(
-    String status,
-    int applicationId,
-  ) async {
-    var url = Uri.parse('$baseUrl/admin/c/status');
+  static Future<Map<String, dynamic>> updateAdminStatus(
+      String status, int companyId) async {
+    var url = Uri.parse('$baseUrl/admin/c/status/$companyId');
 
     var response = await http.patch(
       url,
       headers: headers,
       body: jsonEncode({
         // Correct key-value format
-        'newStatus': status
+        'admin_status': status
       }),
     );
 

@@ -26,8 +26,11 @@ class AdminTnC extends StatelessWidget {
                   //KBN LOgO
                   const Center(child: Image(image: AssetImage(kbnLogo))),
                   // APP BAR
-                  HomeAppBarBox(context,
-                      T_and_C: const AdminTnC(), logOutTo: const AdminLogIn()),
+                  HomeAppBarBox(
+                    context,
+                    T_and_C: const AdminTnC(),
+                    // logOutTo: const AdminLogIn(),
+                  ),
                   const SizedBox(
                     height: 10,
                   ),

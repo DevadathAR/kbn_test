@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:kbn_test/service/apiServices.dart';
-import 'dart:convert';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/auth/company_auth/testPage.dart';
+import 'package:kbn_test/veiw/auth/forgotPass.dart';
 import 'package:kbn_test/veiw/auth/signUp.dart';
-import 'package:kbn_test/veiw/widgets/error.dart';
+import 'package:kbn_test/veiw/screen/AdminScreen/adminHome.dart';
+import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets/loginTextFeild.dart';
 import 'package:kbn_test/veiw/widgets/bg_widg.dart';
 
@@ -47,31 +46,42 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
       try {
         var responseData = await ApiServices.company_login(email, password);
 
-        if (responseData.containsKey('token')) {
-          // int userId = responseData['userId'];
+        if (responseData.containsKey('token') &&
+            responseData.containsKey('role')) {
           var token = responseData['token'];
+          var role = responseData['role'];
           ApiServices.headers['Authorization'] = "Bearer $token";
           // getting User Details
           var userDetailsResponse = await ApiServices.fetchUserDetails();
-
-          // print('CompanyDetails$userDetailsResponse');
-
           userDetails = userDetailsResponse;
-
-          // Fetching Applicant Data
-          submittedApplicantsData = await ApiServices.fetchSubmittedApplctns();
-          selectedApplicantsData = await ApiServices.fetchSelectedApplctns();
 
           // Store login state in shared preferences
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token);
 
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const CompanyHomePage(),
-            ),
-          ); // Navigate to home page
+          if (role == 'Company') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const CompanyHomePage(),
+              ),
+            );
+          } else if (role == 'Admin') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AdminHomePage(),
+              ),
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UserHome(),
+              ),
+            );
+          }
+          // Navigate to home page
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Invalid username or password.')),
@@ -96,158 +106,145 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
     bool isMobile = size.width < 600; // Threshold for mobile view
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            peoplebgWIdget(img: companyBg),
-
-            const Text(
-              firmName,
-              style: AppTextStyle.companyName,
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              welcomeComp,
-              style: AppTextStyle.headertext,
-            ),
-            const SizedBox(height: 30),
-
-            // Continue with email section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 0.5,
-                    color: black,
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                  ),
-                ),
-                const Text(
-                  useMail,
-                  style: AppTextStyle.bodytext,
-                ),
-                Expanded(
-                  child: Container(
-                    height: 0.5,
-                    color: black,
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            // Username and password fields
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: Column(
-                children: [
-                  LoginTextForm(
-                    controller: _emailConatroller,
-                    label: "username",
-                    hintlabel: "user_name",
-                    obscure: false,
-                  ),
-                  const SizedBox(height: 15),
-                  LoginTextForm(
-                    controller: _passwordController,
-                    label: "password",
-                    hintlabel: "* * * * *",
-                    obscure: true,
-                  ),
-                ],
-              ),
-            ),
-
-            // Forget password and remember me section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Checkbox(
-                        activeColor: white,
-                        checkColor: black,
-                        value: _isChecked,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _isChecked = value ?? false;
-                          });
-                        },
-                      ),
-                      const Text("Remember me", style: AppTextStyle.bodytext),
-                    ],
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return ErrorPage("Forget");
-                        },
-                      ));
-                    },
-                    child: const Text(forget, style: AppTextStyle.bodytext),
-                  ),
-                ],
-              ),
-            ),
-
-            // Login Button
-            GestureDetector(
-              onTap: companyLogin,
+      body: Stack(
+        children: [
+          peoplebgWIdget(img: companyBg),
+          SingleChildScrollView(
+            child: Align(
+              alignment: Alignment.centerRight,
               child: Container(
-                height: 50,
-                width: size.width * 0.8, // Dynamic button width
-                decoration: BoxDecoration(
-                  border: Border.all(color: black),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(4),
-                  ),
-                  color: _isChecked ? black : Colors.grey,
-                  gradient: LinearGradient(
-                    colors: _isChecked ? loginbutton : InnactiveLoginbutton,
-                  ),
-                ),
-                child: const Center(
-                  child: Text(
-                    "LOGIN",
-                    style: AppTextStyle.logintext,
-                  ),
+                width: size.width * 0.4,
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    const Image(image: AssetImage(kbnLogo)),
+                    const SizedBox(height: 10),
+                    const Text(firmName, style: AppTextStyle.companyName),
+                    const SizedBox(height: 40),
+                    const Text("welcome Back", style: AppTextStyle.headertext),
+                    const SizedBox(height: 30),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // continue with email
+                        Container(
+                          height: 0.5,
+                          width: 102,
+                          color: black,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          child: Text(useMail, style: AppTextStyle.bodytext),
+                        ),
+                        Container(
+                          height: 0.5,
+                          width: 102,
+                          color: black,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 30),
+                    LoginTextForm(
+                      controller: _emailConatroller, // Controller for username
+                      label: "username",
+                      hintlabel: "user_name",
+                      obscure: false,
+                    ),
+                    LoginTextForm(
+                      controller:
+                          _passwordController, // Controller for password
+                      label: "password",
+                      hintlabel: "* * * * *",
+                      obscure: true,
+                      // obscureText: true,  // To obscure the password input
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return const FrogetPswd();
+                            },
+                          ));
+                        },
+                        child: const Text(forget, style: AppTextStyle.bodytext),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Checkbox(
+                          activeColor: white,
+                          checkColor: black,
+                          value: _isChecked,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _isChecked = value ?? false;
+                            });
+                          },
+                        ),
+                        const Text(
+                          "Remember me",
+                          style: AppTextStyle.bodytext,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: companyLogin,
+                      child: Container(
+                        height: 50,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: black),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(4),
+                          ),
+                          color: _isChecked ? black : Colors.grey,
+                          gradient: LinearGradient(
+                            colors:
+                                _isChecked ? loginbutton : InnactiveLoginbutton,
+                          ),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            "LOGIN",
+                            style: AppTextStyle.logintext,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(noacc, style: AppTextStyle.bodytext),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) {
+                                return const SignupPage();
+                              },
+                            ));
+                          },
+                          child: const Text("SignUp"),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
-
-            const SizedBox(height: 30),
-
-            // Sign-up section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(noacc, style: AppTextStyle.bodytext),
-                TextButton(
-                  onPressed: () {
-                    WarningMessage(context);
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) {
-                        return const SignupPage();
-                      },
-                    ));
-                  },
-                  child: const Text("SignUp"),
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
-void WarningMessage(BuildContext context) {
+void warningMessage(BuildContext context) {
   showDialog(
     context: context,
     barrierColor: semitransp,

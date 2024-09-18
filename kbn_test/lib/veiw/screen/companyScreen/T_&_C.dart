@@ -30,7 +30,7 @@ class companyT_n_C extends StatelessWidget {
                 // APP BAR
                 HomeAppBarBox(
                   context,
-                  logOutTo: const CompanyLoginPage(),
+                  // logOutTo: const CompanyLoginPage(),
                   profilePage: const CompanyProfilePage(),
                   home: const CompanyHomePage(),
                   profileImage:

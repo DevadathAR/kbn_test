@@ -1,7 +1,10 @@
 import 'dart:typed_data';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
+import 'package:kbn_test/service/apiServices.dart';
+import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
@@ -20,11 +23,20 @@ class CompanyProfilePage extends StatefulWidget {
 }
 
 class _CompanyProfilePageState extends State<CompanyProfilePage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  // Address Feild
+  final TextEditingController addressTextController = TextEditingController();
+  final TextEditingController mailIdController = TextEditingController();
+  final TextEditingController contactController = TextEditingController();
+  final TextEditingController websiteController = TextEditingController();
+  final TextEditingController businessTypeController = TextEditingController();
+
+// JobCreation Feild
   final TextEditingController jobTitleController = TextEditingController();
   final TextEditingController jobSummaryController = TextEditingController();
   final TextEditingController jobLocationController = TextEditingController();
   final TextEditingController jobVacancyController = TextEditingController();
-  // final TextEditingController employTypeController = TextEditingController();
   final TextEditingController keyRespoController = TextEditingController();
   final TextEditingController requirementController = TextEditingController();
   final TextEditingController salaryController = TextEditingController();
@@ -47,6 +59,38 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
   // int userId = userDetails['user']['userId'];
   String? postedJobTitle;
   String? postingDate;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    fetchUserData();
+    // fetchPostedJobDetails();
+
+    // // Pre-fill text fields with existing user details
+    addressTextController.text = userDetails['user']['address'] ?? '';
+    contactController.text = userDetails['user']['contact'] ?? '';
+    websiteController.text = userDetails['user']['company_website'] ?? '';
+    businessTypeController.text = userDetails['user']['business_type'] ?? '';
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Dispose of controllers when the widget is disposed
+    addressTextController.dispose();
+    contactController.dispose();
+    websiteController.dispose();
+    businessTypeController.dispose();
+    jobTitleController.dispose();
+    jobSummaryController.dispose();
+    jobLocationController.dispose();
+    jobVacancyController.dispose();
+    keyRespoController.dispose();
+    salaryController.dispose();
+    educationController.dispose();
+    skillsController.dispose();
+    super.dispose();
+  }
 
   Future<void> createJob() async {
     Map<String, dynamic> jobData = {
@@ -89,10 +133,40 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
     }
   }
 
+  Future<void> _updateAddressDetails() async {
+    try {
+      // Call the API to update the details
+      await ApiServices.updateAddressDetails(
+        addressTextController.text,
+        contactController.text,
+        businessTypeController.text,
+        websiteController.text,
+      );
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Details updated successfully!')),
+      );
+    } catch (e) {
+      // Show error message if the API call fails
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update details: $e')),
+      );
+    }
+  }
+
+  // Validation function for required text fields
+  String? validateRequired(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field is required';
+    }
+    return null;
+  }
+
 // Define the validator function
   String? numberValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter a number';
+      return 'This field is required';
     }
     final intValue = int.tryParse(value);
     if (intValue == null) {
@@ -103,20 +177,12 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
     return null; // Return null if the input is valid
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    fetchUserData();
-    // fetchPostedJobDetails();
-    super.initState();
-  }
-
   Future<void> fetchUserData() async {
     try {
       var userData = await ApiServices.fetchUserDetails();
       setState(() {
         userDetails = userData;
-        print("userDetails:-$userDetails");
+        // print("userDetails:-$userDetails");
         // userId = userDetails['user']['userId'];
       });
     } catch (e) {
@@ -159,7 +225,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
         HomeAppBarBox(
           context,
           T_and_C: const companyT_n_C(),
-          logOutTo: const CompanyLoginPage(),
+          // logOutTo: const CompanyLoginPage(),
           home: const CompanyHomePage(),
           profileImage:
               "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
@@ -232,7 +298,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
       height: 326,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black, width: 0.3),
-        borderRadius: BorderRadius.circular(4.0),
+        borderRadius: BorderRadius.circular(10.0),
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -241,17 +307,39 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
           children: [
             _buildEditableRow('Address'),
             const SizedBox(height: 8),
-            const TextField(
-              decoration: InputDecoration(border: InputBorder.none),
+            //addressFeild
+            TextFormField(
+              controller: addressTextController,
+              maxLines: 2,
+              decoration: const InputDecoration(
+                  contentPadding: EdgeInsets.all(10),
+                  hintText: "Address",
+                  border: InputBorder.none),
             ),
             const Spacer(),
-            _buildEditableTextField('Mail ID'),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(userDetails['user']['email'] ?? "N/A"),
+            ),
+            // _buildEditableTextField(
+            //     hint: userDetails['user']['email'] ?? "N/A"),
             const SizedBox(height: 8),
-            _buildEditableTextField('Contact no'),
+            _buildEditableTextField(
+                controller: contactController, hint: "Contact"),
             const SizedBox(height: 8),
-            _buildEditableTextField('Link'),
+            _buildEditableTextField(
+                controller: websiteController, hint: "Website Link"),
             const SizedBox(height: 8),
-            _buildEditableTextField('LTD'),
+            _buildEditableTextField(
+                controller: businessTypeController, hint: "Business Type"),
+            const SizedBox(height: 8),
+            Align(
+                alignment: Alignment.bottomRight,
+                child: BoxButton(
+                    title: "Update",
+                    onTap: () {
+                      _updateAddressDetails();
+                    }))
           ],
         ),
       ),
@@ -273,7 +361,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
     );
   }
 
-  // Recruitment Details Box
+// Recruitment Details Box
   Widget _buildRecruitmentDetailsBox(double width) {
     return Container(
       width: width * 0.4,
@@ -345,110 +433,126 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(10.0),
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 10),
-            _buildPositionField(),
-            const SizedBox(height: 10),
-            _textField(
-                textMaxlines: 3,
-                controller: jobSummaryController,
-                width: width * 0.3,
-                label: 'Job Summary'),
-            _buildDropdown(
-                width: width * 0.3,
-                label: 'Experience',
-                value: selectedExperience,
-                items: experiences,
-                onChanged: (value) => setState(() {
-                      selectedExperience = value;
-                    })),
-            _textField(
-                controller: jobLocationController,
-                width: width * 0.3,
-                label: 'Location'),
-            // No of Vacancy Field with Numeric Input
-            _numericField(
-                validator: numberValidator, // Pass the validator
-                controller: jobVacancyController,
-                width: width * 0.3,
-                label: 'No of Vacancy'),
-            _buildDropdown(
-                width: width * 0.3,
-                label: 'Job Mode',
-                value: selectedJobMode,
-                items: jobModes,
-                onChanged: (value) => setState(() {
-                      selectedJobMode = value;
-                    })),
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 10),
+              _buildPositionField(),
+              const SizedBox(height: 10),
+              _textField(
+                  textMaxlines: 3,
+                  controller: jobSummaryController,
+                  validator: validateRequired,
+                  width: width * 0.3,
+                  label: 'Job Summary'),
+              _buildDropdown(
+                  width: width * 0.3,
+                  label: 'Experience',
+                  value: selectedExperience,
+                  items: experiences,
+                  onChanged: (value) => setState(() {
+                        selectedExperience = value;
+                      })),
+              _textField(
+                  controller: jobLocationController,
+                  validator: validateRequired,
+                  width: width * 0.3,
+                  label: 'Location'),
+              // No of Vacancy Field with Numeric Input
+              _numericField(
+                  validator: numberValidator, // Pass the validator
+                  controller: jobVacancyController,
+                  width: width * 0.3,
+                  label: 'No of Vacancy'),
+              _buildDropdown(
+                  width: width * 0.3,
+                  label: 'Job Mode',
+                  value: selectedJobMode,
+                  items: jobModes,
+                  onChanged: (value) => setState(() {
+                        selectedJobMode = value;
+                      })),
 
-            // Salary Field with Numeric Input
-            _numericField(
-                controller: salaryController,
-                width: width * 0.3,
-                label: 'Salary'),
-            _buildDropdown(
-                width: width * 0.3,
-                label: 'Employment Type',
-                value: selectedEmploymentType,
-                items: employmentTypes,
-                onChanged: (value) => setState(() {
-                      selectedEmploymentType = value;
-                    })),
-            _textField(
-                textMaxlines: 3,
-                controller: keyRespoController,
-                width: width * 0.3,
-                label: 'Key Responsibilities'),
+              // Salary Field with Numeric Input
+              _numericField(
+                  validator: numberValidator,
+                  controller: salaryController,
+                  width: width * 0.3,
+                  label: 'Salary'),
+              _buildDropdown(
+                  width: width * 0.3,
+                  label: 'Employment Type',
+                  value: selectedEmploymentType,
+                  items: employmentTypes,
+                  onChanged: (value) => setState(() {
+                        selectedEmploymentType = value;
+                      })),
+              _textField(
+                  textMaxlines: 3,
+                  controller: keyRespoController,
+                  validator: validateRequired,
+                  width: width * 0.3,
+                  label: 'Key Responsibilities'),
 
-            // Box for Requirements with Subcategories
-            Container(
-              width: width * 0.3,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(10.0),
+              // Box for Requirements with Subcategories
+              Container(
+                width: width * 0.3,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Requirements',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Education Subcategory
+                    _subCategoryField(
+                        maxLines: 2,
+                        controller: educationController,
+                        validator: validateRequired,
+                        hintText: 'Education'),
+
+                    // Skills Subcategory
+                    _subCategoryField(
+                        controller: skillsController,
+                        validator: validateRequired,
+                        hintText: 'Skills',
+                        maxLines: 2),
+
+                    // Experience Subcategory
+                    _subCategoryField(
+                        validator: validateRequired,
+                        maxLines: 2,
+                        controller: requirementExperienceController,
+                        hintText: 'Experience'),
+                  ],
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Requirements',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
 
-                  // Education Subcategory
-                  _subCategoryField(
-                      maxLines: 2,
-                      controller: educationController,
-                      hintText: 'Education'),
-
-                  // Skills Subcategory
-                  _subCategoryField(
-                      controller: skillsController,
-                      hintText: 'Skills',
-                      maxLines: 2),
-
-                  // Experience Subcategory
-                  _subCategoryField(
-                      maxLines: 2,
-                      controller: requirementExperienceController,
-                      hintText: 'Experience'),
-                ],
-              ),
-            ),
-
-            /// post Button
-            const SizedBox(height: 20),
-            BoxButton(
-              title: 'Post Job',
-              width: width * 0.15,
-              onTap: () => createJob(),
-            ),
-          ],
+              /// post Button
+              const SizedBox(height: 10),
+              BoxButton(
+                  title: 'Post Job',
+                  onTap: () {
+                    // Validate before calling createJob()
+                    if (_formKey.currentState?.validate() ?? false) {
+                      // If all fields are valid, call createJob()
+                      createJob();
+                    }
+                  }),
+              const SizedBox(height: 10),
+            ],
+          ),
         ),
       ),
     );
@@ -459,11 +563,14 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(
-          width: 180,
-          child: TextField(
-            controller: jobTitleController,
-            decoration: const InputDecoration(hintText: 'Position'),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            width: 180,
+            child: TextField(
+              controller: jobTitleController,
+              decoration: const InputDecoration(hintText: 'Position'),
+            ),
           ),
         ),
       ],
@@ -482,11 +589,12 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
   }
 
   // Editable TextField Widget
-  Widget _buildEditableTextField(String label) {
-    return TextField(
+  Widget _buildEditableTextField({required String hint, required controller}) {
+    return TextFormField(
+      controller: controller,
       decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
+        hintText: hint,
+        border: InputBorder.none,
         isDense: true,
         contentPadding: const EdgeInsets.all(10),
       ),
@@ -551,6 +659,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
             );
           }).toList(),
           onChanged: onChanged,
+          validator: (value) => value == null ? 'Please select a $label' : null,
         ),
       ),
     );
@@ -560,6 +669,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
   Widget _subCategoryField({
     required TextEditingController controller,
     required String hintText,
+    String? Function(String? value)? validator,
     int maxLines = 1,
   }) {
     return Padding(
@@ -567,6 +677,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
       child: TextFormField(
         controller: controller,
         maxLines: maxLines,
+        validator: validator,
         decoration: InputDecoration(
           hintText: hintText,
           border: InputBorder.none, // No border for subcategories

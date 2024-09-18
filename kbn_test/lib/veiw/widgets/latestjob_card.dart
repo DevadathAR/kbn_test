@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/widgets/error.dart';
+import 'package:kbn_test/veiw/auth/forgotPass.dart';
 
 Widget LatestJobCard(context) {
   return Padding(
@@ -71,7 +71,7 @@ Widget JobCardButtons(context, {label}) {
     onTap: () {
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
-          return ErrorPage("next page");
+          return const FrogetPswd();
         },
       ));
     },
