@@ -21,12 +21,12 @@ class ApiServices {
     var response = await http.post(
       url,
       body: jsonEncode({
-        'email': "company2@gmail.com",
-        'password': "123",
+        // 'email': "company2@gmail.com",
+        // 'password': "123",
         // 'email': "applicant8@gmail.com",
         // 'password': "123",
-        // 'email': email,
-        // 'password': password,
+        'email': email,
+        'password': password,
         // 'loginType': "Applicant",
       }),
       headers: {'Content-Type': 'application/json'},

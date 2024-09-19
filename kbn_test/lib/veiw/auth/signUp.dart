@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:kbn_test/service/apiServices.dart';
@@ -7,8 +8,7 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
-import 'package:kbn_test/veiw/auth/user_auth/userLogin.dart';
+import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets_common/bg_widg.dart';
@@ -134,164 +134,241 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
     return Scaffold(
-      body: Stack(
-        children: [
-          BgWIdget(img: bg),
-          SizedBox(
-            height: size.height * 1,
-            width: size.width * 0.5,
-            child: Center(
-              child: SizedBox(
-                height: size.height * 1,
-                width: size.width * 0.425,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 40),
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          signup,
-                          style: AppTextStyle.headertext,
-                        ),
-                      ],
-                    ),
-                    Container(
-                      height: 50,
-                      width: 200,
-                      decoration: const BoxDecoration(
-                        boxShadow: [BoxShadow(color: black)],
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                        color: logintextbox,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          SignUpUserSelectionWidget(
-                            appuser: "Applicant",
-                            isSelected: _isApplicantSelected,
-                            onTap: () {
-                              setState(() {
-                                _isApplicantSelected = true;
-                                roleController.text = "Applicant";
-                              });
-                            },
-                          ),
-                          SignUpUserSelectionWidget(
-                            appuser: "Company",
-                            isSelected: !_isApplicantSelected,
-                            onTap: () {
-                              setState(() {
-                                _isApplicantSelected = false;
-                                roleController.text = "Company";
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    const Text(
-                      "Account details",
-                      style: AppTextStyle.subheadertext,
-                    ),
-                    LoginTextForm(
-                        label: "Full name", controller: fullNameController),
-                    LoginTextForm(label: "email", controller: emailController),
-                    LoginTextForm(
-                        obscure: true,
-                        label: "Create Password",
-                        controller: passwordController),
-                    LoginTextForm(
-                        label: "Confirm Password",
-                        obscure: true,
-                        controller: confirmPasswordController),
-                    LoginTextForm(
-                        label: "Contact Number",
-                        controller: contactNumController),
-                    const Text(tac, style: AppTextStyle.tactext),
-                    Row(
-                      children: [
-                        Checkbox(
-                          activeColor: white,
-                          checkColor: black,
-                          value: _ischeck,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _ischeck = value ?? false;
-                            });
-                          },
-                        ),
-                        const Text(terms, style: AppTextStyle.tactext),
-                      ],
-                    ),
-                    const SizedBox(height: 50),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: GestureDetector(
-                        onTap: _ischeck ? _signin : null,
-                        child: Container(
-                          height: 33,
-                          width: 119,
-                          decoration: BoxDecoration(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(4)),
-                            color: white,
-                            border: Border.all(color: black),
-                            gradient: LinearGradient(
-                              colors:
-                                  _ischeck ? loginbutton : InnactiveLoginbutton,
-                            ),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              signin,
-                              style: AppTextStyle.signin,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 600) {
+            return _buildMobileLayout(constraints);
+          } else {
+            return _buildDesktopLayout(constraints);
+          }
+        },
+      ),
+    );
+  }
+
+  // Method for Mobile Layout
+  Widget _buildMobileLayout(BoxConstraints constraints) {
+    Size size = MediaQuery.of(context).size;
+
+    return SingleChildScrollView(
+      child: Container(
+        // width: size.width * 1 - 50,
+        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 5),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              signup,
+              style: AppTextStyle.subheadertext,
             ),
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 200),
+            _buildRoleSelection(constraints, isMobile: true),
+            const SizedBox(height: 5),
+            _buildAccountDetails(isMobile: true),
+            const SizedBox(height: 5),
+            _buildSignInButton(),
+            const SizedBox(height: 5),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                bgWidget(
+                  img: mobileBg,
+                ), // Background widget
+
+                _buildImagePicker(isMobile: true),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Method for Desktop Layout
+  Widget _buildDesktopLayout(BoxConstraints constraints) {
+    return Stack(
+      children: [
+        bgWidget(
+          img: bg,
+        ), // Background widget
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SizedBox(
+              width: constraints.maxWidth * 0.5,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 180),
-                    child: SizedBox(height: 20),
+                  const SizedBox(height: 40),
+                  const Text(
+                    signup,
+                    style: AppTextStyle.headertext,
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      _selectImage();
-                    },
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      height: 250,
-                      width: 225,
-                      child: _selectedImage != null
-                          ? CircleAvatar(
-                              backgroundImage: MemoryImage(_selectedImage!),
-                            )
-                          : Image.asset(upimagPng),
-                    ),
-                  ),
+                  _buildRoleSelection(constraints, isMobile: false),
+                  const SizedBox(height: 15),
+                  _buildAccountDetails(isMobile: false),
+                  const SizedBox(height: 50),
+                  _buildSignInButton(),
                 ],
               ),
             ),
+            _buildImagePicker(isMobile: false),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Method to build the role selection widget
+  Widget _buildRoleSelection(BoxConstraints constraints,
+      {required bool isMobile}) {
+    return Container(
+      height: 50,
+      width: isMobile ? constraints.maxWidth * 0.4 : 200,
+      decoration: const BoxDecoration(
+        boxShadow: [BoxShadow(color: Colors.black)],
+        borderRadius: BorderRadius.all(Radius.circular(4)),
+        color: logintextbox,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          SignUpUserSelectionWidget(
+            appuser: "Applicant",
+            isSelected: _isApplicantSelected,
+            onTap: () {
+              setState(() {
+                _isApplicantSelected = true;
+                roleController.text = "Applicant";
+              });
+            },
+          ),
+          SignUpUserSelectionWidget(
+            appuser: "Company",
+            isSelected: !_isApplicantSelected,
+            onTap: () {
+              setState(() {
+                _isApplicantSelected = false;
+                roleController.text = "Company";
+              });
+            },
           ),
         ],
+      ),
+    );
+  }
+
+  // Method to build account details form
+  Widget _buildAccountDetails({required bool isMobile}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Account details",
+            style: isMobile
+                ? AppTextStyle.moBsubheadertext
+                : AppTextStyle.subheadertext),
+        LoginTextForm(
+          label: "Full name",
+          controller: fullNameController,
+          obscure: false,
+          hight: 10,
+        ),
+        LoginTextForm(
+          label: "Email",
+          controller: emailController,
+          hight: 10,
+          obscure: false,
+        ),
+        LoginTextForm(
+          obscure: true,
+          label: "Create Password",
+          hight: 10,
+          controller: passwordController,
+        ),
+        LoginTextForm(
+          obscure: true,
+          label: "Confirm Password",
+          controller: confirmPasswordController,
+          hight: 10,
+        ),
+        LoginTextForm(
+          label: "Contact Number",
+          controller: contactNumController,
+          obscure: false,
+          hight: 10,
+        ),
+        const Text(tac, style: AppTextStyle.tactext),
+        const SizedBox(height: 5),
+        Row(
+          children: [
+            Checkbox(
+              activeColor: Colors.white,
+              checkColor: Colors.black,
+              value: _ischeck,
+              onChanged: (bool? value) {
+                setState(() {
+                  _ischeck = value ?? false;
+                });
+              },
+            ),
+            const Text(terms, style: AppTextStyle.tactext),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Method to build Sign-In button
+  Widget _buildSignInButton() {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: GestureDetector(
+        onTap: _ischeck ? _signin : null,
+        child: Container(
+          height: 33,
+          width: 119,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(4)),
+            color: Colors.white,
+            border: Border.all(color: Colors.black),
+            gradient: LinearGradient(
+              colors: _ischeck ? loginbutton : InnactiveLoginbutton,
+            ),
+          ),
+          child: const Center(
+            child: Text(
+              signin,
+              style: AppTextStyle.signin,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Method to build image picker
+  Widget _buildImagePicker({required bool isMobile}) {
+    return Align(
+      alignment: isMobile ? Alignment.center : Alignment.centerRight,
+      child: GestureDetector(
+        onTap: () {
+          _selectImage();
+        },
+        child: Container(
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          height: isMobile ? 150 : 250,
+          width: isMobile ? 150 : 225,
+          child: _selectedImage != null
+              ? CircleAvatar(
+                  backgroundImage: MemoryImage(_selectedImage!),
+                )
+              : Image.asset(upimagPng),
+        ),
       ),
     );
   }

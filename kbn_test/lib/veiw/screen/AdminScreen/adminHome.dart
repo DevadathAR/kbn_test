@@ -1,17 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
-import 'package:kbn_test/utilities/const.dart';
-import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/screen/AdminScreen/admin_T_n_C.dart';
-import 'package:kbn_test/veiw/screen/AdminScreen/adminLogin.dart';
 import 'package:kbn_test/veiw/widgets_common/boldText.dart';
 import 'package:kbn_test/veiw/widgets_common/home_appbar_box.dart';
-import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets_common/normalText.dart';
 import 'package:kbn_test/veiw/widgets_common/statusUpdate.dart';
 import 'package:kbn_test/veiw/widgets_common/warningDialogue.dart';

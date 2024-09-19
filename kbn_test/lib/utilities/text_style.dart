@@ -14,6 +14,12 @@ class AppTextStyle {
     fontWeight: FontWeight.w500,
     color: black,
   );
+  static const TextStyle moBsubheadertext = TextStyle(
+    fontSize: 20,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w500,
+    color: black,
+  );
   static const TextStyle bodytextwhite = TextStyle(
     fontSize: 12,
     fontFamily: "Inter",
@@ -95,6 +101,12 @@ class AppTextStyle {
   );
   static const TextStyle companyName = TextStyle(
     fontSize: 25,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w600,
+    color: black,
+  );
+   static const TextStyle mobCompanyName = TextStyle(
+    fontSize: 18,
     fontFamily: "Poppins",
     fontWeight: FontWeight.w600,
     color: black,

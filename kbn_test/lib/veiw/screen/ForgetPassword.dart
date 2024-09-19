@@ -83,7 +83,7 @@ class _FrogetPswdState extends State<FrogetPswd> {
     return Scaffold(
       body: Stack(
         children: [
-          BgWIdget(img: bg),
+          bgWidget(img: bg,),
           SizedBox(
             height: size.height * 1,
             width: size.width * 0.5,

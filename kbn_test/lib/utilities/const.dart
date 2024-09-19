@@ -5,13 +5,13 @@ NETWORK''';
 const welcomeComp = "Welcome Back Companies";
 const welcome = "Welcome Back ";
 
-
 const useMail = "continue with email";
 const forget = "forget password?";
 const frgtpswd = "Forget Password";
 const noacc = "Don't you have an account?";
-const tac = '''*The portal may update its terms and conditions, and continued
- use of the service indicates acceptance of any changes.*''';
+const tac =
+    '''*The portal may update its terms and conditions, and continued use of the 
+service indicates acceptance of any changes.*''';
 const terms = "accept all terms & conditions";
 const hi = "Hi,";
 const signup = "SIGN UP";

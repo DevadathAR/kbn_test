@@ -6,12 +6,14 @@ class SignUpUserSelectionWidget extends StatefulWidget {
   final String appuser;
   final bool isSelected;
   final VoidCallback onTap;
+  // final bool isMObile;
 
   const SignUpUserSelectionWidget({
     super.key,
     required this.appuser,
     required this.isSelected,
-    required this.onTap,
+    required this.onTap, 
+    // required this.isMObile,
   });
 
   @override

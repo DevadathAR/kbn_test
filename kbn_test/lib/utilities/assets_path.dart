@@ -21,5 +21,6 @@ const upimagPng = "assets/upImage.png";
 const loginbg = "assets/logInbg.png";
 const resumePng = "assets/resume.png";
 const tickMark = "assets/tickMark.png";
-
-
+const mobileBg = "assets/mobileBg.png";
+const mobCompanyBg = "assets/mobCompanyBg.png";
+const mobBg = "assets/mobBg.png";

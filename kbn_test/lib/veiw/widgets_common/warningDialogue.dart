@@ -9,18 +9,18 @@ class WarningDialog extends StatelessWidget {
   final VoidCallback onConfirm;
 
   const WarningDialog({
-    Key? key,
+    super.key,
     required this.title,
     required this.content,
     this.confirmText = 'Confirm',
     this.cancelText = 'Cancel',
     required this.onConfirm,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: none,
+      backgroundColor: white,
       title: Text(title),
       content: Text(content),
       actions: [

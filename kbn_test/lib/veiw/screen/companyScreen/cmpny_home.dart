@@ -5,7 +5,7 @@ import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
-import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
+import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/T_&_C.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/companyProfile.dart';
 import 'package:kbn_test/veiw/widgets_common/boldText.dart';
