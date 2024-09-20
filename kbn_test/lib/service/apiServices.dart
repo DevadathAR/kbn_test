@@ -47,34 +47,13 @@ class ApiServices {
     }
   }
 
-  // static Future<Map<String, dynamic>> company_login(
-  //     String email, String password) async {
-  //   var url = Uri.parse('$baseUrl/user/login');
-
-  //   var response = await http.post(url,
-  //       body: jsonEncode({
-  //         'email': email,
-  //         'password': password,
-  //         // 'loginType': "Company",
-  //       }),
-  //       headers: headers);
-
-  //   print('LpgIn Response${response.body}');
-
-  //   if (response.statusCode == 200) {
-  //     return jsonDecode(response.body);
-  //   } else {
-  //     throw Exception('Login failed');
-  //   }
-  // }
-
   // Fetch User Details API
   static Future<Map<String, dynamic>> fetchUserDetails() async {
     var url = Uri.parse('$baseUrl/user/loggedIn');
 
     var response = await http.get(url, headers: headers);
 
-    print('userDetails${response.body}');
+    // print('userDetails${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -213,8 +192,8 @@ class ApiServices {
         body: jsonEncode(jobData),
       );
 
-      print('Status Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
+      // print('Status Code: ${response.statusCode}');
+      // print('Response Body: ${response.body}');
 
       if (response.statusCode == 201) {
         // Successfully created the job
@@ -287,7 +266,7 @@ class ApiServices {
       url,
       headers: headers,
     );
-    print(response.body);
+    // print(response.body);
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -329,7 +308,7 @@ class ApiServices {
       );
 
       // print('Response status: ${response.statusCode}');
-      print('DropBox: ${response.body}');
+      // print('DropBox: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

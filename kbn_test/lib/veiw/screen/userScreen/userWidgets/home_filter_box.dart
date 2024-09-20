@@ -7,8 +7,9 @@ import 'package:kbn_test/utilities/text_style.dart';
 
 class HomeFilterBox extends StatefulWidget {
   final Function(List<dynamic>) onFilterApplied;
-  
-  const HomeFilterBox({Key? key, required this.onFilterApplied}) : super(key: key);
+
+  const HomeFilterBox({Key? key, required this.onFilterApplied})
+      : super(key: key);
 
   @override
   _HomeFilterBoxState createState() => _HomeFilterBoxState();
@@ -108,7 +109,8 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
                         });
                       }),
                       const VerticalDivider(),
-                      buildDropdown(experiences, selectedExperience, (newValue) {
+                      buildDropdown(experiences, selectedExperience,
+                          (newValue) {
                         setState(() {
                           selectedExperience = newValue!;
                           fetchFilteredJobs();
@@ -154,7 +156,8 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
           );
   }
 
-  Widget buildDropdown(List<String> items, String selectedItem, ValueChanged<String?> onChanged) {
+  Widget buildDropdown(List<String> items, String selectedItem,
+      ValueChanged<String?> onChanged) {
     return DropdownButton<String>(
       dropdownColor: tealblue,
       value: selectedItem,
@@ -169,84 +172,4 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
       onChanged: onChanged,
     );
   }
-}
-
-class FilterDrawer extends StatelessWidget {
-  final List<String> jobTypes;
-  final List<String> salaryRanges;
-  final List<String> experiences;
-  final List<String> workModes;
-  final List<String> locations;
-  final String selectedJobType;
-  final String selectedSalary;
-  final String selectedExperience;
-  final String selectedWorkMode;
-  final String selectedLocation;
-  final Function(String?) onJobTypeChanged;
-  final Function(String?) onSalaryChanged;
-  final Function(String?) onExperienceChanged;
-  final Function(String?) onWorkModeChanged;
-  final Function(String?) onLocationChanged;
-
-  const FilterDrawer({
-    Key? key,
-    required this.jobTypes,
-    required this.salaryRanges,
-    required this.experiences,
-    required this.workModes,
-    required this.locations,
-    required this.selectedJobType,
-    required this.selectedSalary,
-    required this.selectedExperience,
-    required this.selectedWorkMode,
-    required this.selectedLocation,
-    required this.onJobTypeChanged,
-    required this.onSalaryChanged,
-    required this.onExperienceChanged,
-    required this.onWorkModeChanged,
-    required this.onLocationChanged,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.all(16),
-        children: [
-          Text('Filters',),
-          SizedBox(height: 20),
-          buildDropdown('Job Type', jobTypes, selectedJobType, onJobTypeChanged),
-          buildDropdown('Salary', salaryRanges, selectedSalary, onSalaryChanged),
-          buildDropdown('Experience', experiences, selectedExperience, onExperienceChanged),
-          buildDropdown('Work Mode', workModes, selectedWorkMode, onWorkModeChanged),
-          buildDropdown('Location', locations, selectedLocation, onLocationChanged),
-        ],
-      ),
-    );
-  }
-
-  Widget buildDropdown(String title, List<String> items, String selectedItem, Function(String?) onChanged) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-        DropdownButton<String>(
-          value: selectedItem,
-          icon: Icon(Icons.arrow_drop_down),
-          onChanged: onChanged,
-          items: items.map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-        ),
-        SizedBox(height: 20),
-      ],
-    );
-    
-  }
-
-
-  
 }

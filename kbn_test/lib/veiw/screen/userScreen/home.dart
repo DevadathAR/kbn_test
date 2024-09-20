@@ -10,15 +10,9 @@ import 'package:kbn_test/veiw/screen/userScreen/userT_n_C.dart';
 import 'package:kbn_test/veiw/screen/userScreen/userWidgets/home_filter_box.dart';
 import 'package:kbn_test/veiw/screen/userScreen/userWidgets/upload_resume.dart';
 import 'package:kbn_test/veiw/widgets_common/home_appbar_box.dart';
-// import 'package:kbn_test/view/screen/userScreen/jobCards.dart';
-// import 'package:kbn_test/view/screen/userScreen/jobDetails.dart';
-// import 'package:kbn_test/view/screen/userScreen/userT_n_C.dart';
-// import 'package:kbn_test/view/screen/userScreen/userWidgets/home_filter_box.dart';
-// import 'package:kbn_test/view/screen/userScreen/userWidgets/upload_resume.dart';
-// import 'package:kbn_test/view/widgets_common/home_appbar_box.dart';
 
 class UserHome extends StatefulWidget {
-  const UserHome({super.key});
+  const UserHome({Key? key}) : super(key: key);
 
   @override
   _UserHomeState createState() => _UserHomeState();
@@ -36,13 +30,23 @@ class _UserHomeState extends State<UserHome> {
   List<String> _selectedExperience = [];
   List<String> _selectedWorkModes = [];
   List<String> _selectedLocations = [];
-  List<String> _selectedSalaries = [];
+  double _selectedSalaryStart = 0;
+  double _selectedSalaryEnd = 300000; // Default upper limit for salary
+
+  // State for filter items from API
+  Map<String, List<String>> dropDownItems = {
+    'jobTypes': [],
+    'experiences': [],
+    'locations': [],
+    'workModes': [],
+  };
 
   @override
   void initState() {
     super.initState();
-    _fetchJobTitles();
+    _fetchDropDownItems();
     _checkResumeLink();
+    _fetchFilteredJobs(); // Initial fetch
   }
 
   Future<void> _checkResumeLink() async {
@@ -58,40 +62,68 @@ class _UserHomeState extends State<UserHome> {
     }
   }
 
-  Future<void> _fetchJobTitles() async {
+  Future<void> _fetchDropDownItems() async {
     try {
-      var jobs = await ApiServices.fetchJobTitles();
+      var items = await ApiServices.fetchDropdownBoxItems();
       setState(() {
-        _jobs = jobs;
-        _totalPages = ((jobs.length / 8) + 1).ceil();
+        dropDownItems = items;
       });
     } catch (e) {
-      print('Error fetching job titles: $e');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      print('Error fetching dropdown items: $e');
     }
   }
 
-  Future<void> _fetchFilteredJobs(int pageNumber) async {
+  Future<void> _fetchFilteredJobs() async {
     try {
-      var response = await ApiServices.fetchFilteredJobs(
-        selectedJobType: _selectedJobTypes.isNotEmpty ? _selectedJobTypes.first : null,
-        selectedSalary: _selectedSalaries.isNotEmpty ? _selectedSalaries.first : null,
-        selectedExperience: _selectedExperience.isNotEmpty ? _selectedExperience.first : null,
-        selectedWorkMode: _selectedWorkModes.isNotEmpty ? _selectedWorkModes.first : null,
-        selectedLocation: _selectedLocations.isNotEmpty ? _selectedLocations.first : null,
-        pageNumber: pageNumber,
+      setState(() {
+        _isLoading = true; // Show loading spinner
+      });
+      final jobsResponse = await ApiServices.fetchFilteredJobs(
+        selectedJobType: _selectedJobTypes.isNotEmpty
+            ? _selectedJobTypes.join(",")
+            : "Job Type",
+        selectedSalary:
+            '${_selectedSalaryStart.toInt()}-${_selectedSalaryEnd.toInt()}', // Salary filter
+        selectedExperience: _selectedExperience.isNotEmpty
+            ? _selectedExperience.join(",")
+            : "Experience",
+        selectedWorkMode: _selectedWorkModes.isNotEmpty
+            ? _selectedWorkModes.join(",")
+            : "Work Mode",
+        selectedLocation: _selectedLocations.isNotEmpty
+            ? _selectedLocations.join(",")
+            : "Location",
+        pageNumber: _currentPage, // Pass current page
       );
 
+      final jobs = jobsResponse['data'] as List<dynamic>;
+      final totalJobsPosted = jobsResponse['totalJobs'] as int;
       setState(() {
-        _jobs = response['data'] as List<dynamic>;
-        int totalJobs = response['totalJobs'] ?? 0;
-        _totalPages = (totalJobs / 8).ceil();
+        _jobs = jobs;
+        
+        _totalPages = (totalJobsPosted / 8).ceil();
+        _isLoading = false; // Hide loading spinner
       });
     } catch (e) {
-      print('Error fetching filtered jobs: $e');
+      print("Error fetching filtered jobs: $e");
+    }
+  }
+
+  void _goToPreviousPage() {
+    if (_currentPage > 1) {
+      setState(() {
+        _currentPage--;
+      });
+      _fetchFilteredJobs();
+    }
+  }
+
+  void _goToNextPage() {
+    if (_currentPage < _totalPages!) {
+      setState(() {
+        _currentPage++;
+      });
+      _fetchFilteredJobs();
     }
   }
 
@@ -114,9 +146,10 @@ class _UserHomeState extends State<UserHome> {
                         const Center(child: Image(image: AssetImage(kbnLogo))),
                         HomeAppBarBox(
                           context,
-                          profileImage: "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
                           T_and_C: const user_T_n_C(),
                           termscolor: white,
+                          profileImage:
+                              "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
                         ),
                         const SizedBox(height: 10),
                         HomeFilterBox(
@@ -139,7 +172,8 @@ class _UserHomeState extends State<UserHome> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 40),
                             child: GridView.builder(
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: _getCrossAxisCount(size),
                                 crossAxisSpacing: 30,
                                 mainAxisSpacing: 10,
@@ -151,72 +185,80 @@ class _UserHomeState extends State<UserHome> {
                                 return GestureDetector(
                                   onTap: () async {
                                     try {
-                                      await ApiServices.postJobDetails(job['jobId']);
+                                      await ApiServices.postJobDetails(
+                                          job['jobId']);
                                       Navigator.push(context, MaterialPageRoute(
                                         builder: (context) {
                                           return JobDetails(
                                             jobId: job['jobId'],
                                             companyId: job['companyId'],
-                                            firmname: job['company_name'].toString(),
+                                            firmname:
+                                                job['company_name'].toString(),
                                             jobTitle: job['title'].toString(),
-                                            jobSummary: job['job_summary'].toString(),
-                                            expLevel: job['experience_level'].toString(),
+                                            jobSummary:
+                                                job['job_summary'].toString(),
+                                            expLevel: job['experience_level']
+                                                .toString(),
                                             jobMode: job['job_mode'].toString(),
                                             jobType: job['job_type'].toString(),
-                                            keyResponsibilities: job['key_responsibilities'] as List<dynamic>,
-                                            jobReq: job['job_requirements'] as Map<String, dynamic>,
+                                            keyResponsibilities:
+                                                job['key_responsibilities']
+                                                    as List<dynamic>,
+                                            jobReq: job['job_requirements']
+                                                as Map<String, dynamic>,
                                             salary: job['salary'],
                                             currentVacancy: job['vacancy'],
-                                            workLocation: job['location'].toString(),
-                                            companywebsite: job['company_website'].toString(),
-                                            datePosted: job['created_at'].toString(),
-                                            companyImage: job['company_profile_image'],
-                                            status: job['application_status'].toString(),
+                                            workLocation:
+                                                job['location'].toString(),
+                                            companywebsite:
+                                                job['company_website']
+                                                    .toString(),
+                                            datePosted:
+                                                job['created_at'].toString(),
+                                            companyImage:
+                                                job['company_profile_image'],
+                                            status: job['application_status']
+                                                .toString(),
                                           );
                                         },
                                       ));
                                     } catch (error) {
                                       print('Error in onTap: $error');
                                     }
+                                    // Navigate to JobDetails
                                   },
                                   child: LatestJobCard(
                                     firmname: job['company_name'].toString(),
                                     jobTitle: job['title'].toString(),
                                     jobSummary: job['job_summary'].toString(),
-                                    expLevel: job['experience_level'].toString(),
+                                    expLevel:
+                                        job['experience_level'].toString(),
                                     jobMode: job['job_mode'].toString(),
                                     jobType: job['job_type'].toString(),
-                                    companyImage: job['company_profile_image'].toString(),
+                                    companyImage:
+                                        job['company_profile_image'].toString(),
                                     datePosted: job['created_at'].toString(),
-                                    status: job['application_status'].toString(),
+                                    status:
+                                        job['application_status'].toString(),
                                   ),
                                 );
                               },
                             ),
                           ),
                         ),
+                        // Pagination Controls
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             PaginatedButton(
-                              onPressed: () async {
-                                if (_currentPage > 1) {
-                                  setState(() => _currentPage--);
-                                  await _fetchFilteredJobs(_currentPage);
-                                }
-                              },
+                              onPressed: _goToPreviousPage,
                               child: const Text('Previous'),
                             ),
                             const SizedBox(width: 20),
                             Text('Page $_currentPage of $_totalPages'),
                             const SizedBox(width: 20),
                             PaginatedButton(
-                              onPressed: () async {
-                                if (_currentPage < _totalPages!) {
-                                  setState(() => _currentPage++);
-                                  await _fetchFilteredJobs(_currentPage);
-                                }
-                              },
+                              onPressed: _goToNextPage,
                               child: const Text('Next'),
                             ),
                           ],
@@ -234,8 +276,8 @@ class _UserHomeState extends State<UserHome> {
               ],
             ),
       drawer: Padding(
-        padding:  EdgeInsets.only(top: size.width>600? 230.0:210),
-        child: Drawer (
+        padding: EdgeInsets.only(top: size.width > 600 ? 230.0 : 210),
+        child: Drawer(
           child: Container(
             height: size.height * 0.5,
             width: size.width * 0.25,
@@ -243,41 +285,124 @@ class _UserHomeState extends State<UserHome> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                ListTile(
-                  title: Text('Job Type', style: AppTextStyle.flitertxt),
-                  onTap: () {
-                    // Handle Job Type filter logic
-                  },
-                ),
-                ListTile(
-                  title: Text('Experience', style: AppTextStyle.flitertxt),
-                  onTap: () {
-                    // Handle Experience filter logic
-                  },
-                ),
-                ListTile(
-                  title: Text('Work Mode', style: AppTextStyle.flitertxt),
-                  onTap: () {
-                    // Handle Work Mode filter logic
-                  },
-                ),
-                ListTile(
-                  title: Text('Location', style: AppTextStyle.flitertxt),
-                  onTap: () {
-                    // Handle Location filter logic
-                  },
-                ),
-                ListTile(
-                  title: Text('Salary', style: AppTextStyle.flitertxt),
-                  onTap: () {
-                    // Handle Salary filter logic
-                  },
-                ),
+                _buildFilterSection('Job Type', dropDownItems['jobTypes'] ?? [],
+                    _selectedJobTypes, (value) {
+                  setState(() {
+                    _selectedJobTypes.contains(value)
+                        ? _selectedJobTypes.remove(value)
+                        : _selectedJobTypes.add(value);
+                    _fetchFilteredJobs();
+                  });
+                }),
+                _buildFilterSection(
+                    'Experience',
+                    dropDownItems['experiences'] ?? [],
+                    _selectedExperience, (value) {
+                  setState(() {
+                    _selectedExperience.contains(value)
+                        ? _selectedExperience.remove(value)
+                        : _selectedExperience.add(value);
+                    _fetchFilteredJobs();
+                  });
+                }),
+                _buildFilterSection(
+                    'Work Mode',
+                    dropDownItems['workModes'] ?? [],
+                    _selectedWorkModes, (value) {
+                  setState(() {
+                    _selectedWorkModes.contains(value)
+                        ? _selectedWorkModes.remove(value)
+                        : _selectedWorkModes.add(value);
+                    _fetchFilteredJobs();
+                  });
+                }),
+                _buildFilterSection(
+                    'Location',
+                    dropDownItems['locations'] ?? [],
+                    _selectedLocations, (value) {
+                  setState(() {
+                    _selectedLocations.contains(value)
+                        ? _selectedLocations.remove(value)
+                        : _selectedLocations.add(value);
+                    _fetchFilteredJobs();
+                  });
+                }),
+                _buildFilterSection(
+                    'Salary', [], [], (value) {}), // Include salary filter here
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSalarySlider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Salary Range:  ${_selectedSalaryStart.round()} - ${_selectedSalaryEnd.round()}',
+            style: const TextStyle(color: Colors.white),
+          ),
+          RangeSlider(
+            activeColor: white,
+            inactiveColor: textGrey,
+            values: RangeValues(_selectedSalaryStart, _selectedSalaryEnd),
+            min: 0,
+            max: 300000, // Adjust max salary as needed
+            divisions: 10000,
+            labels: RangeLabels(_selectedSalaryStart.round().toString(),
+                _selectedSalaryEnd.round().toString()),
+            onChanged: (RangeValues values) {
+              setState(() {
+                // Only allow changing the end value (maxSalary)
+                _selectedSalaryStart = values.start;
+                _selectedSalaryEnd = values.end;
+                // Fetch the jobs whenever the salary range changes
+                _fetchFilteredJobs();
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterSection(String label, List<String> items,
+      List<String> selectedItems, ValueChanged<String> onChanged) {
+    return ExpansionTile(
+      title: Text(label, style: TextStyle(color: Colors.white)),
+      children: [
+        if (label == 'Salary')
+          _buildSalarySlider(), // Add salary slider for Salary section
+        if (label != 'Salary')
+          ...items.map((item) {
+            return ListTile(
+              leading: Checkbox(
+                // focusColor: white,
+                hoverColor: white,
+                
+                value: selectedItems.contains(item),
+                onChanged: (bool? value) {
+                  setState(() {
+                    if (value != null && value) {
+                      selectedItems.add(item);
+                    } else {
+                      selectedItems.remove(item);
+                    }
+                    _fetchFilteredJobs(); // Call job filtering whenever a checkbox is changed
+                  });
+                },
+                activeColor: Colors.white,
+                checkColor: tealblue,
+              ),
+              title: Text(item, style: TextStyle(color: Colors.white)),
+            );
+          }).toList(),
+      ],
     );
   }
 

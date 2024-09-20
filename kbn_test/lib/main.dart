@@ -59,7 +59,7 @@ class MainApp extends StatelessWidget {
       var userDetailsResponse = await ApiServices.fetchUserDetails();
       userDetails = userDetailsResponse;
 
-      print(userDetailsResponse);
+      // print(userDetailsResponse);
 
       return role;
     }
