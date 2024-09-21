@@ -78,6 +78,8 @@ class _UserHomeState extends State<UserHome> {
       setState(() {
         _isLoading = true; // Show loading spinner
       });
+
+      // Fetch filtered jobs based on the selected filters
       final jobsResponse = await ApiServices.fetchFilteredJobs(
         selectedJobType: _selectedJobTypes.isNotEmpty
             ? _selectedJobTypes.join(",")
@@ -93,19 +95,24 @@ class _UserHomeState extends State<UserHome> {
         selectedLocation: _selectedLocations.isNotEmpty
             ? _selectedLocations.join(",")
             : "Location",
-        pageNumber: _currentPage, // Pass current page
+        pageNumber: _currentPage, // Pass the current page
       );
 
+      // Extract jobs and total jobs from the response
       final jobs = jobsResponse['data'] as List<dynamic>;
       final totalJobsPosted = jobsResponse['totalJobs'] as int;
+
       setState(() {
         _jobs = jobs;
-        
-        _totalPages = (totalJobsPosted / 8).ceil();
+        // Calculate total pages based on the total number of jobs
+        _totalPages = totalJobsPosted == 0 ? 1 : (totalJobsPosted / 8).ceil();
         _isLoading = false; // Hide loading spinner
       });
     } catch (e) {
       print("Error fetching filtered jobs: $e");
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -114,7 +121,7 @@ class _UserHomeState extends State<UserHome> {
       setState(() {
         _currentPage--;
       });
-      _fetchFilteredJobs();
+      _fetchFilteredJobs(); // Fetch jobs for the previous page
     }
   }
 
@@ -123,7 +130,7 @@ class _UserHomeState extends State<UserHome> {
       setState(() {
         _currentPage++;
       });
-      _fetchFilteredJobs();
+      _fetchFilteredJobs(); // Fetch jobs for the next page
     }
   }
 
@@ -384,7 +391,7 @@ class _UserHomeState extends State<UserHome> {
               leading: Checkbox(
                 // focusColor: white,
                 hoverColor: white,
-                
+
                 value: selectedItems.contains(item),
                 onChanged: (bool? value) {
                   setState(() {

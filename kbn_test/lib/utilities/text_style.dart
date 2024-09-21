@@ -93,6 +93,12 @@ class AppTextStyle {
     fontWeight: FontWeight.w400,
     color: white,
   );
+  static const TextStyle flitertxtblack = TextStyle(
+    fontSize: 16,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w400,
+    color: black,
+  );
   static const TextStyle companyName = TextStyle(
     fontSize: 25,
     fontFamily: "Poppins",

@@ -22,5 +22,7 @@ const loginbg = "assets/logInbg.png";
 const resumePng = "assets/resume.png";
 const tickMark = "assets/tickMark.png";
 const filterPng = "assets/filter.png";
+const calenderPng = "assets/calender.png";
+const personPng = "assets/person.png";
 
 

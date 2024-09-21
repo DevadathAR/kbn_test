@@ -41,6 +41,7 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
   void initState() {
     super.initState();
     fetchDropdownBoxItems();
+    // _fetchFilteredJobs();
   }
 
   Future<void> fetchDropdownBoxItems() async {
@@ -61,7 +62,7 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
     }
   }
 
-  Future<void> fetchFilteredJobs() async {
+  Future<void> _fetchFilteredJobs() async {
     try {
       final jobsResponse = await ApiServices.fetchFilteredJobs(
         selectedJobType: selectedJobType,
@@ -98,14 +99,14 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
                       buildDropdown(jobTypes, selectedJobType, (newValue) {
                         setState(() {
                           selectedJobType = newValue!;
-                          fetchFilteredJobs();
+                          _fetchFilteredJobs();
                         });
                       }),
                       const VerticalDivider(),
                       buildDropdown(salaryRanges, selectedSalary, (newValue) {
                         setState(() {
                           selectedSalary = newValue!;
-                          fetchFilteredJobs();
+                          _fetchFilteredJobs();
                         });
                       }),
                       const VerticalDivider(),
@@ -113,21 +114,21 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
                           (newValue) {
                         setState(() {
                           selectedExperience = newValue!;
-                          fetchFilteredJobs();
+                          _fetchFilteredJobs();
                         });
                       }),
                       const VerticalDivider(),
                       buildDropdown(workModes, selectedWorkMode, (newValue) {
                         setState(() {
                           selectedWorkMode = newValue!;
-                          fetchFilteredJobs();
+                          _fetchFilteredJobs();
                         });
                       }),
                       const VerticalDivider(),
                       buildDropdown(locations, selectedLocation, (newValue) {
                         setState(() {
                           selectedLocation = newValue!;
-                          fetchFilteredJobs();
+                          _fetchFilteredJobs();
                         });
                       }),
                     ],
