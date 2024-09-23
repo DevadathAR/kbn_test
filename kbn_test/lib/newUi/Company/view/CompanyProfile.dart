@@ -9,11 +9,10 @@ class CompanyProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    // Size size = MediaQuery.of(context).size;
 
-    return Scaffold(
-        backgroundColor: gray,
-        body: Wrap(
+    return 
+         Wrap(
           children: [
             PageAndDate(context, pageLabel: "Profile"),
             Row(
@@ -28,8 +27,7 @@ class CompanyProfilePage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  companyDetails(context,
-                      label: "Compnay Details", sub: "Address",),
+                  companyDetails(context,label: "Compnay Details", sub: "Address",),
                   otherDetails(context, label: "Team Members",),
                   otherDetails(context, label: "Job Positions",),
                   otherDetails(context, label: "Commmunity",),
@@ -37,6 +35,6 @@ class CompanyProfilePage extends StatelessWidget {
               ),
             )
           ],
-        ));
+        );
   }
 }

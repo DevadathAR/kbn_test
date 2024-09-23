@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kbn_test/newUi/Company/widget/CompaanySettingColum.dart';
 import 'package:kbn_test/newUi/Company/widget/CompanyAndManager.dart';
-import 'package:kbn_test/newUi/Company/widget/OtherDetails.dart';
 import 'package:kbn_test/newUi/Company/widget/PageAndDate.dart';
-import 'package:kbn_test/utilities/colors.dart';
 
 class CompanySettingPage extends StatelessWidget {
   const CompanySettingPage({super.key});
@@ -12,9 +10,7 @@ class CompanySettingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Size size = MediaQuery.of(context).size;
 
-    return Scaffold(
-        backgroundColor: gray,
-        body: Wrap(
+    return  Wrap(
           children: [
             PageAndDate(context, pageLabel: "Settings"),
             companyAndManager(context,
@@ -42,6 +38,6 @@ class CompanySettingPage extends StatelessWidget {
               ),
             )
           ],
-        ));
+        );
   }
 }

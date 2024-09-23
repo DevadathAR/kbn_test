@@ -15,7 +15,7 @@ Widget PageAndDate(context,{pageLabel}) {
 
   return SizedBox(
     width: size.width*1,
-    height: size.height*.15,
+    height: size.height*.1,
         // color: black,
 
     child: Center(
@@ -28,8 +28,8 @@ Widget PageAndDate(context,{pageLabel}) {
             style: AppTextStyle.googletext,
           ),
           Container(
-            width: 150,
-            height: 40,
+            // width: 150,
+            // height: 40,
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(6)),
                 color: white),

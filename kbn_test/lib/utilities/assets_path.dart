@@ -24,5 +24,9 @@ const tickMark = "assets/tickMark.png";
 const filterPng = "assets/filter.png";
 const calenderPng = "assets/calender.png";
 const personPng = "assets/person.png";
+const mobileBg = "assets/mobileBg.png";
+const mobCompanyBg = "assets/mobCompanyBg.png";
+const mobBg = "assets/mobBg.png";
+const overViewBg = "assets/horizontalBg.png";
 
 

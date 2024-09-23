@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kbn_test/newUi/Company/view/CompanyMessage.dart';
+import 'package:kbn_test/newUi/Company/view/CompanySetting.dart';
+import 'package:kbn_test/newUi/Company/view/CompanyTransation.dart';
+import 'package:kbn_test/newUi/Company/view/scaffoldbuilder.dart';
+import 'package:kbn_test/newUi/Company/widget/HorizontalCardList.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/veiw/screen/AdminScreen/adminHome.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
@@ -81,7 +86,19 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
       title: "KBN_Test",
       debugShowCheckedModeBanner: false,
-      home: CompanyProfilePage());
+      home: 
+            // ScaffoldBuilder(child: CompanyProfilePage())
+            // ScaffoldBuilder(child: CompanySettingPage())
+
+      // ScaffoldBuilder(child: CompanyMessage(),pageName: "Message",currentPath: "Message",)
+      ScaffoldBuilder(pageName: "Transation",currentPath: "Transation",child: CompanyTransation(),)
+
+
+      // CompanyMessage()
+      // CompanyProfilePage()
+      
+      
+      );
   }
 
 
