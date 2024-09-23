@@ -42,7 +42,7 @@ class AppTextStyle {
   static const TextStyle firmHead = TextStyle(
     fontSize: 25,
     fontFamily: "Popppins",
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     color: black,
   );
   static const TextStyle abouttxt = TextStyle(
@@ -105,7 +105,7 @@ class AppTextStyle {
     fontWeight: FontWeight.w600,
     color: black,
   );
-   static const TextStyle mobCompanyName = TextStyle(
+  static const TextStyle mobCompanyName = TextStyle(
     fontSize: 18,
     fontFamily: "Poppins",
     fontWeight: FontWeight.w600,

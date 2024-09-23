@@ -54,9 +54,60 @@ class JobDetails extends StatefulWidget {
 }
 
 class _JobDetailsState extends State<JobDetails> {
+  bool _isApplied = false;
+  String _currentStatus =
+      ""; // Initialize a variable to hold the dynamic status
+
+  @override
+  void initState() {
+    super.initState();
+    // Set the initial status from widget
+    _currentStatus = widget.status;
+  }
+
+  Future<void> _applyForJob() async {
+    try {
+      // Call the API to apply for the job
+      final result = await ApiServices.applyForJob(widget.jobId);
+
+      // Print the response to check its structure
+      print('API Response: $result');
+
+      // Check if the response has a 'message' field with "Application Created"
+      if (result['message'] == 'Application Created') {
+        setState(() {
+          _isApplied = true;
+          _currentStatus = 'Submitted'; // Update status to "Submitted"
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Application successfully submitted!')),
+        );
+      } else {
+        // Handle unexpected messages or error cases
+        setState(() {
+          _isApplied = false;
+          _currentStatus = widget.status; // Revert to the original status
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to apply: ${result['message']}')),
+        );
+      }
+    } catch (e) {
+      // Revert the state if an error occurred
+      setState(() {
+        _isApplied = false;
+        _currentStatus = widget.status; // Revert to original status on error
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    bool canApply = _currentStatus == "Apply for this Job";
 
     return Scaffold(
       body: Stack(
@@ -105,42 +156,124 @@ class _JobDetailsState extends State<JobDetails> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                      width: size.width * 0.4,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(15.0),
-                                        child: CompanyDetails1(
-                                          jobId: widget.jobId,
-                                          aboutCompany: widget.jobSummary,
-                                          userId: widget.companyId,
-                                          jobTitle: widget.jobTitle,
-                                          firmname: widget.firmname,
-                                          status: widget.status,
-                                          companywebsite: widget.companywebsite,
-                                          companyImage: widget.companyImage,
+                                child: size.width < 1200
+                                    ?
+
+                                    //////////web view of colum 1///////////
+
+                                    SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            SizedBox(
+                                              width: size.width < 1200
+                                                  ? size.width * 1
+                                                  : size.width * 0.4,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(15.0),
+                                                child: CompanyDetails1(
+                                                  jobId: widget.jobId,
+                                                  aboutCompany:
+                                                      widget.jobSummary,
+                                                  userId: widget.companyId,
+                                                  jobTitle: widget.jobTitle,
+                                                  firmname: widget.firmname,
+                                                  status: widget.status,
+                                                  companywebsite:
+                                                      widget.companywebsite,
+                                                  companyImage:
+                                                      widget.companyImage,
+                                                ),
+                                              ),
+                                            ),
+                                            const Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 25),
+                                              child:
+                                                  Divider(color: shadowblack),
+                                            ),
+                                            CompanyDetails2(size),
+                                            const Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 25),
+                                              child: Divider(
+                                                color: shadowblack,
+                                              ),
+                                            ),
+                                            CompanyDetails3(size),
+                                            GestureDetector(
+                                                onTap: canApply
+                                                    ? _applyForJob
+                                                    : null, // Disable if can't apply
+                                                child: size.width < 1200
+                                                    ? Container(
+                                                        height: 60,
+                                                        width: 220,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                  .all(Radius
+                                                                      .circular(
+                                                                          12)),
+                                                          color: getStatusColor(
+                                                              _currentStatus), // Use dynamic status color
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            _currentStatus, // Display dynamic status
+                                                            style: AppTextStyle
+                                                                .applytxt
+                                                                .copyWith(
+                                                              color: getTxtColor(
+                                                                  _currentStatus),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : Container()),
+                                          ],
                                         ),
+                                      )
+                                    : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          SizedBox(
+                                            width: size.width * 0.4,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(15.0),
+                                              child: CompanyDetails1(
+                                                jobId: widget.jobId,
+                                                aboutCompany: widget.jobSummary,
+                                                userId: widget.companyId,
+                                                jobTitle: widget.jobTitle,
+                                                firmname: widget.firmname,
+                                                status: widget.status,
+                                                companywebsite:
+                                                    widget.companywebsite,
+                                                companyImage:
+                                                    widget.companyImage,
+                                              ),
+                                            ),
+                                          ),
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 25),
+                                            child: VerticalDivider(
+                                                color: shadowblack),
+                                          ),
+                                          CompanyDetails2(size),
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 25),
+                                            child: VerticalDivider(
+                                                color: shadowblack),
+                                          ),
+                                          CompanyDetails3(size),
+                                        ],
                                       ),
-                                    ),
-                                    const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 25),
-                                      child:
-                                          VerticalDivider(color: shadowblack),
-                                    ),
-                                    CompanyDetails2(size),
-                                    const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 25),
-                                      child:
-                                          VerticalDivider(color: shadowblack),
-                                    ),
-                                    CompanyDetails3(size),
-                                  ],
-                                ),
                               ),
                               Align(
                                   alignment: Alignment.bottomRight,
@@ -166,13 +299,15 @@ class _JobDetailsState extends State<JobDetails> {
     );
   }
 
-  SingleChildScrollView CompanyDetails3(Size size) {
+  Padding CompanyDetails3(Size size) {
     Map<String, dynamic> reqlist = widget.jobReq;
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        child: SizedBox(
-          width: size.width * .25,
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: SizedBox(
+        // width: size.width * .25,
+        width: size.width < 1200 ? size.width * 1 : size.width * 0.22,
+
+        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             // crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,6 +344,7 @@ class _JobDetailsState extends State<JobDetails> {
                           ),
                         ],
                       )),
+                  const SizedBox(height: 10),
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -231,6 +367,7 @@ class _JobDetailsState extends State<JobDetails> {
                           ),
                         ],
                       )),
+                  const SizedBox(height: 10),
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -265,9 +402,11 @@ class _JobDetailsState extends State<JobDetails> {
   SingleChildScrollView CompanyDetails2(Size size) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15),
+        padding: const EdgeInsets.all(15),
         child: SizedBox(
-          width: size.width * .25,
+          // width: size.width * .25,
+          width: size.width < 1200 ? size.width * 1 : size.width * 0.22,
+
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -419,6 +558,7 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
   Widget build(BuildContext context) {
     // Check if the job can be applied for by comparing the current status
     bool canApply = _currentStatus == "Apply for this Job";
+    Size size = MediaQuery.of(context).size;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -470,24 +610,28 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
             ],
           ),
         ),
+        // In CompanyDetails1
         GestureDetector(
           onTap: canApply ? _applyForJob : null, // Disable if can't apply
-          child: Container(
-            height: 60,
-            width: 220,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(12)),
-              color: getStatusColor(_currentStatus), // Use dynamic status color
-            ),
-            child: Center(
-              child: Text(
-                _currentStatus, // Display dynamic status
-                style: AppTextStyle.applytxt.copyWith(
-                  color: getTxtColor(_currentStatus),
+          child: size.width < 1200
+              ? Container()
+              : Container(
+                  height: 60,
+                  width: 220,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(12)),
+                    color: getStatusColor(
+                        _currentStatus), // Use dynamic status color
+                  ),
+                  child: Center(
+                    child: Text(
+                      _currentStatus, // Display dynamic status
+                      style: AppTextStyle.applytxt.copyWith(
+                        color: getTxtColor(_currentStatus),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
         ),
       ],
     );

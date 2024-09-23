@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
@@ -110,19 +111,108 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                 "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    if (constraints.maxWidth > 800) {
-                      // Wide screen layout
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Left Section - Applicant Details
-                          Expanded(
-                            flex: 2,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  if (constraints.maxWidth > 800) {
+                    // Wide screen layout
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Left Section - Applicant Details
+                        Expanded(
+                          flex: 2,
+                          child: SizedBox(
+                            height: size.height * 0.8,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: CustomTable(
+                                headers: const [
+                                  'Date',
+                                  'Applicant name',
+                                  'Location',
+                                  'Designation',
+                                  'Resume',
+                                  'Status'
+                                ],
+                                rows: applicationsList.map((application) {
+                                  // Format the date
+                                  String formattedDate =
+                                      DateFormat('yyyy-MM-dd').format(
+                                    DateTime.parse(application['created_at']),
+                                  );
+
+                                  return CustomTableRow(
+                                    cells: [
+                                      formattedDate, // Application date
+                                      application[
+                                          'applicantName'], // Applicant name
+                                      application['location'], // Location
+                                      application['designation'], // Designation
+                                      application['resumeLink'] ??
+                                          'N/A', // Resume link
+                                      CustomStatusColumn(
+                                        status: application['status'],
+                                        applicationId:
+                                            application['applicationId'],
+                                        onSelect: () {
+                                          addSelectedApplicant(
+                                              application['applicationId']);
+                                        },
+                                        onStatusChange: _fetchApplicantsData,
+                                      ) // Status
+                                    ],
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        // Right Section - Selected Applicants
+                        Expanded(
+                          flex: 1,
+                          child: SizedBox(
+                            height: size.height * 0.8,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: CustomTable(
+                                headers: const [
+                                  'Name',
+                                  'Designation',
+                                  'Contact'
+                                ],
+                                rows: selectedApplicants.map((applicant) {
+                                  return CustomTableRow(
+                                    cells: [
+                                      applicant['applicantName'],
+                                      applicant['designation'],
+                                      CustomContactColumn(
+                                        designation: applicant['designation'],
+                                        applicantId: applicant['userId'],
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    // Small screen layout
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // small Layout first Table
+
+                        SizedBox(
+                          height: size.height * 0.4,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
                             child: CustomTable(
                               headers: const [
                                 'Date',
@@ -157,16 +247,19 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                                             application['applicationId']);
                                       },
                                       onStatusChange: _fetchApplicantsData,
-                                    ) // Status
+                                    ), // Status
                                   ],
                                 );
                               }).toList(),
                             ),
                           ),
-                          const SizedBox(width: 16),
-                          // Right Section - Selected Applicants
-                          Expanded(
-                            flex: 1,
+                        ),
+                        const SizedBox(height: 16),
+                        // small Layout second Table
+                        SizedBox(
+                          height: size.height * 0.4,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
                             child: CustomTable(
                               headers: const ['Name', 'Designation', 'Contact'],
                               rows: selectedApplicants.map((applicant) {
@@ -175,79 +268,18 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
                                     applicant['applicantName'],
                                     applicant['designation'],
                                     CustomContactColumn(
-                                      designation: applicant['designation'],
-                                      applicantId: applicant['userId'],
-                                    ),
+                                        designation: applicant['designation'],
+                                        applicantId: applicant['userId']),
                                   ],
                                 );
                               }).toList(),
                             ),
                           ),
-                        ],
-                      );
-                    } else {
-                      // Small screen layout
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomTable(
-                            headers: const [
-                              'Date',
-                              'Applicant name',
-                              'Location',
-                              'Designation',
-                              'Resume',
-                              'Status'
-                            ],
-                            rows: applicationsList.map((application) {
-                              // Format the date
-                              String formattedDate =
-                                  DateFormat('yyyy-MM-dd').format(
-                                DateTime.parse(application['created_at']),
-                              );
-
-                              return CustomTableRow(
-                                cells: [
-                                  formattedDate, // Application date
-                                  application[
-                                      'applicantName'], // Applicant name
-                                  application['location'], // Location
-                                  application['designation'], // Designation
-                                  application['resumeLink'] ??
-                                      'N/A', // Resume link
-                                  CustomStatusColumn(
-                                    status: application['status'],
-                                    applicationId: application['applicationId'],
-                                    onSelect: () {
-                                      addSelectedApplicant(
-                                          application['applicationId']);
-                                    },
-                                    onStatusChange: _fetchApplicantsData,
-                                  ), // Status
-                                ],
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 16),
-                          CustomTable(
-                            headers: const ['Name', 'Designation', 'Contact'],
-                            rows: selectedApplicants.map((applicant) {
-                              return CustomTableRow(
-                                cells: [
-                                  applicant['applicantName'],
-                                  applicant['designation'],
-                                  CustomContactColumn(
-                                      designation: applicant['designation'],
-                                      applicantId: applicant['userId']),
-                                ],
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      );
-                    }
-                  },
-                ),
+                        ),
+                      ],
+                    );
+                  }
+                },
               ),
             ),
           ),
@@ -257,7 +289,6 @@ class _CompanyHomePageState extends State<CompanyHomePage> {
   }
 }
 
-// Custom Table Widget
 class CustomTable extends StatelessWidget {
   final List<String> headers;
   final List<CustomTableRow> rows;
@@ -266,23 +297,36 @@ class CustomTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get the total screen width
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // Calculate dynamic column width based on screen size
+    double columnWidth = screenWidth < 600
+        ? screenWidth / headers.length // For mobile, distribute evenly
+        : screenWidth /
+            (headers.length * 3); // Wider screens, adjust column width
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Table(
-        border: TableBorder.all(),
-        columnWidths: headers.asMap().map((index, _) {
-          return MapEntry(index, const FixedColumnWidth(100));
-        }),
-        children: [
-          // Header Row
-          TableRow(
-            children: headers
-                .map((header) => CustomTableHeader(text: header))
-                .toList(),
-          ),
-          // Data Rows
-          ...rows.map((row) => row.buildRow()),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Table(
+          border: TableBorder.all(),
+          columnWidths: headers.asMap().map((index, _) {
+            // Use the calculated column width for each column
+            return MapEntry(index, FixedColumnWidth(columnWidth));
+          }),
+          children: [
+            // Header Row
+            TableRow(
+              children: headers
+                  .map((header) => CustomTableHeader(text: header))
+                  .toList(),
+            ),
+            // Data Rows
+            ...rows.map((row) => row.buildRow()),
+          ],
+        ),
       ),
     );
   }
@@ -298,8 +342,8 @@ class CustomTableRow {
     return TableRow(
       children: cells
           .map((cell) => SizedBox(
-                width: 100,
-                height: 70,
+                width: 50,
+                height: 60,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: cell is Widget ? cell : Text(cell.toString()),

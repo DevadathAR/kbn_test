@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/apiServices.dart';
+import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
+import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 
 class HomeFilterBox extends StatefulWidget {
   final Function(List<dynamic>) onFilterApplied;
+
   const HomeFilterBox({super.key, required this.onFilterApplied});
 
   @override
@@ -12,8 +15,6 @@ class HomeFilterBox extends StatefulWidget {
 }
 
 class _HomeFilterBoxState extends State<HomeFilterBox> {
-// List<dynamic> dropboxes =[];
-
   List<String> jobTypes = ["Job Type"];
   List<String> salaryRanges = [
     "Salary",
@@ -39,23 +40,17 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
   void initState() {
     super.initState();
     fetchDropdownBoxItems();
+    // _fetchFilteredJobs();
   }
 
   Future<void> fetchDropdownBoxItems() async {
     try {
-      print("Fetching dropdown box items...");
       final dropBoxItems = await ApiServices.fetchDropdownBoxItems();
-      print("Dropdown box items fetched: $dropBoxItems");
       setState(() {
         jobTypes = ["Job Type"] + dropBoxItems['jobTypes']!;
-        print("jobTypes: $jobTypes"); // Add this line
         experiences = ["Experience"] + dropBoxItems['experiences']!;
-        print("experiences: $experiences"); // Add this line
         locations = ["Location"] + dropBoxItems['locations']!;
-        print("locations: $locations"); // Add this line
         workModes = ["Work Mode"] + dropBoxItems['workModes']!;
-        print("workModes: $workModes"); // Add this line
-
         isLoading = false;
       });
     } catch (e) {
@@ -66,7 +61,7 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
     }
   }
 
-  Future<void> fetchFilteredJobs() async {
+  Future<void> _fetchFilteredJobs() async {
     try {
       final jobsResponse = await ApiServices.fetchFilteredJobs(
         selectedJobType: selectedJobType,
@@ -96,57 +91,68 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
               borderRadius: BorderRadius.all(Radius.circular(2)),
               color: tealblue,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                buildDropdown(jobTypes, selectedJobType, (newValue) {
-                  setState(() {
-                    selectedJobType = newValue!;
-                    fetchFilteredJobs();
-                  });
-                }),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: VerticalDivider(),
-                ),
-                buildDropdown(salaryRanges, selectedSalary, (newValue) {
-                  setState(() {
-                    selectedSalary = newValue!;
-                    fetchFilteredJobs();
-                  });
-                }),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: VerticalDivider(),
-                ),
-                buildDropdown(experiences, selectedExperience, (newValue) {
-                  setState(() {
-                    selectedExperience = newValue!;
-                    fetchFilteredJobs();
-                  });
-                }),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: VerticalDivider(),
-                ),
-                buildDropdown(workModes, selectedWorkMode, (newValue) {
-                  setState(() {
-                    selectedWorkMode = newValue!;
-                    fetchFilteredJobs();
-                  });
-                }),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: VerticalDivider(),
-                ),
-                buildDropdown(locations, selectedLocation, (newValue) {
-                  setState(() {
-                    selectedLocation = newValue!;
-                    fetchFilteredJobs();
-                  });
-                }),
-              ],
-            ),
+            child: (size.width >= 900)
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      buildDropdown(jobTypes, selectedJobType, (newValue) {
+                        setState(() {
+                          selectedJobType = newValue!;
+                          _fetchFilteredJobs();
+                        });
+                      }),
+                      const VerticalDivider(),
+                      buildDropdown(salaryRanges, selectedSalary, (newValue) {
+                        setState(() {
+                          selectedSalary = newValue!;
+                          _fetchFilteredJobs();
+                        });
+                      }),
+                      const VerticalDivider(),
+                      buildDropdown(experiences, selectedExperience,
+                          (newValue) {
+                        setState(() {
+                          selectedExperience = newValue!;
+                          _fetchFilteredJobs();
+                        });
+                      }),
+                      const VerticalDivider(),
+                      buildDropdown(workModes, selectedWorkMode, (newValue) {
+                        setState(() {
+                          selectedWorkMode = newValue!;
+                          _fetchFilteredJobs();
+                        });
+                      }),
+                      const VerticalDivider(),
+                      buildDropdown(locations, selectedLocation, (newValue) {
+                        setState(() {
+                          selectedLocation = newValue!;
+                          _fetchFilteredJobs();
+                        });
+                      }),
+                    ],
+                  )
+                : GestureDetector(
+                    onTap: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.only(left: 25),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Image(image: AssetImage(filterPng)),
+                          Padding(
+                            padding: EdgeInsets.only(left: 15),
+                            child: Text(
+                              "Filters",
+                              style: AppTextStyle.flitertxt,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
           );
   }
 
@@ -160,10 +166,7 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
       items: items.map((String value) {
         return DropdownMenuItem<String>(
           value: value,
-          child: Text(
-            value,
-            style: AppTextStyle.flitertxt,
-          ),
+          child: Text(value, style: AppTextStyle.flitertxt),
         );
       }).toList(),
       onChanged: onChanged,

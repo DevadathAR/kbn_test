@@ -33,7 +33,8 @@ class _SignupPageState extends State<SignupPage> {
   bool _isApplicantSelected = true;
   bool _ischeck = false;
   Uint8List? _selectedImage;
-  String? _imageFilename; // Add this to store the filename
+  String? _imageFilename;
+  final ApiServices _apiService = ApiServices(); // Instantiate the ApiService
 
   void _signin() {
     if (_ischeck) {
@@ -41,6 +42,72 @@ class _SignupPageState extends State<SignupPage> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please check the box to proceed.')),
+      );
+    }
+  }
+  Future<void> _signup() async {
+    String fullName = fullNameController.text.trim();
+    String email = emailController.text.trim();
+    String password = passwordController.text;
+    String confirmPassword = confirmPasswordController.text;
+    String contactNumber = contactNumController.text.trim();
+    String role = roleController.text.trim();
+
+    if (fullName.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty || contactNumber.isEmpty || role.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all the fields')),
+      );
+      return;
+    }
+
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    if (!emailRegex.hasMatch(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid email address')),
+      );
+      return;
+    }
+
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
+
+    try {
+      // Call the ApiService signUp method
+      var response = await _apiService.signUp(
+        fullName: fullName,
+        email: email,
+        password: password,
+        contactNumber: contactNumber,
+        role: role,
+        selectedImage: _selectedImage,
+        imageFilename: _imageFilename,
+      );
+
+      if (response.statusCode == 201) {
+        // Successful signup
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sign up successful! Redirecting to login...')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CompanyLoginPage(),
+          ),
+        );
+      } else {
+        // Handle unsuccessful signup
+        final errorMessage = await response.stream.bytesToString();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sign up failed: $errorMessage')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $e')),
       );
     }
   }
@@ -59,64 +126,6 @@ class _SignupPageState extends State<SignupPage> {
         _selectedImage = null;
         _imageFilename = null; // Clear the filename
       });
-    }
-  }
-
-  void _signup() async {
-    // Get the input from the text fields
-    String fullName = fullNameController.text;
-    String email = emailController.text;
-    String password = passwordController.text;
-    String confirmPassword = confirmPasswordController.text;
-    String contactNumber = contactNumController.text;
-    String role = roleController.text;
-
-    // Check if the passwords match
-    if (password != confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
-      );
-      return;
-    }
-
-    // Create multipart form data request
-    final url = Uri.parse('http://192.168.29.37:8000/user/sign-up');
-    var request = http.MultipartRequest('POST', url);
-
-    // Add headers without Authorization
-    request.headers.addAll({
-      'Content-Type': 'multipart/form-data',
-    });
-
-    // Add the text fields to the request
-    request.fields['name'] = fullName;
-    request.fields['role'] = role;
-    request.fields['email'] = email;
-    request.fields['password'] = password;
-    request.fields['contact'] = contactNumber;
-
-    // Add the image to the request if it exists
-    if (_selectedImage != null) {
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'image',
-          _selectedImage!,
-          filename: _imageFilename!,
-        ),
-      );
-    }
-
-    // Send the request
-    var response = await request.send();
-
-    if (response.statusCode == 201) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const CompanyLoginPage(),
-          // Pass the uploaded image here
-        ),
-      );
     }
   }
 
@@ -152,35 +161,38 @@ class _SignupPageState extends State<SignupPage> {
   Widget _buildMobileLayout(BoxConstraints constraints) {
     Size size = MediaQuery.of(context).size;
 
-    return SingleChildScrollView(
-      child: Container(
-        // width: size.width * 1 - 50,
-        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 5),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              signup,
-              style: AppTextStyle.subheadertext,
-            ),
-            _buildRoleSelection(constraints, isMobile: true),
-            const SizedBox(height: 5),
-            _buildAccountDetails(isMobile: true),
-            const SizedBox(height: 5),
-            _buildSignInButton(),
-            const SizedBox(height: 5),
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                bgWidget(
-                  img: mobileBg,
-                ), // Background widget
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Container(
+          // width: size.width * 1 - 50,
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 5),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 10),
+              const Text(
+                signup,
+                style: AppTextStyle.subheadertext,
+              ),
+              _buildRoleSelection(constraints, isMobile: true),
+              const SizedBox(height: 10),
+              _buildAccountDetails(isMobile: true),
+              const SizedBox(height: 10),
+              _buildSignInButton(),
+              const SizedBox(height: 10),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  bgWidget(
+                    img: mobileBg,
+                  ), // Background widget
 
-                _buildImagePicker(isMobile: true),
-              ],
-            ),
-          ],
+                  _buildImagePicker(isMobile: true),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

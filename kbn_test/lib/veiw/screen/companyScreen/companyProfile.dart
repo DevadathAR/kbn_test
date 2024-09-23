@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:kbn_test/veiw/screen/companyScreen/T_&_C.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
 import 'package:kbn_test/veiw/widgets_common/boxBTN.dart';
 import 'package:kbn_test/veiw/widgets_common/home_appbar_box.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CompanyProfilePage extends StatefulWidget {
   const CompanyProfilePage({super.key});
@@ -57,7 +59,6 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
     'Junior level, 2-5 years',
     'Senior level, 5+ years'
   ];
-  // int userId = userDetails['user']['userId'];
   String? postedJobTitle;
   String? postingDate;
 
@@ -65,6 +66,8 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
   void initState() {
     // TODO: implement initState
     fetchUserData();
+    // _loadPostedJobInfo();
+
     // fetchPostedJobDetails();
 
     // // Pre-fill text fields with existing user details
@@ -114,11 +117,32 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
     try {
       var response = await ApiServices.createJob(jobData);
       if (response.statusCode == 201) {
+        var jobResponse = jsonDecode(response.body);
+
         setState(() {
-          postedJobTitle = jobTitleController.text;
-          postingDate =
-              DateTime.now().toString().split(' ')[0]; // Store current date
+          // var JobTitle = jobTitleController.text;
+
+          // Parse job title and posted date from the server's response
+          postedJobTitle = jobResponse['job_title'];
+          // postingDate = DateTime.parse(jobResponse['posted_date']).toString();
+
+          // Clear all text fields
+          jobTitleController.clear();
+          jobSummaryController.clear();
+          jobLocationController.clear();
+          jobVacancyController.clear();
+          salaryController.clear();
+          keyRespoController.clear();
+          educationController.clear();
+          skillsController.clear();
+          requirementExperienceController.clear();
+
+          // Reset dropdowns
+          selectedExperience = null;
+          selectedJobMode = null;
+          selectedEmploymentType = null;
         });
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Job created successfully")),
         );
@@ -133,6 +157,21 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
       );
     }
   }
+
+//   Future<void> fetchJobDetails(int jobId) async {
+//   try {
+//     var response = await ApiServices.fetchRecruitmentDetails();
+//       var jobResponse = jsonDecode(response);
+//       setState(() {
+//         postedJobTitle = jobResponse['job_title'];
+//         postingDate = DateTime.parse(jobResponse['posted_date']).toString();
+//       });
+//   } catch (e) {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(content: Text("Error fetching job details: $e")),
+//     );
+//   }
+// }
 
   Future<void> _updateAddressDetails() async {
     try {
@@ -155,6 +194,30 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
       );
     }
   }
+
+  // void _updatePostedJobInfo(String jobTitle, String postedDate) async {
+  //   final prefs = await SharedPreferences.getInstance();
+
+  //   // Store job title and posting date
+  //   await prefs.setString('postedJobTitle', jobTitle);
+  //   await prefs.setString('postingDate', postedDate);
+
+  //   // Update the state as well
+  //   setState(() {
+  //     postedJobTitle = jobTitle;
+  //     postingDate = postedDate; // Store current date
+  //   });
+  // }
+
+  // void _loadPostedJobInfo() async {
+  //   final prefs = await SharedPreferences.getInstance();
+
+  //   setState(() {
+  //     // Retrieve stored values or set them to default if not available
+  //     postedJobTitle = prefs.getString('postedJobTitle') ?? '';
+  //     postingDate = prefs.getString('postingDate') ?? '';
+  //   });
+  // }
 
   // Validation function for required text fields
   String? validateRequired(String? value) {
@@ -193,6 +256,10 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
     }
   }
 
+// user Details  stored here
+  var dpImage =
+      "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -228,8 +295,8 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
           T_and_C: const companyT_n_C(),
           // logOutTo: const CompanyLoginPage(),
           home: const CompanyHomePage(),
-          profileImage:
-              "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
+          profileImage: dpImage,
+          // "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
         ),
       ],
     );
@@ -257,6 +324,8 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
   Widget _companyInfoSection(double width) {
     var kbnCode = userDetails['user']['kbn_code'];
 
+    var profileImage = userDetails['user']['profile_image'];
+
     // Corrected assignment of isApproved
     isApproved = kbnCode == null ? false : true;
 
@@ -273,10 +342,15 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(10.0),
-                  image: const DecorationImage(
-                    image: AssetImage(compnyLogo),
-                    fit: BoxFit.cover,
-                  ),
+                  image: dpImage != null
+                      ? DecorationImage(
+                          image: NetworkImage(dpImage),
+                          fit: BoxFit.cover,
+                        )
+                      : const DecorationImage(
+                          image: AssetImage(compnyLogo),
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
               // The tickMark icon positioned at the bottom-right corner
@@ -382,30 +456,26 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
         children: [
           const Text('Recruitment details', style: AppTextStyle.normalHeading),
           const SizedBox(height: 10),
-          _buildRecruitmentDetailsBox(width),
-        ],
-      ),
-    );
-  }
-
-// Recruitment Details Box
-  Widget _buildRecruitmentDetailsBox(double width) {
-    return Container(
-      width: width * 0.4,
-      height: 498,
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Align(
-            alignment: Alignment.centerRight,
-            child: Icon(Icons.edit, color: textGrey),
+          Container(
+            width: width * 0.4,
+            height: 498,
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Align(
+                  alignment: Alignment.centerRight,
+                  child: Icon(Icons.edit, color: textGrey),
+                ),
+                recruitDetailsWidget(width: width * 4),
+              ],
+            ),
           ),
-          recruitDetailsWidget(width: width * 4),
+          // _buildRecruitmentDetailsBox(width),
         ],
       ),
     );

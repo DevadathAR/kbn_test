@@ -9,6 +9,7 @@ import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/forgotPass.dart';
 import 'package:kbn_test/veiw/auth/signUp.dart';
 import 'package:kbn_test/veiw/screen/AdminScreen/adminHome.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/overView.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets_common/loginTextFeild.dart';
 import 'package:kbn_test/veiw/widgets_common/bg_widg.dart';
@@ -66,7 +67,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => const CompanyHomePage(),
+                builder: (context) => const OverviewScreen(),
               ),
             );
           } else if (role == 'Admin') {
@@ -282,34 +283,24 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
               obscure: false,
               hight: 20,
             ),
-            Stack(
+            LoginTextForm(
+              controller: _passwordController,
+              label: "password",
+              hintlabel: "* * * * *",
+              obscure: true,
+            ),
+            Align(
               alignment: Alignment.bottomRight,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 10,
-                  ),
-                  child: LoginTextForm(
-                    controller: _passwordController,
-                    label: "password",
-                    hintlabel: "* * * * *",
-                    obscure: true,
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return const FrogetPswd();
-                        },
-                      ));
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return const FrogetPswd();
                     },
-                    child: const Text(forget, style: AppTextStyle.bodytext),
-                  ),
-                ),
-              ],
+                  ));
+                },
+                child: const Text(forget, style: AppTextStyle.bodytext),
+              ),
             ),
             Row(
               children: [

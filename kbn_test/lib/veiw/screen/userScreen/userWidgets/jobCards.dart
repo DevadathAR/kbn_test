@@ -57,6 +57,40 @@ class _LatestJobCardState extends State<LatestJobCard> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    double getHeight(double screenWidth) {
+      if (screenWidth < 900) {
+        return screenWidth * 0.1; // 12% of screen width for small screens
+      } else if (screenWidth < 1200) {
+        return screenWidth * 0.06; // 15% of screen width for medium screens
+      } else if (screenWidth < 1600) {
+        return screenWidth * 0.045; // 18% of screen width for large screens
+      } else {
+        return screenWidth * 0.03; // or any other default value
+      }
+    }
+
+    double getWidth(double screenWidth) {
+      if (screenWidth < 900) {
+        return screenWidth * 0.25; // 25% of screen width for small screens
+      } else if (screenWidth < 1200) {
+        return screenWidth * 0.12; // 40% of screen width for medium screens
+      } else if (screenWidth < 1600) {
+        return screenWidth * 0.08; // 50% of screen width for large screens
+      } else {
+        return screenWidth * 0.06; // or any other default value
+      }
+    }
+
+    double getLogoRadius(double screenWidth) {
+      if (screenWidth < 900) {
+        return 40; // larger radius for small screens
+      } else {
+        return 25; // default radius for larger screens
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.only(right: 10, bottom: 20, left: 10),
       child: Container(
@@ -80,7 +114,7 @@ class _LatestJobCardState extends State<LatestJobCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   CircleAvatar(
-                    radius: 25,
+                    radius: getLogoRadius(size.width),
                     backgroundImage: NetworkImage(
                         '${ApiServices.baseUrl}${widget.companyImage}'),
                   ),
@@ -117,9 +151,9 @@ class _LatestJobCardState extends State<LatestJobCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Requirments(txt: widget.expLevel),
-                Requirments(txt: widget.jobMode),
-                Requirments(txt: widget.jobType),
+                Requirments(context, txt: widget.expLevel),
+                Requirments(context, txt: widget.jobMode),
+                Requirments(context, txt: widget.jobType),
               ],
             ),
             const Padding(
@@ -133,8 +167,8 @@ class _LatestJobCardState extends State<LatestJobCard> {
                 children: [
                   // SubmitButton..........
                   Container(
-                    height: 50,
-                    width: 120,
+                    height: getHeight(size.width),
+                    width: getWidth(size.width),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(4)),
                       color: getStatusColor(widget.status),
@@ -167,21 +201,35 @@ class _LatestJobCardState extends State<LatestJobCard> {
   }
 }
 
-Widget Requirments({required String txt}) {
+Widget Requirments(context, {required String txt}) {
+  Size size = MediaQuery.of(context).size;
+  double containerWidth;
+
+  if (size.width < 900) {
+    containerWidth = size.width * 0.25;
+  } else if (size.width < 1200) {
+    containerWidth = size.width * 0.1;
+  } else if (size.width < 1600) {
+    containerWidth = size.width * 0.075;
+  } else {
+    containerWidth = size.width * 0.05; // or any other default value
+  }
+
   return Container(
     height: 25,
-    width: 90,
+    width: containerWidth,
     decoration: const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(4)),
       color: green,
     ),
     child: Center(
-        child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        txt,
-        style: AppTextStyle.buttontxt,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          txt,
+          style: AppTextStyle.buttontxt,
+        ),
       ),
-    )),
+    ),
   );
 }

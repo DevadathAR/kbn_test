@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
@@ -11,7 +12,49 @@ class ApiServices {
   static Map<String, String> headers = {
     'Content-Type': 'application/json',
   };
-  static const String baseUrl = 'http://192.168.29.37:8000';
+  // static const String baseUrl = 'http://192.168.29.37:8000';
+  static const String baseUrl = 'http://192.168.29.197:5500';
+
+  Future<http.StreamedResponse> signUp({
+    required String fullName,
+    required String email,
+    required String password,
+    required String contactNumber,
+    required String role,
+    Uint8List? selectedImage,
+    String? imageFilename,
+  }) async {
+    final url = Uri.parse('$baseUrl/user/sign-up');
+
+    // Create multipart form data request
+    var request = http.MultipartRequest('POST', url);
+
+    // Add headers without Authorization
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data',
+    });
+
+    // Add the text fields to the request
+    request.fields['name'] = fullName;
+    request.fields['role'] = role;
+    request.fields['email'] = email;
+    request.fields['password'] = password;
+    request.fields['contact'] = contactNumber;
+
+    // Add the image to the request if it exists
+    if (selectedImage != null && imageFilename != null) {
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image',
+          selectedImage,
+          filename: imageFilename,
+        ),
+      );
+    }
+
+    // Send the request and return the response
+    return await request.send();
+  }
 
   // Login API
   static Future<Map<String, dynamic>> userLogin(
@@ -21,15 +64,14 @@ class ApiServices {
     var response = await http.post(
       url,
       body: jsonEncode({
-        // 'email': "company2@gmail.com",
+        // 'email': "festa",
         // 'password': "123",
         // 'email': "applicant8@gmail.com",
         // 'password': "123",
         'email': email,
         'password': password,
-        // 'loginType': "Applicant",
       }),
-      headers: {'Content-Type': 'application/json'},
+      headers: headers,
     );
 
     // print("Login response: ${response.statusCode}");
@@ -44,27 +86,6 @@ class ApiServices {
       throw Exception('Login failed: ${response.body}');
     }
   }
-
-  // static Future<Map<String, dynamic>> company_login(
-  //     String email, String password) async {
-  //   var url = Uri.parse('$baseUrl/user/login');
-
-  //   var response = await http.post(url,
-  //       body: jsonEncode({
-  //         'email': email,
-  //         'password': password,
-  //         // 'loginType': "Company",
-  //       }),
-  //       headers: headers);
-
-  //   print('LpgIn Response${response.body}');
-
-  //   if (response.statusCode == 200) {
-  //     return jsonDecode(response.body);
-  //   } else {
-  //     throw Exception('Login failed');
-  //   }
-  // }
 
   // Fetch User Details API
   static Future<Map<String, dynamic>> fetchUserDetails() async {
@@ -105,6 +126,21 @@ class ApiServices {
     // print('Selected${response.body}');
 
     if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to fetch user details');
+    }
+  }
+  
+
+  // View  Applicant Details API
+  static Future<Map<String, dynamic>> fetchRecruitmentDetails(jobId) async {
+    var url = Uri.parse('$baseUrl/job/vaccancy$jobId');
+
+    var response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+
       return jsonDecode(response.body);
     } else {
       throw Exception('Failed to fetch user details');
@@ -163,28 +199,28 @@ class ApiServices {
     }
   }
 
-  // Updating Vaccancy
-  static Future<Map<String, dynamic>> updateVaccancy(
-    String status,
-    int applicationId,
-  ) async {
-    var url = Uri.parse('$baseUrl/application/$applicationId');
+  // // Updating Vaccancy
+  // static Future<Map<String, dynamic>> updateVaccancy(
+  //   String status,
+  //   int applicationId,
+  // ) async {
+  //   var url = Uri.parse('$baseUrl/job/vaccancy$jobId);
 
-    var response = await http.patch(
-      url,
-      headers: headers,
-      body: jsonEncode({
-        // Correct key-value format
-        'newStatus': status
-      }),
-    );
+  //   var response = await http.patch(
+  //     url,
+  //     headers: headers,
+  //     body: jsonEncode({
+  //       // Correct key-value format
+  //       'newStatus': status
+  //     }),
+  //   );
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to update application');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body);
+  //   } else {
+  //     throw Exception('Failed to update application');
+  //   }
+  // }
 
   // View  Applicant Details API
   static Future<Map<String, dynamic>> fetchApplicantDetails(
@@ -317,6 +353,8 @@ class ApiServices {
 
   //..............................................................
 
+  //user Section
+
   static Future<Map<String, List<String>>> fetchDropdownBoxItems() async {
     final url = Uri.parse('$baseUrl/job/dropbox');
 
@@ -327,7 +365,7 @@ class ApiServices {
       );
 
       // print('Response status: ${response.statusCode}');
-      print('DropBox: ${response.body}');
+      // print('DropBox: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -420,6 +458,7 @@ class ApiServices {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
+      // log(jsonEncode(data));
       return data['data'] as List;
     } else {
       throw Exception('Failed to fetch job titles');
@@ -468,11 +507,12 @@ class ApiServices {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      final totalJobs = data["total_jobs"];
+      final totalJobs = data["totalJobs"];
+      log(jsonEncode(data));
 
       return {
         'data': data['data'] as List,
-        'total_jobs': totalJobs,
+        'totalJobs': totalJobs,
       };
     } else {
       throw Exception("Failed to fetch filtered jobs");
