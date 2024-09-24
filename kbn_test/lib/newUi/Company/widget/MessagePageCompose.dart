@@ -15,7 +15,7 @@ Widget messagePageCompose(context) {
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
       height: size.height * 0.6,
-      width: 600,
+    width: size.width < 1200 ? 700 : size.width * 0.4,
       child: Padding(
         padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
         child: Column(

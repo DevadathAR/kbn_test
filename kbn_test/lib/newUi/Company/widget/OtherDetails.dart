@@ -3,10 +3,10 @@ import 'package:kbn_test/newUi/Company/widget/CompanyAndManager.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 
-Widget companyDetails(context, {label, sub,isview}) {
+Widget companyDetails(context, {label, sub, isview}) {
   Size size = MediaQuery.of(context).size;
   return Container(
-    width: size.width * 0.235,
+    width: size.width < 1200 ? 170 : size.width * 0.2012,
     height: size.height * 0.5,
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
@@ -46,17 +46,16 @@ Widget companyDetails(context, {label, sub,isview}) {
             ],
           ),
         ),
-       addAndSave(context)
-       
+        addAndSave(context)
       ],
     ),
   );
 }
 
-Widget otherDetails(context, {label, sub,isview}) {
+Widget otherDetails(context, {label, sub, isview}) {
   Size size = MediaQuery.of(context).size;
   return Container(
-    width: size.width * 0.24,
+    width: size.width < 1200 ? 170 : size.width * 0.2012,
     height: size.height * 0.5,
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
@@ -83,7 +82,7 @@ Widget otherDetails(context, {label, sub,isview}) {
             ],
           ),
         ),
-       addAndSave(context)
+        addAndSave(context)
       ],
     ),
   );

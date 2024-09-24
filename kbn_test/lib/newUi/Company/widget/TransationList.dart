@@ -44,17 +44,17 @@ Widget transationListItem(context, {name, description, date}) {
   Size size = MediaQuery.of(context).size;
 
   return Padding(
-    padding: EdgeInsets.symmetric(horizontal: 10.0),
+    padding: const EdgeInsets.symmetric(horizontal: 10.0),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Image(image: AssetImage(kbnLogo), height: 20),
-        SizedBox(width: 16),
-        Text("Date"),
-        Text("Amount"),
-        Text("Account Number"),
-        Text("Mail ID"),
-        Container(decoration: BoxDecoration(borderRadius:  BorderRadius.all(Radius.circular(8)),color: tealblue),
+        const Image(image: const AssetImage(kbnLogo), height: 20),
+        const SizedBox(width: 16),
+        const Text("Date"),
+        const Text("Amount"),
+        const Text("Account Number"),
+        const Text("Mail ID"),
+        Container(decoration: const BoxDecoration(borderRadius:  BorderRadius.all(Radius.circular(8)),color: tealblue),
           height: 30,
           width: 100,
           child: TextButton(
@@ -65,7 +65,7 @@ Widget transationListItem(context, {name, description, date}) {
                   },
                 ));
               },
-              child: Text("Download",style: AppTextStyle.applytxt,)),
+              child: const Text("Download",style: AppTextStyle.applytxt,)),
         )
       ],
     ),

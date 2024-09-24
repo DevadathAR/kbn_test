@@ -29,13 +29,10 @@ class ScaffoldBuilder extends StatelessWidget {
       body: Row(
         children: [
           // Nav Menu
+          Sidebar(
+            currentPath: currentPath,
+          ),
           Expanded(
-              flex: 1,
-              child: Sidebar(
-                currentPath: currentPath,
-              )),
-          Expanded(
-            flex: 5,
             child: Column(
               children: [
                 // App bar

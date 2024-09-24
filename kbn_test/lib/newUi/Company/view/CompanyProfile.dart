@@ -9,32 +9,65 @@ class CompanyProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery.of(context).size;
 
-    return 
-         Wrap(
-          children: [
-            PageAndDate(context, pageLabel: "Profile"),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return SizedBox(height: size.height*0.6222,
+      child: ListView(
+        children: [
+          SizedBox(height: 10,),
+          // PageAndDate(context, pageLabel: "Profile"),
+          Wrap(
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              
+              companyAndManager(context,
+                  label: "Company name", sub: "KBN Code", isview: true),
+              SizedBox(
+                width: size.width * 0.005,
+              ),
+              companyAndManager(context,
+                  label: "Manager name", sub: "Year", isview: true),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: Wrap(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                companyAndManager(context, label: "Company name", sub: "KBN Code",isview: true),
-                companyAndManager(context, label: "Manager name", sub: "Year",isview: true),
+      
+                Wrap(children: [companyDetails(
+                  context,
+                  label: "Compnay Details",
+                  sub: "Address",
+                ),
+                SizedBox(
+                  width: size.width * 0.005,
+                ),
+                otherDetails(
+                  context,
+                  label: "Team Members",
+                ),
+                SizedBox(
+                  width: size.width * 0.005,
+                ),],),
+                Wrap(children: [otherDetails(
+                  context,
+                  label: "Job Positions",
+                ),
+                SizedBox(
+                  width: size.width * 0.005,
+                ),
+                otherDetails(
+                  context,
+                  label: "Commmunity",
+                ),],)
+                
+                
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  companyDetails(context,label: "Compnay Details", sub: "Address",),
-                  otherDetails(context, label: "Team Members",),
-                  otherDetails(context, label: "Job Positions",),
-                  otherDetails(context, label: "Commmunity",),
-                ],
-              ),
-            )
-          ],
-        );
+          )
+        ],
+      ),
+    );
   }
 }

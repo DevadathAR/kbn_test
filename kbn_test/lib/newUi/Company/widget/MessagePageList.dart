@@ -8,12 +8,13 @@ Widget messagePageList(context) {
 
   return Container(
     height: size.height * 0.6,
-    width: 600,
+    width: size.width < 1200 ? 700 : size.width * 0.4,
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
     child: Scrollbar(
       thumbVisibility: true,
       trackVisibility: true,
+      
       scrollbarOrientation: ScrollbarOrientation.right,
       interactive: true,
       thickness: 10,

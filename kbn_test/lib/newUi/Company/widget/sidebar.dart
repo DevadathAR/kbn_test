@@ -19,7 +19,7 @@ class _SidebarState extends State<Sidebar> {
       padding: const EdgeInsets.only(top: 20, bottom: 10),
       color: white,
       constraints: const BoxConstraints(
-        minWidth: 80,
+        // minWidth: 80,
         maxWidth: 180, // Maximum width for the ListView
       ),
       child: Column(

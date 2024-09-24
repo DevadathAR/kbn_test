@@ -15,7 +15,7 @@ Widget PageAndDate(context,{pageLabel}) {
 
   return SizedBox(
     width: size.width*1,
-    height: size.height*.1,
+    // height: size.height*.1,
         // color: black,
 
     child: Center(
@@ -28,6 +28,7 @@ Widget PageAndDate(context,{pageLabel}) {
             style: AppTextStyle.googletext,
           ),
           Container(
+            padding: EdgeInsets.only(bottom: 5,right: 5),
             // width: 150,
             // height: 40,
             decoration: const BoxDecoration(
@@ -37,6 +38,7 @@ Widget PageAndDate(context,{pageLabel}) {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Image(image: AssetImage(calenderPng)),
+                SizedBox(width: 2,),
                 Text(
                   '$currentMonth / $nextMonthStr',
                   style: AppTextStyle.normalText,

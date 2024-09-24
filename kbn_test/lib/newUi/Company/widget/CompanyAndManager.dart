@@ -6,87 +6,86 @@ import 'package:kbn_test/utilities/text_style.dart';
 Widget companyAndManager(BuildContext context, {label, sub, isview}) {
   Size size = MediaQuery.of(context).size;
 
-  return Expanded(
-    child: Container(
-      height:
-          size.height * 0.25, // Increased height to accommodate the TextFormField
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(6)),
-        color: white,
-      ),
-      child: Stack(
-        children: [
-          Column(
-            children: [
-              // Text to show last updated date
-              const Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 8.0, right: 8),
-                  child: Text(
-                    "Last updated date",
-                    style: AppTextStyle.normalHeading,
-                  ),
+  return Container(
+    width: size.width < 1200 ? 700 : size.width * 0.408,
+    height:
+        size.height * 0.25, // Increased height to accommodate the TextFormField
+    decoration: const BoxDecoration(
+      borderRadius: BorderRadius.all(Radius.circular(6)),
+      color: white,
+    ),
+    child: Stack(
+      children: [
+        Column(
+          children: [
+            // Text to show last updated date
+            const Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: EdgeInsets.only(top: 8.0, right: 8),
+                child: Text(
+                  "Last updated date",
+                  style: AppTextStyle.normalHeading,
                 ),
               ),
-    
-              // Image box and other details
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30),
-                    child: Container(
-                      height: 100,
-                      width: 100,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: black),
-                        borderRadius: const BorderRadius.all(Radius.circular(6)),
-                        color: Colors.transparent,
-                      ),
-                      child: const Image(image: AssetImage(personPng)),
+            ),
+
+            // Image box and other details
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 30),
+                  child: Container(
+                    height: 100,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: black),
+                      borderRadius: const BorderRadius.all(Radius.circular(6)),
+                      color: Colors.transparent,
+                    ),
+                    child: const Image(image: AssetImage(personPng)),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 15.0), // Adjusted padding
+                  child: SizedBox(
+                    height: size.height * 0.2,
+                    width: size.width *
+                        .3, /////sized box will overlap in mobile veiew nne dto fix it
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: label,
+                            labelStyle: AppTextStyle.subheadertext,
+                            border: InputBorder.none, // Removed border
+                          ),
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: sub,
+                            labelStyle: AppTextStyle.normalHeading,
+                            border: InputBorder.none, // Removed border
+                          ),
+                        ),
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: "Email ID",
+                            labelStyle: AppTextStyle.normalHeading,
+                            border: InputBorder.none, // Removed border
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 15.0), // Adjusted padding
-                    child: SizedBox(
-                      height: size.height * 0.2,
-                      width: size.width * .3,                   /////sized box will overlap in mobile veiew nne dto fix it 
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            decoration: InputDecoration(
-                              labelText: label,
-                              labelStyle: AppTextStyle.subheadertext,
-                              border: InputBorder.none, // Removed border
-                            ),
-                          ),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              labelText: sub,
-                              labelStyle: AppTextStyle.normalHeading,
-                              border: InputBorder.none, // Removed border
-                            ),
-                          ),
-                          TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: "Email ID",
-                              labelStyle: AppTextStyle.normalHeading,
-                              border: InputBorder.none, // Removed border
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-         if(isview)addAndSave(context)
-         else viewProfile(context)
-        ],
-      ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        if (isview) addAndSave(context) else viewProfile(context)
+      ],
     ),
   );
 }
@@ -164,4 +163,3 @@ Widget viewProfile(BuildContext context) {
     ),
   );
 }
-

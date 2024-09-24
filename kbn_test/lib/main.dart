@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kbn_test/newUi/Company/view/CompanyMessage.dart';
 import 'package:kbn_test/newUi/Company/view/CompanySetting.dart';
 import 'package:kbn_test/newUi/Company/view/CompanyTransation.dart';
+import 'package:kbn_test/newUi/Company/view/CompnanyJobPage.dart';
 import 'package:kbn_test/newUi/Company/view/scaffoldbuilder.dart';
 import 'package:kbn_test/newUi/Company/widget/HorizontalCardList.dart';
 import 'package:kbn_test/service/apiServices.dart';
@@ -91,7 +92,7 @@ class MainApp extends StatelessWidget {
             // ScaffoldBuilder(child: CompanySettingPage())
 
       // ScaffoldBuilder(child: CompanyMessage(),pageName: "Message",currentPath: "Message",)
-      ScaffoldBuilder(pageName: "Transation",currentPath: "Transation",child: CompanyTransation(),)
+      ScaffoldBuilder(pageName: "Transation",currentPath: "Transation",child: CompanyJobpage(),)
 
 
       // CompanyMessage()

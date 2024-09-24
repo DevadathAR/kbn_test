@@ -26,47 +26,16 @@ Widget paymentFormField(context) {
             composeForm(text: "Form"),
             composeForm(text: "To"),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Wrap(
+              direction: Axis.horizontal,
+              spacing: 40,
               children: [
                 paymentDetails(context, header: "Company bank details"),
                 paymentDetails(context, header: "Admin bank details")
               ],
             ),
 
-            // Container(
-            //   height: 200,
-            //   decoration: BoxDecoration(
-            //       borderRadius: const BorderRadius.all(Radius.circular(6)),
-            //       border: Border.all(color: black)),
-            //   child: Column(
-            //     children: [
-            //       Padding(
-            //         padding: const EdgeInsets.all(10.0),
-            //         child: TextFormField(
-            //           maxLines: 5,
-            //           decoration: const InputDecoration(
-            //             border: InputBorder.none, // Removes the border
-            //             hintText:
-            //                 "Write your message", // Assign text directly to labelText for simplicity
-            //           ),
-            //         ),
-            //       ),
-            //       Container(
-            //         width: 150,
-            //         decoration: BoxDecoration(
-            //           border: Border.all(color: black),
-            //           borderRadius: BorderRadius.all(Radius.circular(8)),
-            //         ),
-            //         child: TextButton(
-            //             onPressed: () {}, child: const Text("Upload file")),
-            //       )
-            //     ],
-            //   ),
-            // ),
-
             composeForm(text: "Amount"),
-            // paymentForm(text: "Write your message", lines: 7),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Wrap(
@@ -106,38 +75,28 @@ Widget paymentFormField(context) {
   );
 }
 
-// Widget paymentForm({
-//   text,
-// }) {
-//   return Padding(
-//     padding: const EdgeInsets.symmetric(vertical: 10.0),
-//     child: TextFormField(
-//       decoration: InputDecoration(
-//           border: const OutlineInputBorder(
-//               borderSide: BorderSide(
-//                 color: black,
-//               ),
-//               borderRadius: BorderRadius.all(Radius.circular(6))),
-//           hintText: text),
-//     ),
-//   );
-// }
-
 Widget paymentDetails(context, {header}) {
   Size size = MediaQuery.of(context).size;
 
   return Container(
     height: 200,
-    width: size.width * 0.1625,
+    width: 270,
     decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(6)),
         border: Border.all(color: black)),
     child: Column(
       // mainAxisAlignment: .start,
-      
+
       children: [
-        Align( alignment: Alignment.topLeft,
-          child: Text(header,style: const TextStyle(color: semitransp),)),
+        Align(
+            alignment: Alignment.topLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Text(
+                header,
+                style: const TextStyle(color: semitransp),
+              ),
+            )),
         morePaymentDetails(label: "Account Number"),
         morePaymentDetails(label: "IFSc code"),
         morePaymentDetails(label: "Branch")
@@ -146,20 +105,18 @@ Widget paymentDetails(context, {header}) {
   );
 }
 
-
-
-Widget morePaymentDetails({label}){
+Widget morePaymentDetails({label}) {
   return Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: SizedBox(height: 30,
-                      child: TextFormField(
-                        maxLines: 5,
-                        decoration:  InputDecoration(
-                          border: InputBorder.none, // Removes the border
-                          hintText:
-                              label, // Assign text directly to labelText for simplicity
-                        ),
-                      ),
-                    ),
-                  );
+    padding: const EdgeInsets.all(10.0),
+    child: SizedBox(
+      height: 30,
+      child: TextFormField(
+        maxLines: 5,
+        decoration: InputDecoration(
+          border: InputBorder.none, // Removes the border
+          hintText: label, // Assign text directly to labelText for simplicity
+        ),
+      ),
+    ),
+  );
 }
