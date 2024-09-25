@@ -55,11 +55,11 @@ Widget paymentFormField(context) {
                           shape: RoundedRectangleBorder(
                             // Creates rounded corner buttons
                             borderRadius: BorderRadius.circular(
-                                10), // Adjust corner radius
+                                8), // Adjust corner radius
                           ),
                         ),
                         child: const Text(
-                          "Send",
+                          "Pay",
                           style: AppTextStyle.flitertxt,
                         ),
                       ),

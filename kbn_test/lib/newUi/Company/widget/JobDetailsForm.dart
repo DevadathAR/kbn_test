@@ -141,8 +141,8 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
     Size size = MediaQuery.of(context).size;
 
     return Container(
-      padding: EdgeInsets.only(bottom: 15),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.only(bottom: 15),
+      decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(8)), color: white),
 // width:700,
       width: null,
@@ -259,21 +259,19 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 10.0, top: 10),
-            child: Align(
-                alignment: Alignment.topLeft,
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      color: tealblue),
-                  width: 100,
-                  child: TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        "CREATE",
-                        style: AppTextStyle.buttontxt,
-                      )),
-                )),
+            padding: const EdgeInsets.only(top: 10),
+            child: Container(
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  color: tealblue),
+              width: 100,
+              child: TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    "CREATE",
+                    style: AppTextStyle.buttontxt,
+                  )),
+            ),
           )
         ],
       ),

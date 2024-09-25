@@ -19,8 +19,6 @@ class CompanyTransation extends StatelessWidget {
             paymentFormField(context)
 
 
-            // messagePageList(context),
-            // messagePageCompose(context),
           ]),
         ),
       ),

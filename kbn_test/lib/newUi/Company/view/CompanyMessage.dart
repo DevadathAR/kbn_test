@@ -12,11 +12,13 @@ class CompanyMessage extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return SizedBox(
-      height: size.height * 0.6,
+      height: (size.height -269),
+      // height: 500,
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(top: 8.0),
-          child: Wrap(spacing: 10, runSpacing: 10, children: [
+          child: Wrap(
+            spacing: 10, runSpacing: 10, children: [
             messagePageList(context),
             messagePageCompose(context),
           ]),

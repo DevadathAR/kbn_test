@@ -11,10 +11,11 @@ class CompanySettingPage extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return SizedBox(
-      height: size.height * 0.621,
+      height: size.height-269,
+      // width: double.infinity,
       child: ListView(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Column(
@@ -31,33 +32,19 @@ class CompanySettingPage extends StatelessWidget {
                   runSpacing: 16.0, // Set the vertical space between runs
                   alignment: WrapAlignment.spaceBetween, // Space items evenly
                   children: [
-                    Wrap(
-                      spacing: 16.0, // Set the horizontal space between items
-                      runSpacing: 16.0, // Set the vertical space between runs
-                      alignment: WrapAlignment.spaceBetween,
-                      children: [
-                        companySetting(context,
-                            label: "Account",
-                            sub: "Email",
-                            isItem2view: true,
-                            isItem3view: true),
-                        companySetting(context,
-                            label: "Team Members", sub: "Privacy"),
-                      ],
-                    ),
-                    Wrap(
-                      spacing: 16.0, // Set the horizontal space between items
-                      runSpacing: 16.0, // Set the vertical space between runs
-                      alignment: WrapAlignment.spaceBetween,
-                      children: [
-                        companySetting(context,
-                            label: "Job Positions",
-                            sub: "Notification",
-                            isItem1view: false),
-                        companySetting(context,
-                            label: "Commmunity", sub: "Language"),
-                      ],
-                    )
+                    companySetting(context,
+                        label: "Account",
+                        sub: "Email",
+                        isItem2view: true,
+                        isItem3view: true),
+                    companySetting(context,
+                        label: "Team Members", sub: "Privacy"),
+                    companySetting(context,
+                        label: "Job Positions",
+                        sub: "Notification",
+                        isItem1view: false),
+                    companySetting(context,
+                        label: "Commmunity", sub: "Language")
                   ],
                 ),
               )

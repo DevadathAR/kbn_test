@@ -254,22 +254,22 @@ class _UserHomeState extends State<UserHome> {
                           ),
                         ),
                         // Pagination Controls
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            PaginatedButton(
-                              onPressed: _goToPreviousPage,
-                              child: const Text('Previous'),
-                            ),
-                            const SizedBox(width: 20),
-                            Text('Page $_currentPage of $_totalPages'),
-                            const SizedBox(width: 20),
-                            PaginatedButton(
-                              onPressed: _goToNextPage,
-                              child: const Text('Next'),
-                            ),
-                          ],
-                        ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              PaginatedButton(
+                                onPressed: _goToPreviousPage,
+                                child: const Text('Previous'),
+                              ),
+                              const SizedBox(width: 20),
+                              Text('Page $_currentPage of $_totalPages'),
+                              const SizedBox(width: 20),
+                              PaginatedButton(
+                                onPressed: _goToNextPage,
+                                child: const Text('Next'),
+                              ),
+                            ],
+                          )
                       ],
                     ),
                   ),

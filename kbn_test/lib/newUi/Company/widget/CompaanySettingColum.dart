@@ -14,8 +14,11 @@ Widget companySetting(
   bool isNotificationEnabled = false; // Assuming a variable to track notification state
 
   return Container(
-    width: size.width < 1200 ? 170 : size.width * 0.198,
-    height: size.height * 0.5,
+    // width: size.width < 1200 ? 170 : size.width * 0.198,
+    // height: size.height * 0.5,
+
+    width: 340,
+    height: 400,
     decoration: const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(6)),
       color: white,

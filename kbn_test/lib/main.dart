@@ -88,15 +88,8 @@ class MainApp extends StatelessWidget {
       title: "KBN_Test",
       debugShowCheckedModeBanner: false,
       home: 
-            // ScaffoldBuilder(child: CompanyProfilePage())
-            // ScaffoldBuilder(child: CompanySettingPage())
+      ScaffoldBuilder(pageName: "Transation",currentPath: "Transation",child:  CompanyJobpage(),)
 
-      // ScaffoldBuilder(child: CompanyMessage(),pageName: "Message",currentPath: "Message",)
-      ScaffoldBuilder(pageName: "Transation",currentPath: "Transation",child: CompanyJobpage(),)
-
-
-      // CompanyMessage()
-      // CompanyProfilePage()
       
       
       );

@@ -7,35 +7,26 @@ Widget messagePageList(context) {
   Size size = MediaQuery.of(context).size;
 
   return Container(
-    height: size.height * 0.6,
+    height: size.height * 0.65,
     width: size.width < 1200 ? 700 : size.width * 0.4,
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
-    child: Scrollbar(
-      thumbVisibility: true,
-      trackVisibility: true,
-      
-      scrollbarOrientation: ScrollbarOrientation.right,
-      interactive: true,
-      thickness: 10,
-      radius: const Radius.circular(6),
-      child: ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: black),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                    color: white),
-                height: 100,
-                child: buildListItem(context,
-                    name: "name", description: "description", date: "date")),
-          );
-        },
-      ),
+    child: ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      itemCount: 10,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: black),
+                  borderRadius: const BorderRadius.all(Radius.circular(6)),
+                  color: white),
+              height: 100,
+              child: buildListItem(context,
+                  name: "name", description: "description", date: "date")),
+        );
+      },
     ),
   );
 }
