@@ -13,6 +13,21 @@ const tealblue = Color.fromRGBO(19, 131, 149, 1);
 const semitransp = Color.fromARGB(222, 18, 18, 18);
 const shadowblack = Color.fromARGB(138, 18, 18, 18);
 const textGrey = Color.fromARGB(136, 68, 68, 68);
+const gradientColor = LinearGradient(
+  colors: [
+    Color.fromRGBO(19, 131, 149, 1),
+    Color.fromRGBO(88, 186, 78, 1),
+  ],
+  begin: Alignment.centerRight,
+  end: Alignment.centerLeft,
+);
+const sweepGradient = SweepGradient(colors: [
+  Color.fromRGBO(19, 131, 149, 1),
+  Color.fromRGBO(88, 186, 78, 1),
+], stops: [
+  0.0,
+  1.0
+]);
 
 const loginbutton = [
   Color.fromRGBO(88, 186, 78, 1),

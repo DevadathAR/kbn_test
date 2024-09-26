@@ -69,6 +69,12 @@ class AppTextStyle {
     fontWeight: FontWeight.w500,
     color: black,
   );
+   static const TextStyle tactext = TextStyle(
+    fontSize: 14,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w400,
+    color: black,
+  );
   static const TextStyle bodytext = TextStyle(
     fontSize: 12,
     fontFamily: "Inter",
@@ -99,6 +105,12 @@ class AppTextStyle {
     fontWeight: FontWeight.w400,
     color: white,
   );
+  static const TextStyle flitertxtBlack = TextStyle(
+    fontSize: 16,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w400,
+    color: black,
+  );
   static const TextStyle companyName = TextStyle(
     fontSize: 25,
     fontFamily: "Poppins",
@@ -117,12 +129,7 @@ class AppTextStyle {
     fontWeight: FontWeight.w400,
     color: white,
   );
-  static const TextStyle tactext = TextStyle(
-    fontSize: 14,
-    fontFamily: "Poppins",
-    fontWeight: FontWeight.w400,
-    color: black,
-  );
+ 
 
   static const TextStyle tactexthead = TextStyle(
     fontSize: 24,

@@ -67,7 +67,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => const OverviewScreen(),
+                builder: (context) => const Home(),
               ),
             );
           } else if (role == 'Admin') {

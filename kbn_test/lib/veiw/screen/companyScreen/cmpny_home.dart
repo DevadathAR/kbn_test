@@ -415,22 +415,6 @@ class _CustomStatusColumnState extends State<CustomStatusColumn> {
     }
   }
 
-  Future<void> _updateApplicationStatus(int applicantionId) async {
-    try {
-      String newStatus = status;
-      var result =
-          await ApiServices.updateApplication(newStatus, applicantionId);
-      widget.onStatusChange(); // Refresh data
-
-      print('Application status updated: $result');
-//............................................................................................
-    } catch (e) {
-      // SnackBar(content: Text('Failed to update application: $e')),
-
-      print('Failed to update application: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -451,6 +435,8 @@ class _CustomStatusColumnState extends State<CustomStatusColumn> {
     );
   }
 }
+
+// contact
 
 class CustomContactColumn extends StatefulWidget {
   final int applicantId;

@@ -4,8 +4,7 @@ import 'package:kbn_test/veiw/screen/AdminScreen/adminHome.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/chartWidget.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/overView.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/scaffoldBuilder.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/pages/home.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/pages/statisticScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/statisticScreen.dart';
 import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
 import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
@@ -20,37 +19,37 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return const MaterialApp(
       title: "KBN_Test",
       debugShowCheckedModeBanner: false,
-      home:
+      home: StatisticScreen(),
 
-          // StatisticScreen()
+      // StatisticScreen(),
 
-          // Home(),
+      // Home(),
 
-          FutureBuilder(
-        future: _checkLoginStatus(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          } else if (snapshot.hasData && snapshot.data is String) {
-            // Role-Based navigation
-            switch (snapshot.data) {
-              case 'Company':
-                return const CompanyHomePage();
-              case 'Applicant':
-                return const UserHome();
-              case 'Admin':
-                return const AdminHomePage();
-              default:
-                return const CompanyLoginPage(); // Fallback
-            }
-          } else {
-            return const CompanyLoginPage(); // Show login if no valid role
-          }
-        },
-      ),
+      //     FutureBuilder(
+      //   future: _checkLoginStatus(),
+      //   builder: (context, snapshot) {
+      //     if (snapshot.connectionState == ConnectionState.waiting) {
+      //       return const CircularProgressIndicator();
+      //     } else if (snapshot.hasData && snapshot.data is String) {
+      //       // Role-Based navigation
+      //       switch (snapshot.data) {
+      //         case 'Company':
+      //           return const CompanyHomePage();
+      //         case 'Applicant':
+      //           return const UserHome();
+      //         case 'Admin':
+      //           return const AdminHomePage();
+      //         default:
+      //           return const CompanyLoginPage(); // Fallback
+      //       }
+      //     } else {
+      //       return const CompanyLoginPage(); // Show login if no valid role
+      //     }
+      //   },
+      // ),
     );
   }
 

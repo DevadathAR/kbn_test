@@ -32,7 +32,7 @@ class companyT_n_C extends StatelessWidget {
                   context,
                   // logOutTo: const CompanyLoginPage(),
                   profilePage: const CompanyProfilePage(),
-                  home: const CompanyHomePage(),
+                  // home: const CompanyHomePage(),
                   profileImage:
                       "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
                 ),

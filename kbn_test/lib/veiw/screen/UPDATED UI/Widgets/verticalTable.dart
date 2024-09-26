@@ -34,6 +34,7 @@ class VerticalTable extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Table(
+              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
               border: TableBorder(
                 horizontalInside:
                     BorderSide(color: Colors.grey.withOpacity(0.5), width: 0.5),

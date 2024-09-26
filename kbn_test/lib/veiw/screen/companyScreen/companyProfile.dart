@@ -294,7 +294,7 @@ class _CompanyProfilePageState extends State<CompanyProfilePage> {
           context,
           T_and_C: const companyT_n_C(),
           // logOutTo: const CompanyLoginPage(),
-          home: const CompanyHomePage(),
+          // home: const CompanyHomePage(),
           profileImage: dpImage,
           // "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
         ),
