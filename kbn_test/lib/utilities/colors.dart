@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const logintextbox = Color.fromRGBO(253, 253, 253, 1);
-const gray = Color.fromRGBO(207, 207, 207, 1);
+const sidebarWhite = Color.fromRGBO(251, 251, 251, 1);
 const homecolor = Color.fromRGBO(217, 217, 217, 1);
 const lowwhite = Color.fromRGBO(248, 248, 248, 1);
 const black = Colors.black;
@@ -13,6 +13,22 @@ const tealblue = Color.fromRGBO(19, 131, 149, 1);
 const semitransp = Color.fromARGB(222, 18, 18, 18);
 const shadowblack = Color.fromARGB(138, 18, 18, 18);
 const textGrey = Color.fromARGB(136, 68, 68, 68);
+const drawercolor = Color.fromARGB(46, 101, 101, 101);
+const gradientColor = LinearGradient(
+  colors: [
+    Color.fromRGBO(19, 131, 149, 1),
+    Color.fromRGBO(88, 186, 78, 1),
+  ],
+  begin: Alignment.centerRight,
+  end: Alignment.centerLeft,
+);
+const sweepGradient = SweepGradient(colors: [
+  Color.fromRGBO(19, 131, 149, 1),
+  Color.fromRGBO(88, 186, 78, 1),
+], stops: [
+  0.0,
+  1.0
+]);
 
 const loginbutton = [
   Color.fromRGBO(88, 186, 78, 1),
@@ -50,10 +66,8 @@ Color getTxtColor(String status) {
     case "REJECTED":
       return white;
     case "Submitted":
-      return white;
+      return black;
     default:
       return white;
   }
 }
-
-

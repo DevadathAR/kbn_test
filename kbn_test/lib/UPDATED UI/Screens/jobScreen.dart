@@ -1,8 +1,114 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:kbn_test/UPDATED%20UI/Widgets/commmonTable.dart';
+import 'package:kbn_test/UPDATED%20UI/Widgets/scaffoldBuilder.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/widgets_common/boxBTN.dart';
+
+class CompanyJobpage extends StatelessWidget {
+  const CompanyJobpage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+
+    List<Map<String, String>> jobTableheaders = [
+      {'header': 'Designation', 'key': 'designation'},
+      {'header': 'Experience', 'key': 'experience'},
+      {'header': 'Location', 'key': 'location'},
+      {'header': 'Vaccancy', 'key': 'vaccancy'},
+      {'header': 'No. of applicants', 'key': 'applicantnumber'},
+      {'header': 'Employment type', 'key': 'emptype'},
+      {'header': 'Employment type', 'key': 'emptype'},
+      {'header': 'Salary', 'key': 'salary'},
+      {'header': 'Status', 'key': 'status'},
+    ];
+
+    List<Map<String, String>> jobTableData = [
+      {
+        'designation': 'Software Engineer',
+        'experience': '3-5 years',
+        'location': 'New York',
+        'vaccancy': '3',
+        'applicantnumber': '25',
+        'emptype': 'Full-time',
+        'salary': '\$70,000',
+        'status': 'Open'
+      },
+      {
+        'designation': 'Data Scientist',
+        'experience': '2-4 years',
+        'location': 'San Francisco',
+        'vaccancy': '2',
+        'applicantnumber': '18',
+        'emptype': 'Full-time',
+        'salary': '\$85,000',
+        'status': 'Open'
+      },
+      {
+        'designation': 'UI/UX Designer',
+        'experience': '1-3 years',
+        'location': 'Remote',
+        'vaccancy': '1',
+        'applicantnumber': '12',
+        'emptype': 'Contract',
+        'salary': '\$50,000',
+        'status': 'Closed'
+      },
+      {
+        'designation': 'Project Manager',
+        'experience': '5-7 years',
+        'location': 'Chicago',
+        'vaccancy': '1',
+        'applicantnumber': '30',
+        'emptype': 'Full-time',
+        'salary': '\$95,000',
+        'status': 'Open'
+      },
+      {
+        'designation': 'Business Analyst',
+        'experience': '4-6 years',
+        'location': 'Boston',
+        'vaccancy': '2',
+        'applicantnumber': '15',
+        'emptype': 'Full-time',
+        'salary': '\$80,000',
+        'status': 'Closed'
+      },
+    ];
+
+    return ScaffoldBuilder(
+      currentPath: "Jobs",
+      pageName: "Jobs",
+      child: SizedBox(
+        height: size.height * 0.6,
+        // height: 700,
+        child: ListView(
+          children: [
+            const SizedBox(
+              height: 10,
+            ),
+            Wrap(
+              spacing: 10,
+              children: [
+              Expanded(
+                  child: applicantsTable(
+                      size.width > 600 ? size.width * 0.5 : size.width,
+                      jobTableheaders,
+                      jobTableData,
+                      ["OPEN", "CLOSE"]),
+                ),
+                const jobDetailsForm()
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class jobDetailsForm extends StatefulWidget {
   const jobDetailsForm({super.key});
@@ -123,18 +229,18 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
     }
   }
 
-  Future<void> fetchUserData() async {
-    try {
-      var userData = await ApiServices.fetchUserDetails();
-      setState(() {
-        userDetails = userData;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error occurred while fetching user data: $e")),
-      );
-    }
-  }
+  // Future<void> fetchUserData() async {
+  //   try {
+  //     var userData = await ApiServices.fetchUserDetails();
+  //     setState(() {
+  //       userDetails = userData;
+  //     });
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Error occurred while fetching user data: $e")),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +251,7 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(8)), color: white),
 // width:700,
-      width: null,
+      width: size.width * 0.4,
       //  width:   size.width-920,      // height: 700,
       child: Column(
         children: [
@@ -162,10 +268,10 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
                   textMaxlines: 1,
                   controller: jobLocationController,
                   validator: validateRequired,
-                  width: 310,
+                  width: size.width * 0.15,
                   label: 'Location'),
               _buildDropdown(
-                  width: 350,
+                  width: size.width * 0.15,
                   label: 'Experience',
                   value: selectedExperience,
                   items: experiences,
@@ -176,14 +282,13 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
           ),
           Wrap(
             children: [
-              _textField(
-                  textMaxlines: 1,
+              _numericField(
+                  validator: numberValidator,
                   controller: jobVacancyController,
-                  validator: validateRequired,
-                  width: 310,
-                  label: 'Vacancy'),
+                  width: size.width * 0.15,
+                  label: 'Vaccancy'),
               _buildDropdown(
-                  width: 350,
+                  width: size.width * 0.15,
                   label: 'Job Mode',
                   value: selectedJobMode,
                   items: jobModes,
@@ -194,14 +299,13 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
           ),
           Wrap(
             children: [
-              _textField(
-                  textMaxlines: 1,
+              _numericField(
+                  validator: numberValidator,
                   controller: salaryController,
-                  validator: validateRequired,
-                  width: 310,
+                  width: size.width * 0.15,
                   label: 'Salary'),
               _buildDropdown(
-                  width: 350,
+                  width: size.width * 0.15,
                   label: 'Employment Type',
                   value: selectedEmploymentType,
                   items: employmentTypes,
@@ -399,30 +503,30 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
     );
   }
 
-  // Widget _numericField({
-  //   required TextEditingController controller,
-  //   required double width,
-  //   required String label,
-  //   String? Function(String?)? validator, // Add validator parameter
-  // }) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(8.0),
-  //     child: SizedBox(
-  //       width: width,
-  //       child: TextFormField(
-  //         controller: controller,
-  //         validator: validator, // Use the validator for additional checks
-  //         keyboardType: TextInputType.number,
-  //         inputFormatters: <TextInputFormatter>[
-  //           FilteringTextInputFormatter.digitsOnly // Allow only digits
-  //         ],
-  //         decoration: InputDecoration(
-  //           labelText: label,
-  //           border: const OutlineInputBorder(),
-  //           contentPadding: const EdgeInsets.all(10.0),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+  Widget _numericField({
+    required TextEditingController controller,
+    required double width,
+    required String label,
+    String? Function(String?)? validator, // Add validator parameter
+  }) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        width: width,
+        child: TextFormField(
+          controller: controller,
+          validator: validator, // Use the validator for additional checks
+          keyboardType: TextInputType.number,
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly // Allow only digits
+          ],
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+            contentPadding: const EdgeInsets.all(10.0),
+          ),
+        ),
+      ),
+    );
+  }
 }

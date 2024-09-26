@@ -32,6 +32,8 @@ const tachead = "Terms & Conditions";
 const newjob = "Let's Find You A New Job";
 const latestjob = "Latest jobs";
 const filters = "Filters";
+const currentMonth = "Current month";
+const previousMonth = "Previous month";
 const profileSum =
     'I am a passionate and results-driven Product Manager with a deep commitment to creating innovative products that meet customer needs and drive business success. With 6 years of experience in the tech industry, I have a proven track record of managing the entire product lifecycle—from ideation to launch and beyond.';
 const respon =
