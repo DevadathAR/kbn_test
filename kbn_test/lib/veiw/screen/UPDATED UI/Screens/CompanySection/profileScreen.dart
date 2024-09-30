@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
 
 class CompanyProfileScreen extends StatelessWidget {
   const CompanyProfileScreen({super.key});

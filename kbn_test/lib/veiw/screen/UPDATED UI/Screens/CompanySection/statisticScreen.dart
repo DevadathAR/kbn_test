@@ -5,11 +5,11 @@ import 'package:flutter/widgets.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/RecruitmentBarChart.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/colorDeclaration.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
-class StatisticScreen extends StatelessWidget {
-  const StatisticScreen({super.key});
+class CompanyStatisticScreen extends StatelessWidget {
+  const CompanyStatisticScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

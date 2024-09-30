@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/showAll_bTn.dart';
 
 class HorizontalTable extends StatelessWidget {
@@ -14,15 +15,23 @@ class HorizontalTable extends StatelessWidget {
     const double minColumnWidth = 80.0;
     const double minHeaderWidth = 70.0;
     const int maxColumns = 7;
-    const int minColumns = 4;
+    const int minColumns = 3;
 
     // Define the headers
-    final List<String> headers = [
-      'Company name',
-      'Vacancy',
-      'Selected',
-      'Status',
-    ];
+    // Define headers based on user type (Company or Admin)
+    final List<String> headers = isCompany
+        ? [
+            'Job name',
+            'Vacancy',
+            'Selected',
+            'Status',
+          ]
+        : [
+            'Company name',
+            'Vacancy',
+            'Selected',
+            'Status',
+          ];
 
     // Calculate how many columns can fit in the available screen width
     int columnCount = ((screenWidth - minHeaderWidth) ~/ minColumnWidth)

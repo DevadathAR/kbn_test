@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/chartWidget.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/messageWidget.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/payResult.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/payReminder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/simpleTable.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/verticalTable.dart';
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+class CompanyHome extends StatelessWidget {
+  const CompanyHome({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +21,12 @@ class Home extends StatelessWidget {
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Wrap(
-            spacing: 10.0, 
-            runSpacing: 10.0, 
+            spacing: 10.0,
+            runSpacing: 10.0,
             children: [
               // First column (Charts and Horizontal Table)
               SizedBox(
-                width: 400, 
+                width: 400,
                 child: Column(
                   children: [
                     ChartWidget(),
@@ -48,7 +49,7 @@ class Home extends StatelessWidget {
                   children: [
                     MessageWidget(),
                     SizedBox(height: 10),
-                    PayResult(),
+                    isCompany ? PayRemainder() : PayResult(),
                   ],
                 ),
               ),

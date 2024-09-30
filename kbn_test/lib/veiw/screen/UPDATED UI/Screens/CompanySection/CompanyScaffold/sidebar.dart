@@ -4,16 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/applicantsScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/jobScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/overView.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/profileScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/settingsScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/statisticScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/transactionScreen.dart';
-import 'package:kbn_test/veiw/screen/companyScreen/companyProfile.dart';
-
-import '../Screens/messageScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/applicantsScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/jobScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/messageScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/companyHome.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/profileScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/settingsScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/statisticScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/transactionScreen.dart';
 
 class Sidebar extends StatefulWidget {
   final String currentPath;
@@ -67,7 +66,7 @@ class _SidebarState extends State<Sidebar> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const Home()));
+                              builder: (context) => const CompanyHome()));
                     } else {}
                   },
                 ),
@@ -80,36 +79,39 @@ class _SidebarState extends State<Sidebar> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const StatisticScreen()));
+                              builder: (context) =>
+                                  const CompanyStatisticScreen()));
                     }
                   },
                 ),
                 _buildListTile(
                   path: "Applicants",
                   icon: Icons.people_outline,
-                  label: 'Applicants',
+                  label: isCompany ? 'Applicants' : 'Companies',
                   onTap: () {
                     if (widget.currentPath != "Applicants") {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const TwoTablesScreen()));
+                              builder: (context) =>
+                                  const CompanyApplicantScreen()));
                     }
                   },
                 ),
-                _buildListTile(
-                  path: "Jobs",
-                  icon: Icons.wallet_rounded,
-                  label: 'Jobs',
-                  onTap: () {
-                    if (widget.currentPath != "Jobs") {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const CompanyJobpage()));
-                    }
-                  },
-                ),
+                if (isCompany)
+                  _buildListTile(
+                    path: "Jobs",
+                    icon: Icons.wallet_rounded,
+                    label: 'Jobs',
+                    onTap: () {
+                      if (widget.currentPath != "Jobs") {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CompanyJobpage()));
+                      }
+                    },
+                  ),
                 _buildListTile(
                   path: "Messages",
                   icon: Icons.notifications,

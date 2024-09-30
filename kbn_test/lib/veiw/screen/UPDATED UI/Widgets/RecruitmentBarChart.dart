@@ -78,9 +78,11 @@ class RecruitmentBarChart extends StatelessWidget {
               bottom: BorderSide(color: Colors.black, width: 1), // Bottom side
             ),
           ),
+
           barTouchData: BarTouchData(
             enabled: false, // Disable touch interaction
             touchTooltipData: BarTouchTooltipData(
+              getTooltipColor: (barGroup) => Colors.white.withOpacity(0.1),
               tooltipPadding: const EdgeInsets.all(8),
               tooltipMargin: 8,
               getTooltipItem: (group, groupIndex, rod, rodIndex) {
@@ -88,8 +90,8 @@ class RecruitmentBarChart extends StatelessWidget {
                   rod.toY
                       .toString(), // Display the value directly above the bar
                   const TextStyle(
-                    fontSize: 8,
-                    color: Colors.white,
+                    fontSize: 10,
+                    color: Colors.black,
                     backgroundColor: Colors.transparent,
                     fontWeight: FontWeight.bold,
                   ),
@@ -111,7 +113,7 @@ class RecruitmentBarChart extends StatelessWidget {
       barRods: [
         BarChartRodData(
           toY: y1,
-          width: 20,
+          width: 30,
           gradient: gradientColor,
           borderRadius: BorderRadius.circular(4),
           // rodStackItems: [
@@ -124,7 +126,7 @@ class RecruitmentBarChart extends StatelessWidget {
         ),
         BarChartRodData(
           toY: y2,
-          width: 10,
+          width: 15,
           color: tealblue,
           borderRadius: BorderRadius.circular(4),
           // rodStackItems: [

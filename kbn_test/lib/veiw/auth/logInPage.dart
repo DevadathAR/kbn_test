@@ -8,13 +8,11 @@ import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/forgotPass.dart';
 import 'package:kbn_test/veiw/auth/signUp.dart';
-import 'package:kbn_test/veiw/screen/AdminScreen/adminHome.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/overView.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/companyHome.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets_common/loginTextFeild.dart';
 import 'package:kbn_test/veiw/widgets_common/bg_widg.dart';
 
-import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Map<String, dynamic> submittedApplicantsData = {};
@@ -67,16 +65,16 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => const Home(),
+                builder: (context) => const CompanyHome(),
               ),
             );
           } else if (role == 'Admin') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AdminHomePage(),
-              ),
-            );
+            // Navigator.pushReplacement(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const AdminHomePage(),
+            //   ),
+            // );
           } else {
             Navigator.pushReplacement(
               context,

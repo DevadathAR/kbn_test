@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
 
 class CompanyMessage extends StatelessWidget {
   const CompanyMessage({super.key});

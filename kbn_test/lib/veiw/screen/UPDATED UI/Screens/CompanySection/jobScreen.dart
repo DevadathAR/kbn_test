@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/AdminScreen/adminHome.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/commonTable.dart';
 
 class CompanyJobpage extends StatelessWidget {
   const CompanyJobpage({super.key});
@@ -11,6 +13,73 @@ class CompanyJobpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+    double screenwidth = size.width;
+
+    List<Map<String, String>> jobTableheaders = [
+      {'header': 'Designation', 'key': 'designation'},
+      {'header': 'Experience', 'key': 'experience'},
+      {'header': 'Location', 'key': 'location'},
+      {'header': 'Vaccancy', 'key': 'vaccancy'},
+      {'header': 'No. of applicants', 'key': 'applicantnumber'},
+      {'header': 'Employment type', 'key': 'emptype'},
+      {'header': 'Employment type', 'key': 'emptype'},
+      {'header': 'Salary', 'key': 'salary'},
+      {'header': 'Status', 'key': 'status'},
+    ];
+
+    List<Map<String, String>> jobTableData = [
+      {
+        'designation': 'Software Engineer',
+        'experience': '3-5 years',
+        'location': 'New York',
+        'vaccancy': '3',
+        'applicantnumber': '25',
+        'emptype': 'Full-time',
+        'salary': '\$70,000',
+        'status': 'Open'
+      },
+      {
+        'designation': 'Data Scientist',
+        'experience': '2-4 years',
+        'location': 'San Francisco',
+        'vaccancy': '2',
+        'applicantnumber': '18',
+        'emptype': 'Full-time',
+        'salary': '\$85,000',
+        'status': 'Open'
+      },
+      {
+        'designation': 'UI/UX Designer',
+        'experience': '1-3 years',
+        'location': 'Remote',
+        'vaccancy': '1',
+        'applicantnumber': '12',
+        'emptype': 'Contract',
+        'salary': '\$50,000',
+        'status': 'Closed'
+      },
+      {
+        'designation': 'Project Manager',
+        'experience': '5-7 years',
+        'location': 'Chicago',
+        'vaccancy': '1',
+        'applicantnumber': '30',
+        'emptype': 'Full-time',
+        'salary': '\$95,000',
+        'status': 'Open'
+      },
+      {
+        'designation': 'Business Analyst',
+        'experience': '4-6 years',
+        'location': 'Boston',
+        'vaccancy': '2',
+        'applicantnumber': '15',
+        'emptype': 'Full-time',
+        'salary': '\$80,000',
+        'status': 'Closed'
+      },
+    ];
 
     return ScaffoldBuilder(
       currentPath: "Jobs",
@@ -23,18 +92,17 @@ class CompanyJobpage extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            Wrap(
-              spacing: 10,
+            Row(
+              // spacing: 10,
               children: [
                 Expanded(
-                  child: Container(
-                    color: black,
-                    width: 700,
-                    // (size.width-180)*0.49,
-                    height: 550,
-                  ),
+                  child: applicantsTable(
+                      screenwidth > 600 ? screenwidth * 0.5 : screenwidth,
+                      jobTableheaders,
+                      jobTableData,
+                      ["OPEN", "CLOSE"]),
                 ),
-                const jobDetailsForm()
+                const Expanded(child: JobCreationForm())
               ],
             )
           ],
@@ -44,14 +112,14 @@ class CompanyJobpage extends StatelessWidget {
   }
 }
 
-class jobDetailsForm extends StatefulWidget {
-  const jobDetailsForm({super.key});
+class JobCreationForm extends StatefulWidget {
+  const JobCreationForm({super.key});
 
   @override
-  State<jobDetailsForm> createState() => _jobDetailsFormState();
+  State<JobCreationForm> createState() => _JobCreationFormState();
 }
 
-class _jobDetailsFormState extends State<jobDetailsForm> {
+class _JobCreationFormState extends State<JobCreationForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // final TextEditingController addressTextController = TextEditingController();
@@ -191,7 +259,7 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
         children: [
           const Text("Position"),
           _textField(
-              textMaxlines: 3,
+              textMaxlines: 2,
               controller: jobSummaryController,
               validator: validateRequired,
               width: 680,
@@ -328,28 +396,6 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
       ),
     );
   }
-  // Widget _buildEditableRow(String label) {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //     children: [
-  //       Text(label, style: AppTextStyle.bodytext),
-  //       const Icon(Icons.edit, color: textGrey, size: 15),
-  //     ],
-  //   );
-  // }
-
-// // Editable TextField Widget
-//   Widget _buildEditableTextField({required String hint, required controller}) {
-//     return TextFormField(
-//       controller: controller,
-//       decoration: InputDecoration(
-//         hintText: hint,
-//         border: InputBorder.none,
-//         isDense: true,
-//         contentPadding: const EdgeInsets.all(10),
-//       ),
-//     );
-//   }
 
 // // Generalized TextField Widget
   Widget _textField({
@@ -375,7 +421,7 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
             hintMaxLines: hintMaxline,
             labelText: label,
             border: const OutlineInputBorder(),
-            contentPadding: const EdgeInsets.all(10.0),
+            contentPadding: const EdgeInsets.all(5),
           ),
         ),
       ),

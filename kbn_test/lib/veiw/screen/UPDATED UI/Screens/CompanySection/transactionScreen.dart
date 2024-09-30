@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
+import 'package:kbn_test/utilities/lists.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/messageScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/messageScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/commonTable.dart';
 
 class CompanyTransation extends StatelessWidget {
   const CompanyTransation({super.key});
@@ -12,10 +14,10 @@ class CompanyTransation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
+    String path = "Transactions";
     return ScaffoldBuilder(
-      currentPath: "Transactions",
-      pageName: "Transaction",
+      currentPath: path,
+      pageName: path,
       child: SizedBox(
         height: size.height * 0.6,
         child: SingleChildScrollView(
@@ -23,7 +25,14 @@ class CompanyTransation extends StatelessWidget {
             padding: const EdgeInsets.only(top: 8.0),
             child: Wrap(spacing: 10, runSpacing: 10, children: [
               transationPageList(context),
-              paymentFormField(context)
+              isCompany
+                  ? paymentFormField(context)
+                  : selectedApplicantsTable(
+                      width: size.width > 600 ? size.width * 0.3 : size.width,
+                      data: companyTransactionData,
+                      headerTitle: "To Approve",
+                      path: path,
+                      statusOptions: ["SELECT", "REGECT"])
             ]),
           ),
         ),
@@ -37,7 +46,7 @@ Widget transationPageList(context) {
 
   return Container(
     height: size.height * 0.6,
-    width: 600,
+    width: size.width * 0.4,
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
     child: Scrollbar(
@@ -70,19 +79,18 @@ Widget transationPageList(context) {
 }
 
 Widget transationListItem(context, {name, description, date}) {
-  Size size = MediaQuery.of(context).size;
-
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 10.0),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        const Image(image: AssetImage(kbnLogo), height: 20),
-        const SizedBox(width: 16),
+        const Image(
+            image: AssetImage(isCompany ? kbnLogo : personPng), height: 20),
+        const SizedBox(width: 10),
         const Text("Date"),
+        const Text(isCompany ? "Mail ID" : "Company name"),
         const Text("Amount"),
         const Text("Account Number"),
-        const Text("Mail ID"),
         Container(
           decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -116,14 +124,16 @@ Widget paymentFormField(context) {
 
   return Expanded(
     child: Container(
+      width: size.width * 0.4,
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
       height: size.height * 0.6,
-      width: 600,
       child: Padding(
-        padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.all(10),
+        // Listview for scroll function
+        child: ListView(
+          shrinkWrap: true,
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text("Pay this month"),
             composeForm(text: "Form"),
@@ -177,8 +187,6 @@ Widget paymentFormField(context) {
 }
 
 Widget paymentDetails(context, {header}) {
-  Size size = MediaQuery.of(context).size;
-
   return Container(
     height: 200,
     width: 270,

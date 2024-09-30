@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:flutter/material.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/profileScreen.dart';
 
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/profileScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
 
 class CompanySettingPage extends StatelessWidget {
   const CompanySettingPage({super.key});
