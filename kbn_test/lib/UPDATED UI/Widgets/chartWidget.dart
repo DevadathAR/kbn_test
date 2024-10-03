@@ -5,47 +5,63 @@ import 'package:kbn_test/UPDATED%20UI/Widgets/colorDeclaration.dart';
 import 'package:kbn_test/UPDATED%20UI/Widgets/latestPie.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
+import 'package:kbn_test/utilities/text_style.dart';
 
-class ChartWidget extends StatelessWidget {
-  const ChartWidget({super.key});
+Widget chartWidget(BuildContext context) {
+  Size size = MediaQuery.of(context).size;
+  
+  // Check if the screen width is below 900
+  bool isSmallScreen = size.width < 900;
 
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return Container(
-      decoration:
-          BoxDecoration(borderRadius: BorderRadius.circular(8), color: white),
-      height: 220, // Define a fixed height for the container
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          const Flexible(
-            flex: 2,
-            child: RecruitmentBarChart(),
-          ),
-          Flexible(
-            flex: 1,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  height: 180,
-                  child: SyncfusionPieChart(),
-                ),
-                Column(
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+      color: white,
+    ),
+    height: isSmallScreen ? 440 : 250, // Adjust height for small screens
+    child: isSmallScreen 
+        ? Column( // Display charts in a column for small screens
+            children: [
+              SizedBox(
+                height: 180,
+                child: RecruitmentBarChart(length: 203,mobilelength: 163,),
+              ),
+              const SizedBox(height: 20), // Add spacing between charts
+              const SizedBox(
+                height: 180,
+                child: SyncfusionPieChart(),
+              ),
+              const SizedBox(height: 10),
+              Container(child: Column(children: [colorDeclaration(title: currentMonth),
+              const SizedBox(height: 5),
+              colorDeclaration(title: previousMonth),],),)
+              
+            ],
+          )
+        : Row( // Display charts side by side for larger screens
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+               Flexible(
+                flex: 2,
+                child: RecruitmentBarChart(length: 203,mobilelength: 163,),
+              ),
+              Flexible(
+                flex: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    colorDeclaration(title: currentMonth),
-                    const SizedBox(height: 5),
-                    colorDeclaration(title: previousMonth)
+                    const SizedBox(
+                      height: 180,
+                      child: SyncfusionPieChart(),
+                    ),
+                    Container(child: Column(children: [colorDeclaration(title: currentMonth),
+              const SizedBox(height: 5),
+              colorDeclaration(title: previousMonth),],),)
                   ],
-                )
-              ],
-            ),
+                ),
+              ),
+              const SizedBox(width: 5),
+            ],
           ),
-          const SizedBox(width: 5),
-        ],
-      ),
-    );
-  }
+  );
 }

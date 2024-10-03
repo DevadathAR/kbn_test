@@ -237,14 +237,14 @@ class TwoTablesScreen extends StatelessWidget {
             spacing: 5,
             runSpacing: 5,
             children: [
-              applicantsTable(
-                  screenwidth > 600 ? screenwidth * 0.5 : screenwidth,
+              applicantsTable(context,
+                  screenwidth > 900 ? screenwidth* 0.49 : screenwidth,
                   applicantTableheaders,
                   tableData,
                   ["SELECT", "REGECT"]),
               const SizedBox(width: 5),
-              selectedApplicantsTable(
-                screenwidth > 600 ? screenwidth * 0.3 : screenwidth,
+              selectedApplicantsTable(context,
+                screenwidth > 1200 ?screenwidth * 0.49 : screenwidth,
                 selectedApplicants,
               ),
             ],
@@ -255,16 +255,19 @@ class TwoTablesScreen extends StatelessWidget {
   }
 
   // Reusable method to build the selected applicants table
-  Widget selectedApplicantsTable(
+  Widget selectedApplicantsTable(context,
     double width,
     List<Map<String, String>> data,
   ) {
     // Column keys for the selected applicants
     List<String> keys = ['name', 'designation'];
+              Size size = MediaQuery.of(context).size;
+
 
     return Container(
-      width: width,
-      height: 400,
+      
+      width: size.width>1200? (size.width-200)*0.49:null,
+      height: 500,
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),

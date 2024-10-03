@@ -18,13 +18,10 @@ class CompanyMessage extends StatelessWidget {
       child: SizedBox(
         height: size.height-200,
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Wrap(spacing: 10, runSpacing: 10, children: [
-              messagePageList(context),
-              messagePageCompose(context),
-            ]),
-          ),
+          child: Wrap(spacing: 10, runSpacing: 10, children: [
+            messagePageList(context),
+            messagePageCompose(context),
+          ]),
         ),
       ),
     );
@@ -35,11 +32,11 @@ Widget messagePageList(context) {
   Size size = MediaQuery.of(context).size;
 
   return Container(
-    height: size.height * 0.6,
+    height: 500,
     // width: size.width < 1200 ? 700 : size.width * 0.4,
     // width: 700,
 
-          width: size.width>1650? 700:null,
+      width: size.width>1200? (size.width-200)*.49:null,
 
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
@@ -145,9 +142,10 @@ Widget messagePageCompose(context) {
     child: Container(
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
-      height: size.height * 0.6,
+      // height: size.height * 0.6,
+      height: 500,
       // width: size.width < 1200 ? 700 : size.width * 0.4,
-      width: size.width>1650? 700:null,
+      width: size.width>1200? (size.width-200)*.49:null,
       // width: null,
       child: Padding(
         padding: const EdgeInsets.only(top: 10, left: 10, right: 10),

@@ -25,7 +25,7 @@ class TopBar extends StatelessWidget {
                   ),
                 ),
               ),
-              const Text(firmName, style: AppTextStyle.firmHead),
+               Text(firmName, style:size.height>400? AppTextStyle.firmHead:AppTextStyle.firmHeadSmall),
             ],
           )
         : Wrap(children: [
@@ -35,7 +35,7 @@ class TopBar extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(firmName, style: AppTextStyle.firmHead),
+                   Text(firmName, style:size.height>400? AppTextStyle.firmHead:AppTextStyle.firmHeadSmall),
                   // Search bar and button
                   Row(
                     children: [

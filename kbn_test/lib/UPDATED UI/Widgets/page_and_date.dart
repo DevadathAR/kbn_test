@@ -4,6 +4,7 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:intl/intl.dart';
+
 class PageAndDate extends StatelessWidget {
   final String pageLabel;
 
@@ -56,16 +57,21 @@ class PageAndDate extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Container(
-                        height: 30,
-                        width: 30,
-                        decoration: BoxDecoration(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(8)),
-                            border: Border.all(color: black)),
-                        child: const Icon(
-                          Icons.search,
-                          color: black,
+                      GestureDetector(
+                        onTap: () {
+                          _openSearchModal(context); // Open search modal
+                        },
+                        child: Container(
+                          height: 30,
+                          width: 30,
+                          decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(
+                                  Radius.circular(8)),
+                              border: Border.all(color: black)),
+                          child: const Icon(
+                            Icons.search,
+                            color: black,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -73,8 +79,8 @@ class PageAndDate extends StatelessWidget {
                         height: 30,
                         width: 30,
                         decoration: BoxDecoration(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(8)),
+                            borderRadius: const BorderRadius.all(
+                                Radius.circular(8)),
                             color: tealblue,
                             border: Border.all(color: black)),
                         child: const Center(
@@ -126,5 +132,46 @@ class PageAndDate extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _openSearchModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Search",
+                style: AppTextStyle.googletext,
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                decoration: InputDecoration(
+                  hintText: 'Enter search query',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onSubmitted: (query) {
+                  // Handle search logic here
+                  print('Searching for: $query');
+                  Navigator.pop(context); // Close the modal after search
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close modal if user cancels
+                },
+                child: const Text('Cancel'),
+              ),
+            ],
+          ),
+        );
+      },
+    ); 
   }
 }

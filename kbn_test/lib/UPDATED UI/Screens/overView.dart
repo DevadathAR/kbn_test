@@ -12,39 +12,52 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ScaffoldBuilder(
+    Size size = MediaQuery.of(context).size;
+
+    return ScaffoldBuilder(
       pageName: "Overview",
       currentPath: "Overview",
       child: SizedBox(
-        height: 410,
+        // height: 410,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Wrap(
-            spacing: 10.0, 
-            runSpacing: 10.0, 
+            spacing: 10.0,
+            runSpacing: 10.0,
             children: [
               // First column (Charts and Horizontal Table)
               SizedBox(
-                width: 400, 
+                // width: size.width>600? 500:null,
+                width: size.width > 1200
+                    ? 600
+                    // size.width * .3
+                    : null,
+
                 child: Column(
                   children: [
-                    ChartWidget(),
-                    SizedBox(height: 10),
-                    HorizontalTable(),
+                    chartWidget(context),
+                    const SizedBox(height: 10),
+                    const HorizontalTable(),
                   ],
                 ),
               ),
 
               // Second column (Vertical Table)
               SizedBox(
-                width: 400, // Adjust the width as necessary
+                // width: 400, // Adjust the width as necessary
+                // width: size.width>1650? 500:null,
+                width: size.width > 1200 ? size.width * .3 : null,
+
                 child: VerticalTable(),
               ),
 
               // Third column (Message and Pay Result)
               SizedBox(
-                width: 400, // Adjust the width as necessary
-                child: Column(
+                // width: 400, // Adjust the width as necessary
+                // width: size.width>1650? 450:null,
+                width: size.width > 1200 ? size.width * .2 : null,
+
+                child: const Column(
                   children: [
                     MessageWidget(),
                     SizedBox(height: 10),

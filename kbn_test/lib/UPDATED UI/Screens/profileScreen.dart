@@ -19,9 +19,6 @@ class CompanyProfileScreen extends StatelessWidget {
           height: size.height * 0.6222,
           child: ListView(
             children: [
-              const SizedBox(
-                height: 10,
-              ),
               // PageAndDate(context, pageLabel: "Profile"),
               Wrap(
                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -30,6 +27,7 @@ class CompanyProfileScreen extends StatelessWidget {
                       label: "Company name", sub: "KBN Code", isview: true),
                   SizedBox(
                     width: size.width * 0.005,
+                    height: size.width > 1200 ? 0 : 5,
                   ),
                   companyAndManager(context,
                       label: "Manager name", sub: "Year", isview: true),
@@ -41,6 +39,7 @@ class CompanyProfileScreen extends StatelessWidget {
                   // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Wrap(
+                      runSpacing: 5,
                       children: [
                         companyDetails(
                           context,
@@ -57,10 +56,10 @@ class CompanyProfileScreen extends StatelessWidget {
                         SizedBox(
                           width: size.width * 0.005,
                         ),
-                      ],
-                    ),
-                    Wrap(
-                      children: [
+                        //   ],
+                        // ),
+                        // Wrap(
+                        //   children: [
                         otherDetails(
                           context,
                           label: "Job Positions",
@@ -87,9 +86,8 @@ Widget companyAndManager(BuildContext context, {label, sub, isview}) {
   Size size = MediaQuery.of(context).size;
 
   return Container(
-    width: size.width < 1200 ? 700 : size.width * 0.408,
-    height:
-        size.height * 0.25, // Increased height to accommodate the TextFormField
+    width: size.width > 1200 ? (size.width - 200) * .495 : null,
+    height: 200, // Increased height to accommodate the TextFormField
     decoration: const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(6)),
       color: white,
@@ -130,14 +128,13 @@ Widget companyAndManager(BuildContext context, {label, sub, isview}) {
                   padding:
                       const EdgeInsets.only(left: 15.0), // Adjusted padding
                   child: SizedBox(
-                    height: size.height * 0.2,
-                    width: size.width *
-                        .3, /////sized box will overlap in mobile veiew nne dto fix it
+                    height: 150,
+                    width:
+                        200, /////sized box will overlap in mobile veiew nne dto fix it
                     child: Column(
                       children: [
                         TextFormField(
                           decoration: InputDecoration(
-                            
                             labelText: label,
                             labelStyle: AppTextStyle.tactext,
                             border: InputBorder.none, // Removed border
@@ -248,7 +245,7 @@ Widget viewProfile(BuildContext context) {
 Widget companyDetails(context, {label, sub, isview}) {
   Size size = MediaQuery.of(context).size;
   return Container(
-    width: size.width < 1200 ? 170 : size.width * 0.2012,
+    width: size.width > 1200 ? (size.width - 200) * .245 : null,
     height: size.height * 0.5,
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
@@ -297,7 +294,7 @@ Widget companyDetails(context, {label, sub, isview}) {
 Widget otherDetails(context, {label, sub, isview}) {
   Size size = MediaQuery.of(context).size;
   return Container(
-    width: size.width < 1200 ? 170 : size.width * 0.2012,
+    width: size.width > 1200 ? (size.width - 200) * .245 : null,
     height: size.height * 0.5,
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),

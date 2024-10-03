@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:kbn_test/UPDATED%20UI/Screens/jobScreen.dart';
+import 'package:kbn_test/UPDATED%20UI/Screens/messageScreen.dart';
+import 'package:kbn_test/UPDATED%20UI/Screens/overView.dart';
+import 'package:kbn_test/UPDATED%20UI/Screens/settingsScreen.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/statisticScreen.dart';
+import 'package:kbn_test/UPDATED%20UI/Screens/transactionScreen.dart';
 import 'package:kbn_test/service/apiServices.dart';
+import 'package:kbn_test/veiw/auth/cmpny_login.dart';
+import 'package:kbn_test/veiw/screen/AdminScreen/adminHome.dart';
+import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
+import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -102,7 +111,7 @@ class MainApp extends StatelessWidget {
       title: "KBN_Test",
       debugShowCheckedModeBanner: false,
       
-      home: StatisticScreen(),
+      home: CompanySettingPage(),
 
       // StatisticScreen(),
 

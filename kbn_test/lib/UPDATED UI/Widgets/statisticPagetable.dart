@@ -1,39 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/applicantsScreen.dart';
-import 'package:kbn_test/UPDATED%20UI/Screens/jobScreen.dart';
 import 'package:kbn_test/UPDATED%20UI/Widgets/showAll_bTn.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/widgets_common/boxBTN.dart'; // Make sure your color file path is correct
 
-class VerticalTable extends StatelessWidget {
-  const VerticalTable({super.key});
+class Statisticpagetable extends StatelessWidget {
+  const Statisticpagetable({super.key});
 
   @override
   Widget build(BuildContext context) {
     // Define the headers and row data
     final List<String> headers = [
-      'Company name',
-      'Website link',
-      '' // Third column for the button
+      'Name',
+      'Percentage',
     ];
 
     // Sample data for the table rows
     final List<List<String>> rowData = [
-      ['sandeep', 'link'],
-      ['hafees', 'www. hafees.com'],
-      ['dev', 'www. dev.com'],
-      ['arjun', 'www. arjun.com'],
-      ['shalu', 'www. shalu.com'],
-      ['sandeep', 'link'],
-      ['hafees', 'www. hafees.com'],
-      ['dev', 'www. dev.com'],
-      ['arjun', 'www. arjun.com'],
-      ['shalu', 'www. shalu.com'],
+      ['Tile A', '25%'],
+      ['Tile B', '40%'],
+      ['Tile C', '15%'],
+      ['Tile D', '10%'],
+      ['Tile E', '50%'],
     ];
 
     return Container(
-      height: 500,
       decoration:
           BoxDecoration(borderRadius: BorderRadius.circular(8), color: white),
       child: Padding(
@@ -50,38 +41,37 @@ class VerticalTable extends StatelessWidget {
                     BorderSide(color: Colors.grey.withOpacity(0.5), width: 0.5),
               ),
               columnWidths: const {
-                0: FlexColumnWidth(), // Responsive width for company name column
-                1: FlexColumnWidth(), // Responsive width for website link column
-                2: FixedColumnWidth(
-                    120), // Fixed width for the third button column
+                0: FlexColumnWidth(), // Responsive width for Tile Name column
+                1: FlexColumnWidth(), // Responsive width for Percentage column
               },
               children: [
                 // Add the header row
                 TableRow(
                   children: [
-                    _buildHeaderCell(headers[0]), // 'Company name'
-                    _buildHeaderCell(headers[1]), // 'Website link'
-                    _buildHeaderCell(''), // Empty header for the third column
+                    _buildHeaderCell(headers[0]), // 'Tile Name'
+                    _buildHeaderCell(headers[1]), // 'Percentage'
                   ],
                 ),
                 // Add the data rows
-                for (var row in rowData.take(5))
+                for (var row in rowData)
                   TableRow(
                     children: [
-                      _buildDataCell(row[0]), // Company name
-                      _buildDataCell(row[1]), // Website link
-                      _buildButtonCell(), // Button for 'View Details'
+                      _buildDataCell(row[0]), // Tile Name
+                      _buildDataCell(row[1]), // Percentage
                     ],
                   ),
               ],
             ),
             const SizedBox(
-                height: 15), // Spacing between table and the "Show all" button
-            ShowAllBtn(onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return const TwoTablesScreen();
-            },));
-          },title: "Show All",)
+                height: 5), // Spacing between table and the "Show all" button
+            ShowAllBtn(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const TwoTablesScreen();
+                }));
+              },
+              title: "arrow mark for share table img",
+            )
           ],
         ),
       ),
@@ -114,14 +104,6 @@ class VerticalTable extends StatelessWidget {
         style: AppTextStyle.normalText,
         textAlign: TextAlign.center,
       ),
-    );
-  }
-
-  // Widget for the button cell
-  Widget _buildButtonCell() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: BoxButton(title: "View Details", onTap: () {}),
     );
   }
 }

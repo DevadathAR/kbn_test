@@ -3,7 +3,7 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/auth/company_auth/cmpny_login.dart';
+import 'package:kbn_test/veiw/auth/cmpny_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Widget HomeAppBarBox(BuildContext context,

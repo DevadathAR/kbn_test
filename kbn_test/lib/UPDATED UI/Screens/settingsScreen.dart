@@ -5,7 +5,6 @@ import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:flutter/material.dart';
 
-
 class CompanySettingPage extends StatelessWidget {
   const CompanySettingPage({super.key});
 
@@ -20,11 +19,9 @@ class CompanySettingPage extends StatelessWidget {
           height: size.height * 0.621,
           child: ListView(
             children: [
-              const SizedBox(
-                height: 10,
-              ),
-              Container(      width: size.width>1650? 700:null,
-
+              
+              SizedBox(
+                width: size.width > 1200 ? (size.width - 200) * .49 : null,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,7 +75,7 @@ Widget companySetting(
       false; // Assuming a variable to track notification state
 
   return Container(
-    width: size.width < 1200 ? 170 : size.width * 0.198,
+      width: size.width>1200? (size.width-200)*.24:null,
     height: size.height * 0.5,
     decoration: const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(6)),

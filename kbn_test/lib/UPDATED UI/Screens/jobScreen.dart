@@ -13,7 +13,6 @@ class CompanyJobpage extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-
     List<Map<String, String>> jobTableheaders = [
       {'header': 'Designation', 'key': 'designation'},
       {'header': 'Experience', 'key': 'experience'},
@@ -83,19 +82,20 @@ class CompanyJobpage extends StatelessWidget {
       currentPath: "Jobs",
       pageName: "Jobs",
       child: SizedBox(
-        height: size.height * 0.6,
-        // height: 700,
+        // height: size.height * 0.6,
+        height: 500,
         child: ListView(
           children: [
-            const SizedBox(
-              height: 10,
-            ),
+           
             Wrap(
               spacing: 10,
               children: [
-              Expanded(
+                Expanded(
                   child: applicantsTable(
-                      size.width > 600 ? size.width * 0.5 : size.width,
+                      context,
+                      size.width > 1200
+                          ? (size.width - 200) * 0.49
+                          : size.width,
                       jobTableheaders,
                       jobTableData,
                       ["OPEN", "CLOSE"]),
@@ -251,27 +251,54 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(8)), color: white),
 // width:700,
-      width: size.width * 0.4,
+      width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
       //  width:   size.width-920,      // height: 700,
       child: Column(
         children: [
-          const Text("Position"),
+          // const Text("Position"),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 015.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                    height: 20,
+                    width: 500,
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          border:
+                              OutlineInputBorder(borderSide: BorderSide.none),
+                          labelText: "Position"),
+                    )),
+                Icon(Icons.edit)
+              ],
+            ),
+          ),
           _textField(
               textMaxlines: 3,
               controller: jobSummaryController,
               validator: validateRequired,
               width: 680,
               label: 'Job Summary'),
-          Wrap(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _textField(
                   textMaxlines: 1,
                   controller: jobLocationController,
                   validator: validateRequired,
-                  width: size.width * 0.15,
+                  width: size.width > 1200
+                      ? size.width * 0.19
+                      : size.width > 900
+                          ? (size.width) * 0.22
+                          : size.width * 0.33,
                   label: 'Location'),
               _buildDropdown(
-                  width: size.width * 0.15,
+                  width: size.width > 1200
+                      ? size.width * 0.19
+                      : size.width > 900
+                          ? (size.width) * 0.22
+                          : size.width * 0.33,
                   label: 'Experience',
                   value: selectedExperience,
                   items: experiences,
@@ -280,15 +307,24 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
                       })),
             ],
           ),
-          Wrap(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _numericField(
                   validator: numberValidator,
                   controller: jobVacancyController,
-                  width: size.width * 0.15,
+                  width: size.width > 1200
+                      ? size.width * 0.19
+                      : size.width > 900
+                          ? (size.width) * 0.22
+                          : size.width * 0.33,
                   label: 'Vaccancy'),
               _buildDropdown(
-                  width: size.width * 0.15,
+                  width: size.width > 1200
+                      ? size.width * 0.19
+                      : size.width > 900
+                          ? (size.width) * 0.22
+                          : size.width * 0.33,
                   label: 'Job Mode',
                   value: selectedJobMode,
                   items: jobModes,
@@ -297,15 +333,24 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
                       })),
             ],
           ),
-          Wrap(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _numericField(
                   validator: numberValidator,
                   controller: salaryController,
-                  width: size.width * 0.15,
+                  width: size.width > 1200
+                      ? size.width * 0.19
+                      : size.width > 900
+                          ? (size.width) * 0.22
+                          : size.width * 0.33,
                   label: 'Salary'),
               _buildDropdown(
-                  width: size.width * 0.15,
+                  width: size.width > 1200
+                      ? size.width * 0.19
+                      : size.width > 900
+                          ? (size.width) * 0.22
+                          : size.width * 0.33,
                   label: 'Employment Type',
                   value: selectedEmploymentType,
                   items: employmentTypes,

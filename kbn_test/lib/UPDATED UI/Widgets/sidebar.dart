@@ -149,36 +149,37 @@ class _SidebarState extends State<Sidebar> {
             child: Text("GENERAL", style: AppTextStyle.tactext),
           ),
           const SizedBox(height: 10),
-          Container(
-            child: Column(children: [
-            _buildListTile(
-              path: "Settings",
-              icon: Icons.settings,
-              label: 'Settings',
-              onTap: () {
-                if (widget.currentPath != "Settings") {
+          Column(
+            children: [
+              _buildListTile(
+                path: "Settings",
+                icon: Icons.settings,
+                label: 'Settings',
+                onTap: () {
+                  if (widget.currentPath != "Settings") {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CompanySettingPage()));
+                  }
+                },
+              ),
+              _buildListTile(
+                path: "",
+                icon: Icons.library_books_outlined,
+                label: 'Terms',
+                onTap: () {},
+              ),
+              profileButton(
+                context: context, // Pass the context from the widget tree
+                onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const CompanySettingPage()));
-                }
-              },
-            ),
-            _buildListTile(
-              path: "",
-              icon: Icons.library_books_outlined,
-              label: 'Terms',
-              onTap: () {},
-            ),
-            profileButton(
-              context: context, // Pass the context from the widget tree
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const CompanyProfileScreen()));
-              },
-            ),],),
+                          builder: (context) => const CompanyProfileScreen()));
+                },
+              ),
+            ],
           )
         ],
       ),

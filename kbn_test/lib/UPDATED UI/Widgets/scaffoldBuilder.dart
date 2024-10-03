@@ -25,6 +25,7 @@ class ScaffoldBuilder extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 242, 255, 0),
       // drawerDragStartBehavior: DragStartBehavior.down,
       // drawerScrimColor: none,
       // drawerEdgeDragWidth: 10,
@@ -55,8 +56,8 @@ class ScaffoldBuilder extends StatelessWidget {
                         const SizedBox(height: 10),
                         const overViewCards(),
                         const SizedBox(height: 10),
-                      //  if(size.width > 300) 
-                       Container(
+                        //  if(size.width > 300)
+                        Container(
                             height: size.width > 900
                                 ? size.height - 300
                                 : size.height - 340,

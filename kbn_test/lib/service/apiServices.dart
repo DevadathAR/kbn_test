@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 
 Map<String, dynamic> userDetails = {};
 Map<String, dynamic> jobDetailsResponse = {};
@@ -12,8 +11,52 @@ class ApiServices {
   static Map<String, String> headers = {
     'Content-Type': 'application/json',
   };
-  // static const String baseUrl = 'http://192.168.29.37:8000';
-  static const String baseUrl = 'http://192.168.29.197:5500';
+  static const String baseUrl = 'http://192.168.29.37:8000';
+  // static const String baseUrl = 'http://192.168.29.197:5500';
+
+
+
+    Future<http.StreamedResponse> signUp({
+    required String fullName,
+    required String email,
+    required String password,
+    required String contactNumber,
+    required String role,
+    Uint8List? selectedImage,
+    String? imageFilename,
+  }) async {
+    final url = Uri.parse('$baseUrl/user/sign-up');
+
+    // Create multipart form data request
+    var request = http.MultipartRequest('POST', url);
+
+    // Add headers without Authorization
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data',
+    });
+
+    // Add the text fields to the request
+    request.fields['name'] = fullName;
+    request.fields['role'] = role;
+    request.fields['email'] = email;
+    request.fields['password'] = password;
+    request.fields['contact'] = contactNumber;
+
+    // Add the image to the request if it exists
+    if (selectedImage != null && imageFilename != null) {
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image',
+          selectedImage,
+          filename: imageFilename,
+        ),
+      );
+    }
+
+    // Send the request and return the response
+    return await request.send();
+  }
+
 
   // Login API
   static Future<Map<String, dynamic>> userLogin(

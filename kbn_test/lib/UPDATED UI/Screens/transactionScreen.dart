@@ -20,13 +20,10 @@ class CompanyTransation extends StatelessWidget {
           ? SizedBox(
               height: size.height - 300,
               child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Wrap(spacing: 10, runSpacing: 10, children: [
-                    transationPageList(context),
-                    paymentFormField(context)
-                  ]),
-                ),
+                child: Wrap(spacing: 10, runSpacing: 10, children: [
+                  transationPageList(context),
+                  paymentFormField(context)
+                ]),
               ),
             )
           : Container(),
@@ -39,11 +36,11 @@ Widget transationPageList(context) {
 
   return Container(
     // height: size.height * 0.2,
-    // height: 500,
-    height: size.height - 300,
+    height: 500,
+    // height: size.height - 300,
 
     // width: 600,
-    width: size.width > 1650 ? 700 : null,
+                width: size.width > 1200 ? (size.width -200)* .49: null,
 
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
@@ -126,11 +123,11 @@ Widget paymentFormField(context) {
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
       // height: size.height * 0.6,
-      // height: 500,
-      height: size.height - 300,
+      height: 500,
+      // height: size.height - 300,
 
       // width: 600,
-      width: size.width > 1650 ? 700 : null,
+                width: size.width > 1200 ? (size.width -200)* .49: null,
 
       child: Padding(
         padding: const EdgeInsets.only(top: 10, left: 10, right: 10),

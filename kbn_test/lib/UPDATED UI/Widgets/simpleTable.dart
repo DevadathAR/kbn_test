@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kbn_test/UPDATED%20UI/Screens/jobScreen.dart';
 import 'package:kbn_test/UPDATED%20UI/Widgets/showAll_bTn.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
@@ -12,7 +13,7 @@ class HorizontalTable extends StatelessWidget {
 
     // Minimum width required for one data column
     const double minColumnWidth = 80.0;
-    const double minHeaderWidth = 70.0;
+    const double minHeaderWidth = 80.0;
     const int maxColumns = 7;
     const int minColumns = 4;
 
@@ -55,7 +56,11 @@ class HorizontalTable extends StatelessWidget {
               },
             ),
           ),
-          ShowAllBtn(onTap: () {})
+          ShowAllBtn(onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return CompanyJobpage();
+            },));
+          },title: "Show All",)
           // ElevatedButton(onPressed: () {}, child: const Text("ShowAll"))
         ],
       ),
@@ -84,7 +89,7 @@ class HorizontalTable extends StatelessWidget {
 
   Widget _buildDataCell(String text) {
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.all(15.0),
       child: Text(
         text,
         style: AppTextStyle.normalText,

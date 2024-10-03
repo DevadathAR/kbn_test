@@ -14,6 +14,20 @@ class AppTextStyle {
     fontWeight: FontWeight.w500,
     color: black,
   );
+  
+  static const TextStyle mobCompanyName = TextStyle(
+    fontSize: 18,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w600,
+    color: black,
+  );
+  
+  static const TextStyle moBsubheadertext = TextStyle(
+    fontSize: 20,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w500,
+    color: black,
+  );
   static const TextStyle bodytextwhite = TextStyle(
     fontSize: 12,
     fontFamily: "Inter",
@@ -35,6 +49,12 @@ class AppTextStyle {
   );
   static const TextStyle firmHead = TextStyle(
     fontSize: 25,
+    fontFamily: "Popppins",
+    fontWeight: FontWeight.w500,
+    color: black,
+  );
+  static const TextStyle firmHeadSmall = TextStyle(
+    fontSize: 15,
     fontFamily: "Popppins",
     fontWeight: FontWeight.w500,
     color: black,
@@ -67,6 +87,12 @@ class AppTextStyle {
     fontSize: 12,
     fontFamily: "Inter",
     fontWeight: FontWeight.w400,
+    color: black,
+  );
+  static const TextStyle bodytextBold = TextStyle(
+    fontSize: 12,
+    fontFamily: "Inter",
+    fontWeight: FontWeight.w600,
     color: black,
   );
   static const TextStyle logintext = TextStyle(

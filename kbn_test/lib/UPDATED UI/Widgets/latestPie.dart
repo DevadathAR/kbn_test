@@ -51,7 +51,7 @@ class SyncfusionPieChart extends StatelessWidget {
       title: const GaugeTitle(
         alignment: GaugeAlignment.near,
         text: "Total Applicants",
-        textStyle: AppTextStyle.bodytext,
+        textStyle: AppTextStyle.bodytextBold,
       ),
       axes: <RadialAxis>[
         // Outer Green Arcs

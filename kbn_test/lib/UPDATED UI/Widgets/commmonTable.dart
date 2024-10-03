@@ -5,14 +5,19 @@ import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/veiw/widgets_common/statusUpdate.dart';
 
 Widget applicantsTable(
+  context,
+  
     double width,
     List<Map<String, String>> headers,
     List<Map<String, String>> data,
     List<String> statusOptions, // Add status options dynamically
   ) {
+          Size size = MediaQuery.of(context).size;
+
     return Container(
-        width: width,
-        height: 400,
+      width: size.width>1200? (size.width-200)*0.49:null,
+        height: 500,
+
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),

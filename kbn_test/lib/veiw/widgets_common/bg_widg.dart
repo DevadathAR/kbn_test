@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kbn_test/utilities/assets_path.dart';
 
 Widget peoplebgWIdget({img}) {
   return LayoutBuilder(
@@ -31,16 +32,28 @@ Widget peoplebgWIdget({img}) {
 }
 
 
-Widget BgWIdget({img}) {
-  return Container(
-    color: const Color.fromRGBO(217, 217, 217, 1),
-    child: Align(
-        alignment: Alignment.centerRight,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 30.0, right: 30, bottom: 30),
-          child: Image(
-            image: AssetImage(img),
+Widget bgWidget({img}) {
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      // Adjust width and padding based on screen width
+      double width = constraints.maxWidth;
+      bool isMobile = width < 600; // For mobile devices
+      return SizedBox(
+        // color: const Color.fromRGBO(217, 217, 217, 1),
+        child: Align(
+          alignment: isMobile ? Alignment.center : Alignment.centerRight,
+          child: Padding(
+            padding: EdgeInsets.only(
+              top: isMobile ? 10 : 30.0,
+              right: isMobile ? 10 : 30.0,
+              bottom: isMobile ? 10 : 30.0,
+              left: isMobile ? 10 : 0,
+            ),
+            child: isMobile
+                ? Image(width: width, image: const AssetImage(mobileBg))
+                : const Image(image: AssetImage(bg)),
           ),
-        )),
-  );
-}
+        ),
+      );
+    },
+  );}
