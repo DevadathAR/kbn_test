@@ -16,9 +16,12 @@ class RecruitmentBarChart extends StatelessWidget {
       child: Column(
         children: [
           const Align(alignment: Alignment.topLeft,
-            child: Text(
-              "Recruitment",
-              style: AppTextStyle.bodytextBold,
+            child: Padding(
+              padding: EdgeInsets.only(left: 5),
+              child: Text(
+                "Recruitment",
+                style: AppTextStyle.bodytextBold,
+              ),
             ),
           ),
           Container(

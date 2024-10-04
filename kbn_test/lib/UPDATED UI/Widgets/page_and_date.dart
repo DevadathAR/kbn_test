@@ -105,14 +105,21 @@ class PageAndDate extends StatelessWidget {
               children: [
                 Text(
                   pageLabel,
-                  style: AppTextStyle.googletext,
+                  style: AppTextStyle.flitertxtblack,
                 ),
                 // Calendar
                 if (size.width > 900)
                   Container(
-                    padding: const EdgeInsets.only(bottom: 5, right: 5),
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                    padding:  const EdgeInsets.only(bottom: 5, right: 5),
+                    decoration:  BoxDecoration(
+                      boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.85),
+            blurRadius: 10,
+            spreadRadius: 1,
+          ),
+        ],
+                        borderRadius: const BorderRadius.all(Radius.circular(6)),
                         color: white),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,

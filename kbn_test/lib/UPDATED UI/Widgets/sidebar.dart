@@ -7,6 +7,7 @@ import 'package:kbn_test/UPDATED%20UI/Screens/overView.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/profileScreen.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/settingsScreen.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/statisticScreen.dart';
+import 'package:kbn_test/UPDATED%20UI/Screens/termsNconditions.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/transactionScreen.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
@@ -26,8 +27,10 @@ class Sidebar extends StatefulWidget {
 class _SidebarState extends State<Sidebar> {
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
     return Container(
-      padding: const EdgeInsets.only(top: 20, bottom: 10),
+      padding: const EdgeInsets.only(top: 20, bottom: 10,left: 10),
       color: white,
       constraints: const BoxConstraints(
         minWidth: 80,
@@ -47,11 +50,10 @@ class _SidebarState extends State<Sidebar> {
               ),
             ),
           ),
-          const SizedBox(height: 100),
+          SizedBox(height: size.height > 450 ? 100 : 0),
           Expanded(
             child: ListView(
               shrinkWrap: true,
-              padding: const EdgeInsets.all(5),
               children: [
                 const Padding(
                   padding: EdgeInsets.only(left: 15),
@@ -93,7 +95,8 @@ class _SidebarState extends State<Sidebar> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const TwoTablesScreen()));
+                              builder: (context) =>
+                                  const CompanyApplicantScreen()));
                     }
                   },
                 ),
@@ -142,15 +145,17 @@ class _SidebarState extends State<Sidebar> {
               ],
             ),
           ),
-          const Divider(indent: 16, endIndent: 16),
-          const SizedBox(height: 10),
-          const Padding(
-            padding: EdgeInsets.only(left: 15),
-            child: Text("GENERAL", style: AppTextStyle.tactext),
-          ),
-          const SizedBox(height: 10),
+          // const Divider(indent: 16, endIndent: 16),
+          // const SizedBox(height: 10),
+          // const Padding(
+          //   padding: EdgeInsets.only(left: 15),
+          //   child: Text("GENERAL", style: AppTextStyle.tactext),
+          // ),
+          // const SizedBox(height: 10),
           Column(
             children: [
+              const Divider(indent: 16, endIndent: 16),
+              const Text("GENERAL", style: AppTextStyle.tactext),
               _buildListTile(
                 path: "Settings",
                 icon: Icons.settings,
@@ -165,11 +170,19 @@ class _SidebarState extends State<Sidebar> {
                 },
               ),
               _buildListTile(
-                path: "",
+                path: "Terms",
                 icon: Icons.library_books_outlined,
                 label: 'Terms',
-                onTap: () {},
+                onTap: () {
+                  if (widget.currentPath != "Terms") {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const TermsNconditions()));
+                  }
+                },
               ),
+              
               profileButton(
                 context: context, // Pass the context from the widget tree
                 onTap: () {
@@ -228,24 +241,32 @@ class _SidebarState extends State<Sidebar> {
   }
 
   // Helper method for ListTile
-  ListTile _buildListTile({
+  Container _buildListTile({
     required IconData icon,
     required String label,
     required VoidCallback onTap,
     required String path,
   }) {
-    return ListTile(
-      // tileColor: Colors.amber,
-      selected: path == widget.currentPath,
-      // selectedTileColor: path == widget.currentPath ? Colors.red : black,
-      leading: Icon(
-        icon,
-        color: path == widget.currentPath
-            ? tealblue
-            : black, // Change the icon color if selected
+    return Container(
+      height: 50,
+      decoration:  BoxDecoration(
+          borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(100),
+              topLeft:  Radius.circular(100)),
+          color: path== widget.currentPath?drawercolor:null),
+      child: ListTile(
+        // tileColor: Colors.amber,
+        selected: path == widget.currentPath,
+        // selectedTileColor: path == widget.currentPath ? Colors.red : black,
+        leading: Icon(
+          icon,
+          color: path == widget.currentPath
+              ? tealblue
+              : black, // Change the icon color if selected
+        ),
+        title: Text(label, style: AppTextStyle.bodytext),
+        onTap: onTap,
       ),
-      title: Text(label, style: AppTextStyle.bodytext),
-      onTap: onTap,
     );
   }
 }

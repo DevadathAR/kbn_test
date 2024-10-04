@@ -7,7 +7,7 @@ import 'package:kbn_test/veiw/widgets_common/statusUpdate.dart';
 Widget applicantsTable(
   context,
   
-    double width,
+    // double width,
     List<Map<String, String>> headers,
     List<Map<String, String>> data,
     List<String> statusOptions, // Add status options dynamically

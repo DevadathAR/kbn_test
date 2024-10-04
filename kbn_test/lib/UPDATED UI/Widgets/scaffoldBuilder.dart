@@ -7,6 +7,8 @@ import 'package:kbn_test/UPDATED%20UI/Widgets/sidebar.dart';
 import 'package:kbn_test/UPDATED%20UI/Widgets/topBar.dart';
 import 'package:kbn_test/utilities/colors.dart';
 
+const bool isCompany = true;
+
 // ScaffoldBuilder Widget
 class ScaffoldBuilder extends StatelessWidget {
   final String currentPath;
@@ -25,7 +27,7 @@ class ScaffoldBuilder extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 242, 255, 0),
+      backgroundColor: const Color.fromARGB(255, 1, 162, 255),
       // drawerDragStartBehavior: DragStartBehavior.down,
       // drawerScrimColor: none,
       // drawerEdgeDragWidth: 10,
@@ -54,13 +56,21 @@ class ScaffoldBuilder extends StatelessWidget {
                       children: [
                         PageAndDate(pageLabel: pageName),
                         const SizedBox(height: 10),
+                        if (currentPath != "Settings" && currentPath != "Profile" && currentPath != "Terms" )
                         const overViewCards(),
+                                                if (currentPath != "Settings" && currentPath != "Profile" && currentPath != "Terms" )
+
                         const SizedBox(height: 10),
                         //  if(size.width > 300)
                         Container(
-                            height: size.width > 900
+                            height:
+                            currentPath != "Settings" && currentPath != "Profile" && currentPath != "Terms" ?
+                             size.width > 900
                                 ? size.height - 300
-                                : size.height - 340,
+                                : size.height - 340:
+                                size.width > 900
+                                ? size.height - 160
+                                : size.height - 200,
                             child: child),
                       ],
                     ),

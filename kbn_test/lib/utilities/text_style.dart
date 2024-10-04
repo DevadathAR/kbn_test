@@ -7,6 +7,11 @@ class AppTextStyle {
     fontFamily: "Poppins",
     fontWeight: FontWeight.w500,
     color: black,
+  );static const TextStyle headertextsmall = TextStyle(
+    fontSize: 13,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w500,
+    color: black,
   );
   static const TextStyle subheadertext = TextStyle(
     fontSize: 20,

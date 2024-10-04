@@ -18,14 +18,24 @@ class TopBar extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 height: 50,
                 width: double.infinity,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(kbnLogo),
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      blurRadius: 10,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                  image: const DecorationImage(
+                    image: const AssetImage(kbnLogo),
                     fit: BoxFit.contain,
                   ),
                 ),
               ),
-               Text(firmName, style:size.height>400? AppTextStyle.firmHead:AppTextStyle.firmHeadSmall),
+              Text(firmName,
+                  style: size.height > 400
+                      ? AppTextStyle.firmHead
+                      : AppTextStyle.firmHeadSmall),
             ],
           )
         : Wrap(children: [
@@ -35,7 +45,10 @@ class TopBar extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                   Text(firmName, style:size.height>400? AppTextStyle.firmHead:AppTextStyle.firmHeadSmall),
+                  Text(firmName,
+                      style: size.height > 400
+                          ? AppTextStyle.firmHead
+                          : AppTextStyle.firmHeadSmall),
                   // Search bar and button
                   Row(
                     children: [

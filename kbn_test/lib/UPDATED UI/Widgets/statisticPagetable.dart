@@ -67,7 +67,7 @@ class Statisticpagetable extends StatelessWidget {
             ShowAllBtn(
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const TwoTablesScreen();
+                  return const CompanyApplicantScreen();
                 }));
               },
               title: "arrow mark for share table img",

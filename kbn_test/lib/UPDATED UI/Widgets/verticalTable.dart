@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/applicantsScreen.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/jobScreen.dart';
+import 'package:kbn_test/UPDATED%20UI/Widgets/scaffoldBuilder.dart';
 import 'package:kbn_test/UPDATED%20UI/Widgets/showAll_bTn.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
@@ -12,11 +13,17 @@ class VerticalTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Define the headers and row data
-    final List<String> headers = [
-      'Company name',
-      'Website link',
-      '' // Third column for the button
-    ];
+    final List<String> headers = isCompany
+        ? [
+            'Applicant name',
+            'Dssignation',
+            '',
+          ]
+        : [
+            'Company name',
+            'Website link',
+            '' // Third column for the button
+          ];
 
     // Sample data for the table rows
     final List<List<String>> rowData = [
@@ -35,7 +42,15 @@ class VerticalTable extends StatelessWidget {
     return Container(
       height: 500,
       decoration:
-          BoxDecoration(borderRadius: BorderRadius.circular(8), color: white),
+          BoxDecoration(
+            boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            blurRadius: 10,
+            spreadRadius: 1,
+          ),
+        ],
+            borderRadius: BorderRadius.circular(8), color: white),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
@@ -79,7 +94,7 @@ class VerticalTable extends StatelessWidget {
                 height: 15), // Spacing between table and the "Show all" button
             ShowAllBtn(onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return const TwoTablesScreen();
+              return const CompanyApplicantScreen();
             },));
           },title: "Show All",)
           ],

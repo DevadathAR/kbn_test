@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kbn_test/UPDATED%20UI/Screens/jobScreen.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/transactionScreen.dart';
 import 'package:kbn_test/UPDATED%20UI/Widgets/showAll_bTn.dart';
 import 'package:kbn_test/utilities/colors.dart';
@@ -22,15 +21,14 @@ class PayResult extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              
               Expanded(
-                child: _buildCard(info: "1250+GST",description: 
-                    'paid on date'),
+                child: _buildCard('Number',
+                    'of companies who completed transaction of this month'),
               ),
               const SizedBox(width: 10), // Space between the cards
               Expanded(
-                child: _buildCard( info: 'Success',description: 
-                    'previous payment date'),
+                child: _buildCard('Number',
+                    'of companies who uncompleted transaction of this month'),
               ),
             ],
           ),
@@ -49,7 +47,7 @@ class PayResult extends StatelessWidget {
   }
 
   // Card Widget for the number and description
-  Widget _buildCard({info, description}) {
+  Widget _buildCard(String number, String description) {
     return Container(
       height: 120,
       width: 100,
@@ -58,20 +56,20 @@ class PayResult extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey.withOpacity(0.5)),
       ),
-      child:  Column(
-        children: [ Align(alignment: Alignment.topLeft, child: Text(" to Admin,")),
+      child: Column(
+        children: [
           Text(
-            info,
-            style: TextStyle(
+            number,
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 15, // Increase font size for emphasis
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             description,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
                 fontSize: 12), // Adjust font size for readability
           ),
         ],
@@ -79,10 +77,3 @@ class PayResult extends StatelessWidget {
     );
   }
 }
-
-// Widget _companyFrontPagePaymentInfo(){
-//   return Expanded(
-//                 child: _buildCard('Number',
-//                     'of companies who completed transaction of this month'),
-//               );
-// }

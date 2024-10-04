@@ -33,7 +33,11 @@ class overViewCards extends StatelessWidget {
       },
     ];
 
-    return Container(
+    Size size = MediaQuery.of(context).size;
+
+    return 
+    Container(
+      
       alignment: Alignment.center,
       decoration: ShapeDecoration(
         image: const DecorationImage(
@@ -45,10 +49,11 @@ class overViewCards extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 0),
+        padding:  EdgeInsets.symmetric(vertical: 15, horizontal: 0),
         child: Center(
           child: SizedBox(
-            height: 100, // Define the height for horizontal scroll
+            // height: 100, // Define the height for horizontal scroll
+            height: size.height>400?100:55,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
@@ -81,9 +86,13 @@ class Cards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+        Size size = MediaQuery.of(context).size;
+
     return Container(
-      padding: const EdgeInsets.all(10),
-      height: 100,
+      padding:  EdgeInsets.all(size.height>400?10:1),
+      // height: 100,
+                  height: size.height>400?100:55,
+
       width: 180,
       decoration: ShapeDecoration(
         color: const Color(0xFFFDFDFD),
@@ -92,7 +101,10 @@ class Cards extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: AppTextStyle.headertext),
+          Text(title, 
+          // style: AppTextStyle.headertext
+          style:size.height>400? AppTextStyle.headertext:AppTextStyle.headertextsmall
+          ),
           const Spacer(),
           Text(subTitle,
               textAlign: TextAlign.start, style: AppTextStyle.bodytext),

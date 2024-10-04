@@ -86,20 +86,23 @@ class CompanyJobpage extends StatelessWidget {
         height: 500,
         child: ListView(
           children: [
-           
             Wrap(
               spacing: 10,
               children: [
                 Expanded(
                   child: applicantsTable(
                       context,
-                      size.width > 1200
-                          ? (size.width - 200) * 0.49
-                          : size.width,
+                      // size.width > 1200
+                      //     ? (size.width - 200) * 0.49
+                      //     : size.width,
                       jobTableheaders,
                       jobTableData,
                       ["OPEN", "CLOSE"]),
                 ),
+                if (size.width < 1200)
+                  SizedBox(
+                    height: 5,
+                  ),
                 const jobDetailsForm()
               ],
             )
@@ -119,12 +122,6 @@ class jobDetailsForm extends StatefulWidget {
 
 class _jobDetailsFormState extends State<jobDetailsForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  // final TextEditingController addressTextController = TextEditingController();
-  // final TextEditingController mailIdController = TextEditingController();
-  // final TextEditingController contactController = TextEditingController();
-  // final TextEditingController websiteController = TextEditingController();
-  // final TextEditingController businessTypeController = TextEditingController();
 
 // JobCreation Feild
   final TextEditingController jobTitleController = TextEditingController();
@@ -229,48 +226,33 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
     }
   }
 
-  // Future<void> fetchUserData() async {
-  //   try {
-  //     var userData = await ApiServices.fetchUserDetails();
-  //     setState(() {
-  //       userDetails = userData;
-  //     });
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("Error occurred while fetching user data: $e")),
-  //     );
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Container(
-      padding: const EdgeInsets.only(bottom: 15),
+      height: 500,
+      // padding: const EdgeInsets.only(bottom: 0),
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(8)), color: white),
-// width:700,
       width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
-      //  width:   size.width-920,      // height: 700,
       child: Column(
         children: [
-          // const Text("Position"),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 015.0),
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
-                    height: 20,
-                    width: 500,
+                    width: (size.width - 200) * .32,
                     child: TextFormField(
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border:
                               OutlineInputBorder(borderSide: BorderSide.none),
-                          labelText: "Position"),
+                          hintText: "Position",
+                          hintStyle: AppTextStyle.normalText),
                     )),
-                Icon(Icons.edit)
+                const Icon(Icons.edit)
               ],
             ),
           ),
@@ -278,7 +260,13 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
               textMaxlines: 3,
               controller: jobSummaryController,
               validator: validateRequired,
-              width: 680,
+              // width: 680,
+              width: size.width > 1200
+                  ? (size.width - 200) * 0.455
+                  : size.width > 900
+                      ? (size.width - 200) * 0.7
+                      : (size.width) * 0.775,
+              hight: 60,
               label: 'Job Summary'),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -363,65 +351,96 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
               textMaxlines: 3,
               controller: keyRespoController,
               validator: validateRequired,
-              width: 680,
+              width: size.width > 1200
+                  ? (size.width - 200) * 0.455
+                  : size.width > 900
+                      ? (size.width - 200) * 0.7
+                      : (size.width) * 0.775,
+              // width: 680,
+              hight: 60,
               label: 'Key Responsibilities'),
+
+          // requimnts
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Container(
-              width: 680,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Requirements',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            padding: EdgeInsets.symmetric(
+                horizontal: size.width > 1200
+                    ? 25
+                    : size.width > 900
+                        ? (size.width - 200) * 0.15
+                        : (size.width) * 0.11,
+                vertical: 2),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                  child: Container(
+                    // width: 575,
+                    // width: (size.width - 200) * .32,
+                    width: size.width > 1200
+                        ? (size.width - 200) * 0.32
+                        : size.width > 900
+                            ? (size.width - 200) * 0.5
+                            : (size.width - 100) * 0.5,
+
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            'Requirements',
+                            style: AppTextStyle.normalText
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        const SizedBox(height: 1),
+
+                        // Education Subcategory
+                        _subCategoryField(
+                            maxLines: 1,
+                            controller: educationController,
+                            validator: validateRequired,
+                            hintText: 'Education'),
+
+                        // Skills Subcategory
+                        _subCategoryField(
+                            controller: skillsController,
+                            validator: validateRequired,
+                            hintText: 'Skills',
+                            maxLines: 1),
+
+                        // Experience Subcategory
+                        _subCategoryField(
+                            validator: validateRequired,
+                            maxLines: 1,
+                            controller: requirementExperienceController,
+                            hintText: 'Experience'),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 10),
-
-                  // Education Subcategory
-                  _subCategoryField(
-                      maxLines: 2,
-                      controller: educationController,
-                      validator: validateRequired,
-                      hintText: 'Education'),
-
-                  // Skills Subcategory
-                  _subCategoryField(
-                      controller: skillsController,
-                      validator: validateRequired,
-                      hintText: 'Skills',
-                      maxLines: 2),
-
-                  // Experience Subcategory
-                  _subCategoryField(
-                      validator: validateRequired,
-                      maxLines: 2,
-                      controller: requirementExperienceController,
-                      hintText: 'Experience'),
-                ],
-              ),
+                ),
+                Container(
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(2)),
+                      color: tealblue),
+                  width: 100,
+                  child: TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        "CREATE",
+                        style: AppTextStyle.signin,
+                      )),
+                )
+              ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Container(
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  color: tealblue),
-              width: 100,
-              child: TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    "CREATE",
-                    style: AppTextStyle.buttontxt,
-                  )),
-            ),
-          )
         ],
       ),
     );
@@ -439,42 +458,21 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
       ),
     );
   }
-  // Widget _buildEditableRow(String label) {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //     children: [
-  //       Text(label, style: AppTextStyle.bodytext),
-  //       const Icon(Icons.edit, color: textGrey, size: 15),
-  //     ],
-  //   );
-  // }
-
-// // Editable TextField Widget
-//   Widget _buildEditableTextField({required String hint, required controller}) {
-//     return TextFormField(
-//       controller: controller,
-//       decoration: InputDecoration(
-//         hintText: hint,
-//         border: InputBorder.none,
-//         isDense: true,
-//         contentPadding: const EdgeInsets.all(10),
-//       ),
-//     );
-//   }
 
 // // Generalized TextField Widget
-  Widget _textField({
-    required TextEditingController controller,
-    String? Function(String? value)? validator,
-    hint,
-    int textMaxlines = 1,
-    int hintMaxline = 1,
-    required double width,
-    required String label,
-  }) {
+  Widget _textField(
+      {required TextEditingController controller,
+      String? Function(String? value)? validator,
+      hint,
+      int textMaxlines = 1,
+      int hintMaxline = 1,
+      required double width,
+      required String label,
+      double hight = 40}) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(3.0),
       child: SizedBox(
+        height: hight,
         width: width,
         child: TextFormField(
           maxLines: textMaxlines,
@@ -485,6 +483,7 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
             hintText: hint,
             hintMaxLines: hintMaxline,
             labelText: label,
+            labelStyle: AppTextStyle.normalText,
             border: const OutlineInputBorder(),
             contentPadding: const EdgeInsets.all(10.0),
           ),
@@ -502,21 +501,26 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
     required void Function(String?) onChanged,
   }) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(3.0),
       child: SizedBox(
+        height: 40,
         width: width,
         child: DropdownButtonFormField<String>(
           value: value,
           isExpanded: true,
           decoration: InputDecoration(
             labelText: label,
+            labelStyle: AppTextStyle.normalText,
             border: const OutlineInputBorder(),
             contentPadding: const EdgeInsets.all(10.0),
           ),
           items: items.map((item) {
             return DropdownMenuItem<String>(
               value: item,
-              child: Text(item),
+              child: Text(
+                item,
+                style: AppTextStyle.normalText,
+              ),
             );
           }).toList(),
           onChanged: onChanged,
@@ -534,15 +538,21 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
     int maxLines = 1,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: TextFormField(
-        controller: controller,
-        maxLines: maxLines,
-        validator: validator,
-        decoration: InputDecoration(
-          hintText: hintText,
-          border: InputBorder.none, // No border for subcategories
-          contentPadding: const EdgeInsets.all(8.0), // Padding inside the field
+      padding: const EdgeInsets.only(bottom: 3.0),
+      child: SizedBox(
+        height: 40,
+        child: TextFormField(
+          controller: controller,
+          maxLines: maxLines,
+          validator: validator,
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: AppTextStyle.normalText,
+
+            border: InputBorder.none, // No border for subcategories
+            contentPadding:
+                const EdgeInsets.all(2.0), // Padding inside the field
+          ),
         ),
       ),
     );
@@ -555,8 +565,9 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
     String? Function(String?)? validator, // Add validator parameter
   }) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(3.0),
       child: SizedBox(
+        height: 40,
         width: width,
         child: TextFormField(
           controller: controller,
@@ -567,6 +578,7 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
           ],
           decoration: InputDecoration(
             labelText: label,
+            labelStyle: AppTextStyle.normalText,
             border: const OutlineInputBorder(),
             contentPadding: const EdgeInsets.all(10.0),
           ),

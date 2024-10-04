@@ -6,6 +6,7 @@ import 'package:kbn_test/UPDATED%20UI/Screens/overView.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/profileScreen.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/settingsScreen.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/statisticScreen.dart';
+import 'package:kbn_test/UPDATED%20UI/Screens/termsNconditions.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/transactionScreen.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
@@ -86,7 +87,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const TwoTablesScreen()));
+                              builder: (context) => const CompanyApplicantScreen()));
                     }
                   },
                 ),
@@ -156,10 +157,17 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
             },
           ),
           _buildListTile(
-            path: "",
+            path: "Terms",
             icon: Icons.library_books_outlined,
             label: 'Terms',
-            onTap: () {},
+            onTap: () {
+              if (widget.currentPath != "Terms") {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const TermsNconditions()));
+              }
+            },
           ),
           profileButton(
             context: context,

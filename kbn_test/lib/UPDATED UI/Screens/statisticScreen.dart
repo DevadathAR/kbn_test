@@ -66,7 +66,7 @@ class StatisticScreen extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             flex: 1,
-            child: Container(
+            child: SizedBox(
               height: 500,
               child: Row(
                 children: [

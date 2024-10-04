@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/jobScreen.dart';
+import 'package:kbn_test/UPDATED%20UI/Widgets/scaffoldBuilder.dart';
 import 'package:kbn_test/UPDATED%20UI/Widgets/showAll_bTn.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
@@ -15,16 +16,22 @@ class HorizontalTable extends StatelessWidget {
     const double minColumnWidth = 80.0;
     const double minHeaderWidth = 80.0;
     const int maxColumns = 7;
-    const int minColumns = 4;
+    const int minColumns = 3;
 
     // Define the headers
-    final List<String> headers = [
-      'Company name',
-      'Vacancy',
-      'Selected',
-      'Status',
-    ];
-
+final List<String> headers = isCompany
+        ? [
+            'Job name',
+            'Vacancy',
+            'Selected',
+            'Status',
+          ]
+        : [
+            'Company name',
+            'Vacancy',
+            'Selected',
+            'Status',
+          ];
     // Calculate how many columns can fit in the available screen width
     int columnCount = ((screenWidth - minHeaderWidth) ~/ minColumnWidth)
         .clamp(minColumns, maxColumns);
@@ -32,7 +39,14 @@ class HorizontalTable extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration:
-          BoxDecoration(borderRadius: BorderRadius.circular(8), color: white),
+          BoxDecoration(boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            blurRadius: 10,
+            spreadRadius: 1,
+          ),
+        ],
+            borderRadius: BorderRadius.circular(8), color: white),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -58,10 +72,9 @@ class HorizontalTable extends StatelessWidget {
           ),
           ShowAllBtn(onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return CompanyJobpage();
+              return const CompanyJobpage();
             },));
           },title: "Show All",)
-          // ElevatedButton(onPressed: () {}, child: const Text("ShowAll"))
         ],
       ),
     );

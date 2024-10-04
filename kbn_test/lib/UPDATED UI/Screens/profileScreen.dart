@@ -13,7 +13,7 @@ class CompanyProfileScreen extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return ScaffoldBuilder(
-        currentPath: "",
+        currentPath: "Profile",
         pageName: "Profile",
         child: SizedBox(
           height: size.height * 0.6222,
@@ -205,7 +205,7 @@ Widget addAndSave(context) {
             ),
             child: const Text(
               "Save",
-              style: AppTextStyle.bodytext,
+              style: AppTextStyle.bodytextwhite,
             ),
           ),
         ],
@@ -234,7 +234,7 @@ Widget viewProfile(BuildContext context) {
           ),
           child: const Text(
             "View Profile",
-            style: AppTextStyle.bodytext,
+            style: AppTextStyle.bodytextwhite,
           ),
         ),
       ),
