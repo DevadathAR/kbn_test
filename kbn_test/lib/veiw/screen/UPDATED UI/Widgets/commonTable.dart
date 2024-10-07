@@ -1,19 +1,24 @@
 // Reusable method to build a generic table
 import 'package:flutter/material.dart';
+import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/widgets_common/boldText.dart';
 import 'package:kbn_test/veiw/widgets_common/boxBTN.dart';
+import 'package:kbn_test/veiw/widgets_common/normalText.dart';
 import 'package:kbn_test/veiw/widgets_common/statusUpdate.dart';
 
 Widget applicantsTable(
-  double width,
+  context,
+  // double width,
   List<Map<String, String>> headers,
   List<Map<String, String>> data,
   List<String> statusOptions, // Add status options dynamically
 ) {
+  Size size = MediaQuery.of(context).size;
   return Container(
-      width: width,
+      width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
       height: 400,
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -24,12 +29,7 @@ Widget applicantsTable(
         children: [
           // Header row (fixed)
           Table(
-            border: TableBorder(
-              horizontalInside:
-                  BorderSide(color: Colors.grey.withOpacity(0.5), width: 0.5),
-              verticalInside:
-                  BorderSide(color: Colors.grey.withOpacity(0.5), width: 0.5),
-            ),
+            border: tableHeaderDec(),
             defaultVerticalAlignment: TableCellVerticalAlignment.middle,
             columnWidths:
                 _generateColumnWidths(headers.length), // Dynamic widths
@@ -182,8 +182,9 @@ class _CustomStatusColumnState extends State<CustomStatusColumn> {
   }
 }
 
-Widget selectedApplicantsTable(
-    {required double width,
+Widget selectedApplicantsTable(context,
+    {
+    // required double width,
     required List<Map<String, String>> data,
     required String headerTitle,
     List<String>? statusOptions,
@@ -201,9 +202,10 @@ Widget selectedApplicantsTable(
             ] // Path is "Transactions" and it's not a company
           //companies Screen header
           : ['name', 'website']; // Not a company and path is not "Transactions"
+  Size size = MediaQuery.of(context).size;
 
   return Container(
-    width: width,
+    width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
     height: 400,
     padding: const EdgeInsets.all(10.0),
     decoration: BoxDecoration(
@@ -212,13 +214,9 @@ Widget selectedApplicantsTable(
     ),
     child: Column(
       children: [
+        // header
         Table(
-          border: TableBorder(
-            horizontalInside:
-                BorderSide(color: Colors.grey.withOpacity(0.5), width: 0.5),
-            verticalInside:
-                BorderSide(color: Colors.grey.withOpacity(0.5), width: 0.5),
-          ),
+          border: tableHeaderDec(),
           defaultVerticalAlignment: TableCellVerticalAlignment.middle,
           columnWidths: const {
             0: FlexColumnWidth(),
@@ -277,7 +275,7 @@ Widget selectedApplicantsTable(
                               statusOptions ?? ['Approved', 'Rejected'],
                         ),
                       // Otherwise, show the ButtonCell
-                      if (!hasStatus) _buildButtonCell(),
+                      if (!hasStatus) _buildButtonCell(context),
                     ],
                   );
                 }),
@@ -287,6 +285,15 @@ Widget selectedApplicantsTable(
         ),
       ],
     ),
+  );
+}
+
+TableBorder tableHeaderDec() {
+  return TableBorder(
+    bottom: BorderSide(color: Colors.grey.withOpacity(0.5), width: 0.5),
+    horizontalInside:
+        BorderSide(color: Colors.grey.withOpacity(0.5), width: 0.5),
+    verticalInside: BorderSide(color: Colors.grey.withOpacity(0.5), width: 0.5),
   );
 }
 
@@ -303,9 +310,114 @@ Widget _buildDataCell(String text) {
 }
 
 // Widget for the button cell
-Widget _buildButtonCell() {
+Widget _buildButtonCell(context) {
   return Padding(
     padding: const EdgeInsets.all(10.0),
-    child: BoxButton(title: "View Details", onTap: () {}),
+    child: BoxButton(
+        title: "View Details",
+        onTap: () {
+          showProfileDialog(context);
+        }),
+  );
+}
+
+void showProfileDialog(BuildContext context) {
+  // Fetch applicant details when the dialog is shown
+  // ApiServices.fetchApplicantDetails(widget.applicantId);
+  showDialog(
+    context: context,
+    barrierColor: semitransp,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child:
+            // isLoading
+            //     ? const Center(child: CircularProgressIndicator())
+            //     :
+
+            SizedBox(
+          width: 400,
+          height: 248,
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                // Image and summary row
+                Container(
+                  width: 202.82,
+                  height: 202.82,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300], // Background color if no image
+                    borderRadius: BorderRadius.circular(8), // Square corners
+                    image: const DecorationImage(
+                      image: AssetImage(compnyLogo)
+                          as ImageProvider, // Use a placeholder if image is null
+                      fit: BoxFit.cover, // Adjusts image to cover the container
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 10),
+                // applicant name and designation
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    boldText(text: 'Name', size: 15),
+                    const SizedBox(height: 5),
+                    boldText(text: "Designation", size: 15),
+                    const SizedBox(height: 5),
+                    normalText(text: '8547809771'),
+                    const Spacer(),
+                    box(
+                      width: 118,
+                      height: 28,
+                      child: GestureDetector(
+                        onTap: () => (), // Adding onTap function
+                        child: const Center(
+                          child: Text(
+                            'RESUME',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 10,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    box(
+                      width: 118,
+                      height: 28,
+                      child: GestureDetector(
+                        onTap: () => (), // Adding onTap function
+                        child: const Center(
+                          child: Text(
+                            'CONTACT VIA MAIL',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: tealblue,
+                              fontSize: 10,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
   );
 }

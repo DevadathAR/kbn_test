@@ -3,8 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/screen/AdminScreen/adminHome.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/commonTable.dart';
 
 class CompanyJobpage extends StatelessWidget {
@@ -13,8 +12,6 @@ class CompanyJobpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
-    double screenwidth = size.width;
 
     List<Map<String, String>> jobTableheaders = [
       {'header': 'Designation', 'key': 'designation'},
@@ -85,24 +82,28 @@ class CompanyJobpage extends StatelessWidget {
       currentPath: "Jobs",
       pageName: "Jobs",
       child: SizedBox(
-        height: size.height * 0.6,
-        // height: 700,
+        // height: size.height * 0.6,
+        height: 500,
         child: ListView(
           children: [
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              // spacing: 10,
+            Wrap(
+              spacing: 10,
               children: [
                 Expanded(
                   child: applicantsTable(
-                      screenwidth > 600 ? screenwidth * 0.5 : screenwidth,
+                      context,
+                      // size.width > 1200
+                      //     ? (size.width - 200) * 0.49
+                      //     : size.width,
                       jobTableheaders,
                       jobTableData,
                       ["OPEN", "CLOSE"]),
                 ),
-                const Expanded(child: JobCreationForm())
+                if (size.width < 1200)
+                  const SizedBox(
+                    height: 5,
+                  ),
+                const jobDetailsForm()
               ],
             )
           ],
@@ -112,21 +113,15 @@ class CompanyJobpage extends StatelessWidget {
   }
 }
 
-class JobCreationForm extends StatefulWidget {
-  const JobCreationForm({super.key});
+class jobDetailsForm extends StatefulWidget {
+  const jobDetailsForm({super.key});
 
   @override
-  State<JobCreationForm> createState() => _JobCreationFormState();
+  State<jobDetailsForm> createState() => _jobDetailsFormState();
 }
 
-class _JobCreationFormState extends State<JobCreationForm> {
+class _jobDetailsFormState extends State<jobDetailsForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  // final TextEditingController addressTextController = TextEditingController();
-  // final TextEditingController mailIdController = TextEditingController();
-  // final TextEditingController contactController = TextEditingController();
-  // final TextEditingController websiteController = TextEditingController();
-  // final TextEditingController businessTypeController = TextEditingController();
 
 // JobCreation Feild
   final TextEditingController jobTitleController = TextEditingController();
@@ -231,49 +226,67 @@ class _JobCreationFormState extends State<JobCreationForm> {
     }
   }
 
-  // Future<void> fetchUserData() async {
-  //   try {
-  //     var userData = await ApiServices.fetchUserDetails();
-  //     setState(() {
-  //       userDetails = userData;
-  //     });
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text("Error occurred while fetching user data: $e")),
-  //     );
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Container(
-      padding: const EdgeInsets.only(bottom: 15),
+      height: 500,
+      // padding: const EdgeInsets.only(bottom: 0),
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(8)), color: white),
-// width:700,
-      width: size.width * 0.4,
-      //  width:   size.width-920,      // height: 700,
+      width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
       child: Column(
         children: [
-          const Text("Position"),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                    width: (size.width - 200) * .32,
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                          border:
+                              OutlineInputBorder(borderSide: BorderSide.none),
+                          hintText: "Position",
+                          hintStyle: AppTextStyle.normalText),
+                    )),
+                const Icon(Icons.edit)
+              ],
+            ),
+          ),
           _textField(
-              textMaxlines: 2,
+              textMaxlines: 3,
               controller: jobSummaryController,
               validator: validateRequired,
-              width: 680,
+              // width: 680,
+              width: size.width > 1200
+                  ? (size.width - 200) * 0.455
+                  : size.width > 900
+                      ? (size.width - 200) * 0.7
+                      : (size.width) * 0.775,
+              hight: 60,
               label: 'Job Summary'),
-          Wrap(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _textField(
                   textMaxlines: 1,
                   controller: jobLocationController,
                   validator: validateRequired,
-                  width: size.width * 0.15,
+                  width: size.width > 1200
+                      ? size.width * 0.19
+                      : size.width > 900
+                          ? (size.width) * 0.22
+                          : size.width * 0.33,
                   label: 'Location'),
               _buildDropdown(
-                  width: size.width * 0.15,
+                  width: size.width > 1200
+                      ? size.width * 0.19
+                      : size.width > 900
+                          ? (size.width) * 0.22
+                          : size.width * 0.33,
                   label: 'Experience',
                   value: selectedExperience,
                   items: experiences,
@@ -282,15 +295,24 @@ class _JobCreationFormState extends State<JobCreationForm> {
                       })),
             ],
           ),
-          Wrap(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _numericField(
                   validator: numberValidator,
                   controller: jobVacancyController,
-                  width: size.width * 0.15,
+                  width: size.width > 1200
+                      ? size.width * 0.19
+                      : size.width > 900
+                          ? (size.width) * 0.22
+                          : size.width * 0.33,
                   label: 'Vaccancy'),
               _buildDropdown(
-                  width: size.width * 0.15,
+                  width: size.width > 1200
+                      ? size.width * 0.19
+                      : size.width > 900
+                          ? (size.width) * 0.22
+                          : size.width * 0.33,
                   label: 'Job Mode',
                   value: selectedJobMode,
                   items: jobModes,
@@ -299,15 +321,24 @@ class _JobCreationFormState extends State<JobCreationForm> {
                       })),
             ],
           ),
-          Wrap(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _numericField(
                   validator: numberValidator,
                   controller: salaryController,
-                  width: size.width * 0.15,
+                  width: size.width > 1200
+                      ? size.width * 0.19
+                      : size.width > 900
+                          ? (size.width) * 0.22
+                          : size.width * 0.33,
                   label: 'Salary'),
               _buildDropdown(
-                  width: size.width * 0.15,
+                  width: size.width > 1200
+                      ? size.width * 0.19
+                      : size.width > 900
+                          ? (size.width) * 0.22
+                          : size.width * 0.33,
                   label: 'Employment Type',
                   value: selectedEmploymentType,
                   items: employmentTypes,
@@ -320,65 +351,96 @@ class _JobCreationFormState extends State<JobCreationForm> {
               textMaxlines: 3,
               controller: keyRespoController,
               validator: validateRequired,
-              width: 680,
+              width: size.width > 1200
+                  ? (size.width - 200) * 0.455
+                  : size.width > 900
+                      ? (size.width - 200) * 0.7
+                      : (size.width) * 0.775,
+              // width: 680,
+              hight: 60,
               label: 'Key Responsibilities'),
+
+          // requimnts
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Container(
-              width: 680,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Requirements',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            padding: EdgeInsets.symmetric(
+                horizontal: size.width > 1200
+                    ? 25
+                    : size.width > 900
+                        ? (size.width - 200) * 0.15
+                        : (size.width) * 0.11,
+                vertical: 2),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                  child: Container(
+                    // width: 575,
+                    // width: (size.width - 200) * .32,
+                    width: size.width > 1200
+                        ? (size.width - 200) * 0.32
+                        : size.width > 900
+                            ? (size.width - 200) * 0.5
+                            : (size.width - 100) * 0.5,
+
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            'Requirements',
+                            style: AppTextStyle.normalText
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        const SizedBox(height: 1),
+
+                        // Education Subcategory
+                        _subCategoryField(
+                            maxLines: 1,
+                            controller: educationController,
+                            validator: validateRequired,
+                            hintText: 'Education'),
+
+                        // Skills Subcategory
+                        _subCategoryField(
+                            controller: skillsController,
+                            validator: validateRequired,
+                            hintText: 'Skills',
+                            maxLines: 1),
+
+                        // Experience Subcategory
+                        _subCategoryField(
+                            validator: validateRequired,
+                            maxLines: 1,
+                            controller: requirementExperienceController,
+                            hintText: 'Experience'),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 10),
-
-                  // Education Subcategory
-                  _subCategoryField(
-                      maxLines: 2,
-                      controller: educationController,
-                      validator: validateRequired,
-                      hintText: 'Education'),
-
-                  // Skills Subcategory
-                  _subCategoryField(
-                      controller: skillsController,
-                      validator: validateRequired,
-                      hintText: 'Skills',
-                      maxLines: 2),
-
-                  // Experience Subcategory
-                  _subCategoryField(
-                      validator: validateRequired,
-                      maxLines: 2,
-                      controller: requirementExperienceController,
-                      hintText: 'Experience'),
-                ],
-              ),
+                ),
+                Container(
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(2)),
+                      color: tealblue),
+                  width: 100,
+                  child: TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        "CREATE",
+                        style: AppTextStyle.fifteenW500,
+                      )),
+                )
+              ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Container(
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  color: tealblue),
-              width: 100,
-              child: TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    "CREATE",
-                    style: AppTextStyle.buttontxt,
-                  )),
-            ),
-          )
         ],
       ),
     );
@@ -398,18 +460,19 @@ class _JobCreationFormState extends State<JobCreationForm> {
   }
 
 // // Generalized TextField Widget
-  Widget _textField({
-    required TextEditingController controller,
-    String? Function(String? value)? validator,
-    hint,
-    int textMaxlines = 1,
-    int hintMaxline = 1,
-    required double width,
-    required String label,
-  }) {
+  Widget _textField(
+      {required TextEditingController controller,
+      String? Function(String? value)? validator,
+      hint,
+      int textMaxlines = 1,
+      int hintMaxline = 1,
+      required double width,
+      required String label,
+      double hight = 40}) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(3.0),
       child: SizedBox(
+        height: hight,
         width: width,
         child: TextFormField(
           maxLines: textMaxlines,
@@ -420,8 +483,9 @@ class _JobCreationFormState extends State<JobCreationForm> {
             hintText: hint,
             hintMaxLines: hintMaxline,
             labelText: label,
+            labelStyle: AppTextStyle.normalText,
             border: const OutlineInputBorder(),
-            contentPadding: const EdgeInsets.all(5),
+            contentPadding: const EdgeInsets.all(10.0),
           ),
         ),
       ),
@@ -437,21 +501,26 @@ class _JobCreationFormState extends State<JobCreationForm> {
     required void Function(String?) onChanged,
   }) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(3.0),
       child: SizedBox(
+        height: 40,
         width: width,
         child: DropdownButtonFormField<String>(
           value: value,
           isExpanded: true,
           decoration: InputDecoration(
             labelText: label,
+            labelStyle: AppTextStyle.normalText,
             border: const OutlineInputBorder(),
             contentPadding: const EdgeInsets.all(10.0),
           ),
           items: items.map((item) {
             return DropdownMenuItem<String>(
               value: item,
-              child: Text(item),
+              child: Text(
+                item,
+                style: AppTextStyle.normalText,
+              ),
             );
           }).toList(),
           onChanged: onChanged,
@@ -469,15 +538,21 @@ class _JobCreationFormState extends State<JobCreationForm> {
     int maxLines = 1,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: TextFormField(
-        controller: controller,
-        maxLines: maxLines,
-        validator: validator,
-        decoration: InputDecoration(
-          hintText: hintText,
-          border: InputBorder.none, // No border for subcategories
-          contentPadding: const EdgeInsets.all(8.0), // Padding inside the field
+      padding: const EdgeInsets.only(bottom: 3.0),
+      child: SizedBox(
+        height: 40,
+        child: TextFormField(
+          controller: controller,
+          maxLines: maxLines,
+          validator: validator,
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: AppTextStyle.normalText,
+
+            border: InputBorder.none, // No border for subcategories
+            contentPadding:
+                const EdgeInsets.all(2.0), // Padding inside the field
+          ),
         ),
       ),
     );
@@ -490,8 +565,9 @@ class _JobCreationFormState extends State<JobCreationForm> {
     String? Function(String?)? validator, // Add validator parameter
   }) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(3.0),
       child: SizedBox(
+        height: 40,
         width: width,
         child: TextFormField(
           controller: controller,
@@ -502,6 +578,7 @@ class _JobCreationFormState extends State<JobCreationForm> {
           ],
           decoration: InputDecoration(
             labelText: label,
+            labelStyle: AppTextStyle.normalText,
             border: const OutlineInputBorder(),
             contentPadding: const EdgeInsets.all(10.0),
           ),

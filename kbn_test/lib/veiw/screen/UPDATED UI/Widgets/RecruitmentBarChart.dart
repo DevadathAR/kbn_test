@@ -1,14 +1,23 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/colors.dart';
+import 'package:kbn_test/utilities/text_style.dart';
 
 class RecruitmentBarChart extends StatelessWidget {
-  const RecruitmentBarChart({super.key});
+  final double length;
+  final double mobilelength;
+  const RecruitmentBarChart(
+      {super.key, required this.length, required this.mobilelength});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
+    Size size = MediaQuery.of(context).size;
+
     return Container(
-      color: white,
+      height: size.width > 900 ? length : mobilelength,
+      // width: size.width<600?size.width*.3:null,
       padding: const EdgeInsets.all(8.0),
       child: BarChart(
         BarChartData(
@@ -23,6 +32,22 @@ class RecruitmentBarChart extends StatelessWidget {
           ],
           titlesData: FlTitlesData(
             show: true,
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false, // Hide the Y-axis titles on the left
+              ),
+            ),
+            // Hide left and right titles
+            leftTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false, // Hide the Y-axis titles on the left
+              ),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false, // Hide the Y-axis titles on the right
+              ),
+            ),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
@@ -80,9 +105,11 @@ class RecruitmentBarChart extends StatelessWidget {
           ),
 
           barTouchData: BarTouchData(
-            enabled: false, // Disable touch interaction
+            enabled: false,
             touchTooltipData: BarTouchTooltipData(
-              getTooltipColor: (barGroup) => Colors.white.withOpacity(0.1),
+              getTooltipColor: (barGroup) =>
+                  // tool tip backGround Color
+                  Colors.white.withOpacity(0.1),
               tooltipPadding: const EdgeInsets.all(8),
               tooltipMargin: 8,
               getTooltipItem: (group, groupIndex, rod, rodIndex) {
@@ -116,26 +143,12 @@ class RecruitmentBarChart extends StatelessWidget {
           width: 30,
           gradient: gradientColor,
           borderRadius: BorderRadius.circular(4),
-          // rodStackItems: [
-          //   BarChartRodStackItem(
-          //     0,
-          //     y1,
-          //     Colors.transparent,
-          //   ),
-          // ],
         ),
         BarChartRodData(
           toY: y2,
           width: 15,
           color: tealblue,
           borderRadius: BorderRadius.circular(4),
-          // rodStackItems: [
-          //   BarChartRodStackItem(
-          //     0,
-          //     y2,
-          //     Colors.transparent,
-          //   ),
-          // ],
         ),
       ],
       showingTooltipIndicators: [0, 1],

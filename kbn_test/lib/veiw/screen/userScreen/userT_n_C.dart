@@ -40,7 +40,7 @@ class user_T_n_C extends StatelessWidget {
                     padding: EdgeInsets.only(top: 100, bottom: 30, left: 150),
                     child: Text(
                       tachead,
-                      style: AppTextStyle.tactexthead,
+                      style: AppTextStyle.twentyFour_W400,
                     ),
                   ),
                   const Padding(
@@ -48,7 +48,7 @@ class user_T_n_C extends StatelessWidget {
                     child: SizedBox(
                         child: Text(
                       T_n_C_user,
-                      style: AppTextStyle.tactext,
+                      style: AppTextStyle.fourteenW400,
                     )),
                   )
                 ],

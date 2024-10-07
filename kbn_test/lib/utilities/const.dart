@@ -64,8 +64,7 @@ redistribution is not allowed.
 
 8. Updates : The portal may update these terms, and continued use implies acceptance of the new terms.''';
 
-const T_n_C_company = '''COMPANY PAGE
-
+const T_n_C_company = '''
 Welcome to [Your Company Name]. By accessing and using our services, you agree to the following terms and conditions:
 
 1.  Acceptance of Terms: By using our website or services, you agree to comply with and be bound by these terms and

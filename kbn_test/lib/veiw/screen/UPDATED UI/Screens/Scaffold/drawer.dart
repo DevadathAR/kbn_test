@@ -1,51 +1,46 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/applicantsScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/jobScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/messageScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/companyHome.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/profileScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/settingsScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/statisticScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/transactionScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/applicantsScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/companyHome.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/jobScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/messageScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/profileScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/settingsScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/statisticScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/termsNconditions.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/transactionScreen.dart';
 
-class Sidebar extends StatefulWidget {
+class SidebarDrawer extends StatefulWidget {
   final String currentPath;
-  const Sidebar({super.key, required this.currentPath});
+  const SidebarDrawer({super.key, required this.currentPath});
 
   @override
-  State<Sidebar> createState() => _SidebarState();
+  State<SidebarDrawer> createState() => _SidebarDrawerState();
 }
 
-class _SidebarState extends State<Sidebar> {
+class _SidebarDrawerState extends State<SidebarDrawer> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(top: 20, bottom: 10),
-      color: white,
-      constraints: const BoxConstraints(
-        minWidth: 80,
-        maxWidth: 180, // Maximum width for the ListView
-      ),
+    return Drawer(
+      width: 200,
+      // Changed Container to Drawer
+      // width: 100,
       child: Column(
         children: [
           // KBN LOGO
-          Container(
-            padding: const EdgeInsets.all(16),
-            height: 50,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(kbnLogo),
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
+          // Container(
+          //   padding: const EdgeInsets.all(16),
+          //   height: 50,
+          //   width: double.infinity,
+          //   decoration: const BoxDecoration(
+          //     image: DecorationImage(
+          //       image: AssetImage(kbnLogo),
+          //       fit: BoxFit.contain,
+          //     ),
+          //   ),
+          // ),
           const SizedBox(height: 100),
           Expanded(
             child: ListView(
@@ -54,7 +49,7 @@ class _SidebarState extends State<Sidebar> {
               children: [
                 const Padding(
                   padding: EdgeInsets.only(left: 15),
-                  child: Text("MENU", style: AppTextStyle.tactext),
+                  child: Text("MENU", style: AppTextStyle.fourteenW400),
                 ),
                 const SizedBox(height: 10),
                 _buildListTile(
@@ -63,11 +58,11 @@ class _SidebarState extends State<Sidebar> {
                   path: 'Overview',
                   onTap: () {
                     if (widget.currentPath != "Overview") {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const CompanyHome()));
-                    } else {}
+                    }
                   },
                 ),
                 _buildListTile(
@@ -76,7 +71,7 @@ class _SidebarState extends State<Sidebar> {
                   path: 'Statistics',
                   onTap: () {
                     if (widget.currentPath != "Statistics") {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
@@ -87,10 +82,10 @@ class _SidebarState extends State<Sidebar> {
                 _buildListTile(
                   path: "Applicants",
                   icon: Icons.people_outline,
-                  label: isCompany ? 'Applicants' : 'Companies',
+                  label: 'Applicants',
                   onTap: () {
                     if (widget.currentPath != "Applicants") {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
@@ -98,27 +93,26 @@ class _SidebarState extends State<Sidebar> {
                     }
                   },
                 ),
-                if (isCompany)
-                  _buildListTile(
-                    path: "Jobs",
-                    icon: Icons.wallet_rounded,
-                    label: 'Jobs',
-                    onTap: () {
-                      if (widget.currentPath != "Jobs") {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const CompanyJobpage()));
-                      }
-                    },
-                  ),
+                _buildListTile(
+                  path: "Jobs",
+                  icon: Icons.wallet_rounded,
+                  label: 'Jobs',
+                  onTap: () {
+                    if (widget.currentPath != "Jobs") {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const CompanyJobpage()));
+                    }
+                  },
+                ),
                 _buildListTile(
                   path: "Messages",
                   icon: Icons.notifications,
                   label: 'Messages',
                   onTap: () {
                     if (widget.currentPath != "Messages") {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const CompanyMessage()));
@@ -131,7 +125,7 @@ class _SidebarState extends State<Sidebar> {
                   label: 'Transactions',
                   onTap: () {
                     if (widget.currentPath != "Transactions") {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const CompanyTransation(),
@@ -148,7 +142,7 @@ class _SidebarState extends State<Sidebar> {
           const SizedBox(height: 10),
           const Padding(
             padding: EdgeInsets.only(left: 15),
-            child: Text("GENERAL", style: AppTextStyle.tactext),
+            child: Text("GENERAL", style: AppTextStyle.fourteenW400),
           ),
           const SizedBox(height: 10),
           _buildListTile(
@@ -157,7 +151,7 @@ class _SidebarState extends State<Sidebar> {
             label: 'Settings',
             onTap: () {
               if (widget.currentPath != "Settings") {
-                Navigator.push(
+                Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                         builder: (context) => const CompanySettingPage()));
@@ -165,15 +159,22 @@ class _SidebarState extends State<Sidebar> {
             },
           ),
           _buildListTile(
-            path: "",
+            path: "Terms",
             icon: Icons.library_books_outlined,
             label: 'Terms',
-            onTap: () {},
+            onTap: () {
+              if (widget.currentPath != "Terms") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const TermsNconditions()));
+              }
+            },
           ),
           profileButton(
-            context: context, // Pass the context from the widget tree
+            context: context,
             onTap: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const CompanyProfileScreen()));
@@ -184,6 +185,7 @@ class _SidebarState extends State<Sidebar> {
     );
   }
 
+  // Profile button widget
   Widget profileButton({
     required BuildContext context,
     required VoidCallback onTap,
@@ -233,16 +235,21 @@ class _SidebarState extends State<Sidebar> {
     required String path,
   }) {
     return ListTile(
-      tileColor: Colors.amber,
       selected: path == widget.currentPath,
-      selectedTileColor: path == widget.currentPath ? Colors.red : black,
+      selectedTileColor: path == widget.currentPath ? drawercolor : black,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25),
+          bottomLeft: Radius.circular(25),
+        ),
+      ),
       leading: Icon(
         icon,
         color: path == widget.currentPath
             ? tealblue
             : black, // Change the icon color if selected
       ),
-      title: Text(label, style: AppTextStyle.bodytext),
+      title: Text(label, style: AppTextStyle.bodytext_12),
       onTap: onTap,
     );
   }

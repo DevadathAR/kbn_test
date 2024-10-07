@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 
 class CompanyMessage extends StatelessWidget {
   const CompanyMessage({super.key});
@@ -16,15 +16,12 @@ class CompanyMessage extends StatelessWidget {
       currentPath: "Messages",
       pageName: "Messages",
       child: SizedBox(
-        height: size.height * 0.6,
+        height: size.height - 200,
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Wrap(spacing: 10, runSpacing: 10, children: [
-              messagePageList(context),
-              messagePageCompose(context),
-            ]),
-          ),
+          child: Wrap(spacing: 10, runSpacing: 10, children: [
+            messagePageList(context),
+            messagePageCompose(context),
+          ]),
         ),
       ),
     );
@@ -35,8 +32,12 @@ Widget messagePageList(context) {
   Size size = MediaQuery.of(context).size;
 
   return Container(
-    height: size.height * 0.6,
-    width: size.width < 1200 ? 700 : size.width * 0.4,
+    height: 500,
+    // width: size.width < 1200 ? 700 : size.width * 0.4,
+    // width: 700,
+
+    width: size.width > 1200 ? (size.width - 200) * .49 : null,
+
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
     child: Scrollbar(
@@ -141,8 +142,11 @@ Widget messagePageCompose(context) {
     child: Container(
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
-      height: size.height * 0.6,
-      width: size.width < 1200 ? 700 : size.width * 0.4,
+      // height: size.height * 0.6,
+      height: 500,
+      // width: size.width < 1200 ? 700 : size.width * 0.4,
+      width: size.width > 1200 ? (size.width - 200) * .49 : null,
+      // width: null,
       child: Padding(
         padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
         child: ListView(
@@ -197,7 +201,7 @@ Widget messagePageCompose(context) {
                         ),
                         child: const Text(
                           "Send",
-                          style: AppTextStyle.flitertxt,
+                          style: AppTextStyle.fifteenW500,
                         ),
                       ),
                     ),

@@ -108,12 +108,12 @@ class _FrogetPswdState extends State<FrogetPswd> {
                   height: constraints.maxHeight * 0.1), // Adjust for mobile
               const Text(
                 frgtpswd,
-                style: AppTextStyle.subheadertext,
+                style: AppTextStyle.twenty_w500,
               ),
               const SizedBox(height: 20),
               const Text(
                 forgetpswd,
-                style: AppTextStyle.bodytext,
+                style: AppTextStyle.bodytext_12,
               ),
               bgWidget(img: mobBg), // Responsive Background Widget
 
@@ -149,12 +149,12 @@ class _FrogetPswdState extends State<FrogetPswd> {
                           constraints.maxHeight * 0.25), // Adjust for desktop
                   const Text(
                     frgtpswd,
-                    style: AppTextStyle.headertext,
+                    style: AppTextStyle.thirty_w500,
                   ),
                   const SizedBox(height: 20),
                   const Text(
                     forgetpswd,
-                    style: AppTextStyle.bodytext,
+                    style: AppTextStyle.bodytext_12,
                   ),
                   _buildFormFields(),
                   SizedBox(
@@ -211,7 +211,7 @@ class _FrogetPswdState extends State<FrogetPswd> {
           child: const Center(
             child: Text(
               "Change",
-              style: AppTextStyle.signin,
+              style: AppTextStyle.fifteenW500,
             ),
           ),
         ),

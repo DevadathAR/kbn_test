@@ -41,8 +41,7 @@ class _UploadMyResumeState extends State<UploadMyResume> {
 
       try {
         // Simulate API upload
-        await ApiServices.uploadResume(
-            _selectedFileBytes!, _selectedFileName!);
+        await ApiServices.uploadResume(_selectedFileBytes!, _selectedFileName!);
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('File uploaded successfully!')),
@@ -120,7 +119,7 @@ class _UploadMyResumeState extends State<UploadMyResume> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
                                     _selectedFileName ?? "Selected file",
-                                    style: AppTextStyle.abouttxt,
+                                    style: AppTextStyle.thirteenW500,
                                     textAlign: TextAlign.center,
                                   ),
                                 ),

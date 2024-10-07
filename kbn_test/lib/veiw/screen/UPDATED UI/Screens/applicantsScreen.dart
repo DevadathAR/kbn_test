@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/lists.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/commonTable.dart';
 import 'package:kbn_test/veiw/widgets_common/boxBTN.dart';
 import 'package:kbn_test/veiw/widgets_common/statusUpdate.dart';
@@ -14,7 +14,7 @@ class CompanyApplicantScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    double screenwidth = size.width;
+    // double screenwidth = size.width;
 
     // Define headers and data for the applicant table based on user type
     final List<Map<String, String>> headers = isCompany
@@ -37,16 +37,18 @@ class CompanyApplicantScreen extends StatelessWidget {
             runSpacing: 5,
             children: [
               applicantsTable(
-                  screenwidth > 600 ? screenwidth * 0.5 : screenwidth,
+                  context,
+                  // screenwidth > 600 ? screenwidth * 0.5 : screenwidth,
                   headers,
                   data,
                   ["SELECT", "REGECT"]),
               const SizedBox(width: 5),
               selectedApplicantsTable(
-              width:   screenwidth > 600 ? screenwidth * 0.3 : screenwidth,
-              data:   isCompany ? selectedApplicants : apprvedCompanies,
-              headerTitle:   isCompany ? "Selected Applicants" : "To Approve",
-              // currentPath:   path
+                context,
+                // width:   screenwidth > 600 ? screenwidth * 0.3 : screenwidth,
+                data: isCompany ? selectedApplicants : apprvedCompanies,
+                headerTitle: isCompany ? "Selected Applicants" : "To Approve",
+                // currentPath:   path
               ),
             ],
           ),

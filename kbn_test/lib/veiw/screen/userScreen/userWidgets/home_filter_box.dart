@@ -146,7 +146,7 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
                             padding: EdgeInsets.only(left: 15),
                             child: Text(
                               "Filters",
-                              style: AppTextStyle.flitertxt,
+                              style: AppTextStyle.sixteen_w400_white,
                             ),
                           ),
                         ],
@@ -166,7 +166,7 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
       items: items.map((String value) {
         return DropdownMenuItem<String>(
           value: value,
-          child: Text(value, style: AppTextStyle.flitertxt),
+          child: Text(value, style: AppTextStyle.sixteen_w400_white),
         );
       }).toList(),
       onChanged: onChanged,

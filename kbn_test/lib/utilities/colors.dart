@@ -13,6 +13,8 @@ const tealblue = Color.fromRGBO(19, 131, 149, 1);
 const semitransp = Color.fromARGB(222, 18, 18, 18);
 const shadowblack = Color.fromARGB(138, 18, 18, 18);
 const textGrey = Color.fromARGB(136, 68, 68, 68);
+
+const drawercolor = Color.fromARGB(46, 101, 101, 101);
 const gradientColor = LinearGradient(
   colors: [
     Color.fromRGBO(19, 131, 149, 1),

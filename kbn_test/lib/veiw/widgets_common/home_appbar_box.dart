@@ -142,7 +142,7 @@ void showLogoutConfirmation(
                       padding: EdgeInsets.only(top: 35),
                       child: Text(
                         "Do you want to logout?",
-                        style: AppTextStyle.postheadtxt,
+                        style: AppTextStyle.sixteen_w500,
                       ),
                     ),
                     Padding(
@@ -161,7 +161,7 @@ void showLogoutConfirmation(
                           ),
                           child: const Text(
                             "Logout",
-                            style: AppTextStyle.googletext,
+                            style: AppTextStyle.twentyW400,
                           ),
                           onPressed: () {
                             Navigator.of(context).pop(); // Close the dialog
@@ -176,7 +176,6 @@ void showLogoutConfirmation(
               if (backHome != null)
                 Center(
                   child: TextButton(
-                    
                     onPressed: () {
                       Navigator.pop(context);
                       Navigator.pushReplacement(

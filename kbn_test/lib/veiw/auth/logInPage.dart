@@ -8,7 +8,8 @@ import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/forgotPass.dart';
 import 'package:kbn_test/veiw/auth/signUp.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/companyHome.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/companyHome.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/practiceFile.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets_common/loginTextFeild.dart';
 import 'package:kbn_test/veiw/widgets_common/bg_widg.dart';
@@ -69,12 +70,12 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
               ),
             );
           } else if (role == 'Admin') {
-            // Navigator.pushReplacement(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => const AdminHomePage(),
-            //   ),
-            // );
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const CompanyHome(),
+              ),
+            );
           } else {
             Navigator.pushReplacement(
               context,
@@ -138,9 +139,9 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
                 const SizedBox(height: 20),
                 const Image(image: AssetImage(kbnLogo)),
                 const SizedBox(height: 10),
-                const Text(firmName, style: AppTextStyle.companyName),
+                const Text(firmName, style: AppTextStyle.twntyFive_W600),
                 const SizedBox(height: 40),
-                const Text("Welcome Back", style: AppTextStyle.headertext),
+                const Text("Welcome Back", style: AppTextStyle.thirty_w500),
                 const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -148,7 +149,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
                     Container(height: 0.5, width: 102, color: black),
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 5),
-                      child: Text(useMail, style: AppTextStyle.bodytext),
+                      child: Text(useMail, style: AppTextStyle.bodytext_12),
                     ),
                     Container(height: 0.5, width: 102, color: black),
                   ],
@@ -176,7 +177,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
                         },
                       ));
                     },
-                    child: const Text(forget, style: AppTextStyle.bodytext),
+                    child: const Text(forget, style: AppTextStyle.bodytext_12),
                   ),
                 ),
                 const SizedBox(height: 5),
@@ -192,7 +193,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
                         });
                       },
                     ),
-                    const Text("Remember me", style: AppTextStyle.bodytext),
+                    const Text("Remember me", style: AppTextStyle.bodytext_12),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -218,7 +219,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(noacc, style: AppTextStyle.bodytext),
+                    const Text(noacc, style: AppTextStyle.bodytext_12),
                     TextButton(
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(
@@ -251,14 +252,15 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
             const SizedBox(height: 20),
             const Image(image: AssetImage(kbnLogo)),
             const SizedBox(height: 10),
-            const Text(firmName, style: AppTextStyle.mobCompanyName),
+            const Text(firmName, style: AppTextStyle.eighteen_W600),
             Stack(
               alignment: Alignment.center,
               children: [
                 peoplebgWIdget(img: mobCompanyBg),
                 const Positioned(
                     bottom: 5,
-                    child: Text("Welcome Back", style: AppTextStyle.firmHead)),
+                    child: Text("Welcome Back",
+                        style: AppTextStyle.twntyFive_W600)),
               ],
             ),
             const SizedBox(height: 10),
@@ -268,7 +270,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
                 Container(height: 0.5, width: 102, color: black),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: Text(useMail, style: AppTextStyle.bodytext),
+                  child: Text(useMail, style: AppTextStyle.bodytext_12),
                 ),
                 Container(height: 0.5, width: 102, color: black),
               ],
@@ -297,7 +299,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
                     },
                   ));
                 },
-                child: const Text(forget, style: AppTextStyle.bodytext),
+                child: const Text(forget, style: AppTextStyle.bodytext_12),
               ),
             ),
             Row(
@@ -312,7 +314,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
                     });
                   },
                 ),
-                const Text("Remember me", style: AppTextStyle.bodytext),
+                const Text("Remember me", style: AppTextStyle.bodytext_12),
               ],
             ),
             const SizedBox(
@@ -340,7 +342,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(noacc, style: AppTextStyle.bodytext),
+                const Text(noacc, style: AppTextStyle.bodytext_12),
                 TextButton(
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(
@@ -388,13 +390,13 @@ void approvalWarning(BuildContext context) {
                       'If you are new here,you must have.\n'
                       'approval for your company from the admin side.',
                       textAlign: TextAlign.center,
-                      style: AppTextStyle.flitertxt),
+                      style: AppTextStyle.sixteen_w400_white),
                   const SizedBox(height: 200.0), // 20 dp space
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop(); // Close the dialog
                     },
-                    child: Text(
+                    child: const Text(
                       'BackHome',
                       style: AppTextStyle.bodytextwhiteunderline,
                     ),

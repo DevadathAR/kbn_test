@@ -171,7 +171,7 @@ class _UserHomeState extends State<UserHome> {
                           padding: EdgeInsets.only(left: 50),
                           child: Text(
                             latestjob,
-                            style: AppTextStyle.tactexthead,
+                            style: AppTextStyle.twentyFour_W400,
                           ),
                         ),
                         const SizedBox(height: 10),

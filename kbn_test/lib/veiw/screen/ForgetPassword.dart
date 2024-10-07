@@ -83,7 +83,9 @@ class _FrogetPswdState extends State<FrogetPswd> {
     return Scaffold(
       body: Stack(
         children: [
-          bgWidget(img: bg,),
+          bgWidget(
+            img: bg,
+          ),
           SizedBox(
             height: size.height * 1,
             width: size.width * 0.5,
@@ -103,7 +105,7 @@ class _FrogetPswdState extends State<FrogetPswd> {
                       children: [
                         Text(
                           frgtpswd,
-                          style: AppTextStyle.headertext,
+                          style: AppTextStyle.thirty_w500,
                         ),
                       ],
                     ),
@@ -112,7 +114,7 @@ class _FrogetPswdState extends State<FrogetPswd> {
                     ),
                     const Text(
                       forgetpswd,
-                      style: AppTextStyle.bodytext,
+                      style: AppTextStyle.bodytext_12,
                     ),
                     LoginTextForm(
                         label: "User name", controller: userNameController),
@@ -148,7 +150,7 @@ class _FrogetPswdState extends State<FrogetPswd> {
                           child: const Center(
                               child: Text(
                             "Change",
-                            style: AppTextStyle.signin,
+                            style: AppTextStyle.fifteenW500,
                           )),
                         ),
                       ),

@@ -6,8 +6,6 @@ import 'package:kbn_test/utilities/text_style.dart';
 class HorizontalCards extends StatelessWidget {
   const HorizontalCards({super.key});
 
-  
-
   @override
   Widget build(BuildContext context) {
     final List<Map<String, String>> cardData = [
@@ -102,10 +100,10 @@ class cards extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: AppTextStyle.headertext),
+          Text(title, style: AppTextStyle.thirty_w500),
           const Spacer(),
           Text(subTitle,
-              textAlign: TextAlign.start, style: AppTextStyle.bodytext),
+              textAlign: TextAlign.start, style: AppTextStyle.bodytext_12),
         ],
       ),
     );

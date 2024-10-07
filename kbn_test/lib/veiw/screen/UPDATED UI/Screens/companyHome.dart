@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/chartWidget.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/messageWidget.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/payResult.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/payReminder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/simpleTable.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/verticalTable.dart';
@@ -13,11 +13,13 @@ class CompanyHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ScaffoldBuilder(
+    Size size = MediaQuery.of(context).size;
+
+    return ScaffoldBuilder(
       pageName: "Overview",
       currentPath: "Overview",
       child: SizedBox(
-        height: 410,
+        // height: 410,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Wrap(
@@ -26,8 +28,8 @@ class CompanyHome extends StatelessWidget {
             children: [
               // First column (Charts and Horizontal Table)
               SizedBox(
-                width: 400,
-                child: Column(
+                width: size.width > 1200 ? 600 : null,
+                child: const Column(
                   children: [
                     ChartWidget(),
                     SizedBox(height: 10),
@@ -38,14 +40,18 @@ class CompanyHome extends StatelessWidget {
 
               // Second column (Vertical Table)
               SizedBox(
-                width: 400, // Adjust the width as necessary
-                child: VerticalTable(),
+                width: size.width > 1200
+                    ? (size.width - 200) * 0.33
+                    : null, // Adjust the width as necessary
+                child: const VerticalTable(),
               ),
 
               // Third column (Message and Pay Result)
               SizedBox(
-                width: 400, // Adjust the width as necessary
-                child: Column(
+                width: size.width > 1200
+                    ? (size.width - 200) * 0.2
+                    : null, // Adjust the width as necessary
+                child: const Column(
                   children: [
                     MessageWidget(),
                     SizedBox(height: 10),

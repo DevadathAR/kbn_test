@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:kbn_test/service/modelClass.dart';
 
 Map<String, dynamic> userDetails = {};
 Map<String, dynamic> jobDetailsResponse = {};
@@ -12,8 +13,8 @@ class ApiServices {
   static Map<String, String> headers = {
     'Content-Type': 'application/json',
   };
-  // static const String baseUrl = 'http://192.168.29.37:8000';
-  static const String baseUrl = 'http://192.168.29.197:5500';
+  static const String baseUrl = 'http://192.168.29.37:8000';
+  // static const String baseUrl = 'http://192.168.29.197:5500';
 
   Future<http.StreamedResponse> signUp({
     required String fullName,
@@ -93,7 +94,7 @@ class ApiServices {
 
     var response = await http.get(url, headers: headers);
 
-    print('userDetails${response.body}');
+    // print('userDetails${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -103,6 +104,24 @@ class ApiServices {
   }
 
   // Company Section
+
+  // View  Applicant Details API
+  static Future<Apiresponse> companyData() async {
+    var url = Uri.parse('$baseUrl/company/overview2?month=9&year=2024');
+
+    var response = await http.get(url, headers: headers);
+
+    // print('Raw response: ${response.body}');
+
+    if (response.statusCode == 200) {
+      // Decode the JSON response
+      var jsonMap = jsonDecode(response.body);
+      // Return an ApiResponse object
+      return Apiresponse.fromJson(jsonMap);
+    } else {
+      throw Exception('Failed to fetch user details');
+    }
+  }
 
   // Fetch submitted Applicants Data API
   static Future<Map<String, dynamic>> fetchSubmittedApplctns() async {
@@ -131,7 +150,6 @@ class ApiServices {
       throw Exception('Failed to fetch user details');
     }
   }
-  
 
   // View  Applicant Details API
   static Future<Map<String, dynamic>> fetchRecruitmentDetails(jobId) async {
@@ -140,7 +158,6 @@ class ApiServices {
     var response = await http.get(url, headers: headers);
 
     if (response.statusCode == 200) {
-
       return jsonDecode(response.body);
     } else {
       throw Exception('Failed to fetch user details');

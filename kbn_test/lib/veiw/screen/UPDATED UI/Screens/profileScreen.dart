@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 
 class CompanyProfileScreen extends StatelessWidget {
   const CompanyProfileScreen({super.key});
@@ -13,7 +13,7 @@ class CompanyProfileScreen extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return ScaffoldBuilder(
-        currentPath: "",
+        currentPath: "Profile",
         pageName: "Profile",
         child: SizedBox(
           height: size.height * 0.6222,
@@ -30,6 +30,7 @@ class CompanyProfileScreen extends StatelessWidget {
                       label: "Company name", sub: "KBN Code", isview: true),
                   SizedBox(
                     width: size.width * 0.005,
+                    height: size.width>1200?0:5,
                   ),
                   companyAndManager(context,
                       label: "Manager name", sub: "Year", isview: true),
@@ -87,9 +88,10 @@ Widget companyAndManager(BuildContext context, {label, sub, isview}) {
   Size size = MediaQuery.of(context).size;
 
   return Container(
-    width: size.width < 1200 ? 700 : size.width * 0.408,
+    width: size.width > 1200 ? (size.width - 200) * .495 : null,
+    // height: 200,
     height:
-        size.height * 0.25, // Increased height to accommodate the TextFormField
+        size.height * 0.35, // Increased height to accommodate the TextFormField
     decoration: const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(6)),
       color: white,
@@ -130,16 +132,15 @@ Widget companyAndManager(BuildContext context, {label, sub, isview}) {
                   padding:
                       const EdgeInsets.only(left: 15.0), // Adjusted padding
                   child: SizedBox(
-                    height: size.height * 0.2,
+                    height: size.height * 0.3,
                     width: size.width *
                         .3, /////sized box will overlap in mobile veiew nne dto fix it
                     child: Column(
                       children: [
                         TextFormField(
                           decoration: InputDecoration(
-                            
                             labelText: label,
-                            labelStyle: AppTextStyle.tactext,
+                            labelStyle: AppTextStyle.fourteenW400,
                             border: InputBorder.none, // Removed border
                           ),
                         ),
@@ -192,7 +193,7 @@ Widget addAndSave(context) {
             ),
             child: const Text(
               "Add",
-              style: AppTextStyle.bodytext,
+              style: AppTextStyle.bodytext_12,
             ),
           ),
           SizedBox(width: size.width * 0.005),
@@ -208,7 +209,7 @@ Widget addAndSave(context) {
             ),
             child: const Text(
               "Save",
-              style: AppTextStyle.bodytext,
+              style: AppTextStyle.bodytext_12,
             ),
           ),
         ],
@@ -237,7 +238,7 @@ Widget viewProfile(BuildContext context) {
           ),
           child: const Text(
             "View Profile",
-            style: AppTextStyle.bodytext,
+            style: AppTextStyle.bodytext_12,
           ),
         ),
       ),
@@ -262,7 +263,7 @@ Widget companyDetails(context, {label, sub, isview}) {
                 alignment: Alignment.topLeft,
                 child: Text(
                   label,
-                  style: AppTextStyle.subheadertext,
+                  style: AppTextStyle.twenty_w500,
                 ),
               ),
               TextFormField(
@@ -311,7 +312,7 @@ Widget otherDetails(context, {label, sub, isview}) {
                 alignment: Alignment.topLeft,
                 child: Text(
                   label,
-                  style: AppTextStyle.subheadertext,
+                  style: AppTextStyle.twenty_w500,
                 ),
               ),
               TextFormField(

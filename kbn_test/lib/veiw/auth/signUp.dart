@@ -45,6 +45,7 @@ class _SignupPageState extends State<SignupPage> {
       );
     }
   }
+
   Future<void> _signup() async {
     String fullName = fullNameController.text.trim();
     String email = emailController.text.trim();
@@ -53,7 +54,12 @@ class _SignupPageState extends State<SignupPage> {
     String contactNumber = contactNumController.text.trim();
     String role = roleController.text.trim();
 
-    if (fullName.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty || contactNumber.isEmpty || role.isEmpty) {
+    if (fullName.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty ||
+        contactNumber.isEmpty ||
+        role.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all the fields')),
       );
@@ -90,7 +96,8 @@ class _SignupPageState extends State<SignupPage> {
       if (response.statusCode == 201) {
         // Successful signup
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Sign up successful! Redirecting to login...')),
+          const SnackBar(
+              content: Text('Sign up successful! Redirecting to login...')),
         );
         Navigator.pushReplacement(
           context,
@@ -173,7 +180,7 @@ class _SignupPageState extends State<SignupPage> {
               const SizedBox(height: 10),
               const Text(
                 signup,
-                style: AppTextStyle.subheadertext,
+                style: AppTextStyle.twenty_w500,
               ),
               _buildRoleSelection(constraints, isMobile: true),
               const SizedBox(height: 10),
@@ -217,7 +224,7 @@ class _SignupPageState extends State<SignupPage> {
                   const SizedBox(height: 40),
                   const Text(
                     signup,
-                    style: AppTextStyle.headertext,
+                    style: AppTextStyle.thirty_w500,
                   ),
                   _buildRoleSelection(constraints, isMobile: false),
                   const SizedBox(height: 15),
@@ -279,9 +286,8 @@ class _SignupPageState extends State<SignupPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Account details",
-            style: isMobile
-                ? AppTextStyle.moBsubheadertext
-                : AppTextStyle.subheadertext),
+            style:
+                isMobile ? AppTextStyle.twenty_w500 : AppTextStyle.twenty_w500),
         LoginTextForm(
           label: "Full name",
           controller: fullNameController,
@@ -312,7 +318,7 @@ class _SignupPageState extends State<SignupPage> {
           obscure: false,
           hight: 10,
         ),
-        const Text(tac, style: AppTextStyle.tactext),
+        const Text(tac, style: AppTextStyle.fourteenW400),
         const SizedBox(height: 5),
         Row(
           children: [
@@ -326,7 +332,7 @@ class _SignupPageState extends State<SignupPage> {
                 });
               },
             ),
-            const Text(terms, style: AppTextStyle.tactext),
+            const Text(terms, style: AppTextStyle.fourteenW400),
           ],
         ),
       ],
@@ -353,7 +359,7 @@ class _SignupPageState extends State<SignupPage> {
           child: const Center(
             child: Text(
               signin,
-              style: AppTextStyle.signin,
+              style: AppTextStyle.fifteenW500,
             ),
           ),
         ),

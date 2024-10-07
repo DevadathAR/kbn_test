@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/lists.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/messageScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/messageScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/commonTable.dart';
 
 class CompanyTransation extends StatelessWidget {
@@ -15,28 +16,27 @@ class CompanyTransation extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     String path = "Transactions";
+
     return ScaffoldBuilder(
       currentPath: path,
       pageName: path,
-      child: SizedBox(
-        height: size.height * 0.6,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Wrap(spacing: 10, runSpacing: 10, children: [
-              transationPageList(context),
-              isCompany
-                  ? paymentFormField(context)
-                  : selectedApplicantsTable(
-                      width: size.width > 600 ? size.width * 0.3 : size.width,
-                      data: companyTransactionData,
-                      headerTitle: "To Approve",
-                      path: path,
-                      statusOptions: ["SELECT", "REGECT"])
-            ]),
-          ),
-        ),
-      ),
+      child: size.height > 300
+          ? SizedBox(
+              height: size.height - 300,
+              child: SingleChildScrollView(
+                child: Wrap(spacing: 10, runSpacing: 10, children: [
+                  transationPageList(context),
+                  isCompany
+                      ? paymentFormField(context)
+                      : selectedApplicantsTable(context,
+                          data: companyTableData,
+                          headerTitle: "To Approve",
+                          path: path,
+                          statusOptions: ["SELECT", "REJECT"])
+                ]),
+              ),
+            )
+          : Container(),
     );
   }
 }
@@ -45,8 +45,13 @@ Widget transationPageList(context) {
   Size size = MediaQuery.of(context).size;
 
   return Container(
-    height: size.height * 0.6,
-    width: size.width * 0.4,
+    // height: size.height * 0.2,
+    height: 500,
+    // height: size.height - 300,
+
+    // width: 600,
+    width: size.width > 1200 ? (size.width - 200) * .49 : null,
+
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
     child: Scrollbar(
@@ -79,18 +84,19 @@ Widget transationPageList(context) {
 }
 
 Widget transationListItem(context, {name, description, date}) {
+  Size size = MediaQuery.of(context).size;
+
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 10.0),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        const Image(
-            image: AssetImage(isCompany ? kbnLogo : personPng), height: 20),
-        const SizedBox(width: 10),
+        const Image(image: AssetImage(kbnLogo), height: 20),
+        const SizedBox(width: 16),
         const Text("Date"),
-        const Text(isCompany ? "Mail ID" : "Company name"),
         const Text("Amount"),
         const Text("Account Number"),
+        const Text("Mail ID"),
         Container(
           decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -107,7 +113,7 @@ Widget transationListItem(context, {name, description, date}) {
               },
               child: const Text(
                 "Download",
-                style: AppTextStyle.applytxt,
+                style: AppTextStyle.normalW500,
               )),
         )
       ],
@@ -124,61 +130,69 @@ Widget paymentFormField(context) {
 
   return Expanded(
     child: Container(
-      width: size.width * 0.4,
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
-      height: size.height * 0.6,
+      // height: size.height * 0.6,
+      height: 500,
+      // height: size.height - 300,
+
+      // width: 600,
+      width: size.width > 1200 ? (size.width - 200) * .49 : null,
+
       child: Padding(
-        padding: const EdgeInsets.all(10),
-        // Listview for scroll function
+        padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
         child: ListView(
-          shrinkWrap: true,
-          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Pay this month"),
-            composeForm(text: "Form"),
-            composeForm(text: "To"),
-            Wrap(
-              direction: Axis.horizontal,
-              spacing: 40,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                paymentDetails(context, header: "Company bank details"),
-                paymentDetails(context, header: "Admin bank details")
-              ],
-            ),
-            composeForm(text: "Amount"),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Wrap(
-                children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text("Date: $formattedDate"), // Display today's date
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: SizedBox(
-                      width: 150, // Set the width to 250
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: tealblue,
-                          shape: RoundedRectangleBorder(
-                            // Creates rounded corner buttons
-                            borderRadius: BorderRadius.circular(
-                                8), // Adjust corner radius
+                const Text("Pay this month"),
+                composeForm(text: "Form"),
+                composeForm(text: "To"),
+                Wrap(
+                  direction: Axis.horizontal,
+                  spacing: 40,
+                  children: [
+                    paymentDetails(context, header: "Company bank details"),
+                    paymentDetails(context, header: "Admin bank details")
+                  ],
+                ),
+                composeForm(text: "Amount"),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Wrap(
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                            "Date: $formattedDate"), // Display today's date
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: SizedBox(
+                          width: 150, // Set the width to 250
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: tealblue,
+                              shape: RoundedRectangleBorder(
+                                // Creates rounded corner buttons
+                                borderRadius: BorderRadius.circular(
+                                    8), // Adjust corner radius
+                              ),
+                            ),
+                            child: const Text(
+                              "Pay",
+                              style: AppTextStyle.fifteenW500,
+                            ),
                           ),
                         ),
-                        child: const Text(
-                          "Pay",
-                          style: AppTextStyle.flitertxt,
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            )
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
           ],
         ),
       ),
@@ -187,6 +201,8 @@ Widget paymentFormField(context) {
 }
 
 Widget paymentDetails(context, {header}) {
+  Size size = MediaQuery.of(context).size;
+
   return Container(
     height: 200,
     width: 270,

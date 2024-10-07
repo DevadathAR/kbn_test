@@ -122,11 +122,11 @@ class _LatestJobCardState extends State<LatestJobCard> {
                     children: [
                       Text(
                         widget.jobTitle,
-                        style: AppTextStyle.postheadtxt,
+                        style: AppTextStyle.sixteen_w500,
                       ),
                       Text(
                         widget.firmname,
-                        style: AppTextStyle.tactext,
+                        style: AppTextStyle.fourteenW400,
                       ),
                     ],
                   ),
@@ -176,7 +176,7 @@ class _LatestJobCardState extends State<LatestJobCard> {
                     child: Center(
                       child: Text(
                         widget.status,
-                        style: AppTextStyle.applytxt
+                        style: AppTextStyle.normalW500
                             .copyWith(color: getTxtColor(widget.status)),
                       ),
                     ),

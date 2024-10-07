@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:flutter/material.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/profileScreen.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/profileScreen.dart';
 
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/CompanySection/CompanyScaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 
 class CompanySettingPage extends StatelessWidget {
   const CompanySettingPage({super.key});
@@ -23,56 +23,55 @@ class CompanySettingPage extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // PageAndDate(context, pageLabel: "Settings"),
-                  companyAndManager(context,
-                      label: "Company name", sub: "KBN Code", isview: false),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Wrap(
-                      spacing: 16.0, // Set the horizontal space between items
-                      runSpacing: 16.0, // Set the vertical space between runs
-                      alignment:
-                          WrapAlignment.spaceBetween, // Space items evenly
-                      children: [
-                        Wrap(
-                          spacing:
-                              16.0, // Set the horizontal space between items
-                          runSpacing:
-                              16.0, // Set the vertical space between runs
-                          alignment: WrapAlignment.spaceBetween,
-                          children: [
-                            companySetting(context,
-                                label: "Account",
-                                sub: "Email",
-                                isItem2view: true,
-                                isItem3view: true),
-                            companySetting(context,
-                                label: "Team Members", sub: "Privacy"),
-                          ],
-                        ),
-                        Wrap(
-                          spacing:
-                              16.0, // Set the horizontal space between items
-                          runSpacing:
-                              16.0, // Set the vertical space between runs
-                          alignment: WrapAlignment.spaceBetween,
-                          children: [
-                            companySetting(context,
-                                label: "Job Positions",
-                                sub: "Notification",
-                                isItem1view: false),
-                            companySetting(context,
-                                label: "Commmunity", sub: "Language"),
-                          ],
-                        )
-                      ],
-                    ),
-                  )
-                ],
+              SizedBox(
+                width: size.width > 1200 ? (size.width - 200) * .49 : null,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    companyAndManager(context,
+                        label: "Company name", sub: "KBN Code", isview: false),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Wrap(
+                        spacing: 16.0, // Set the horizontal space between items
+                        runSpacing: 16.0, // Set the vertical space between runs
+                        alignment:
+                            WrapAlignment.spaceBetween, // Space items evenly
+                        children: [
+                          companySetting(context,
+                              label: "Account",
+                              sub: "Email",
+                              isItem2view: true,
+                              isItem3view: true),
+                          companySetting(context,
+                              label: "Security", sub: "Privacy"),
+                          companySetting(context,
+                              label: "Notification",
+                              sub: "Notification",
+                              isItem1view: false),
+                          companySetting(context,
+                              label: "General", sub: "Language"),
+                          // Wrap(
+                          //   spacing:
+                          //       16.0, // Set the horizontal space between items
+                          //   runSpacing:
+                          //       16.0, // Set the vertical space between runs
+                          //   alignment: WrapAlignment.spaceBetween,
+                          //   children: [
+                          //     companySetting(context,
+                          //         label: "Job Positions",
+                          //         sub: "Notification",
+                          //         isItem1view: false),
+                          //     companySetting(context,
+                          //         label: "Commmunity", sub: "Language"),
+                          //   ],
+                          // )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ],
           ),
@@ -107,7 +106,7 @@ Widget companySetting(
             alignment: Alignment.topLeft,
             child: Text(
               label,
-              style: AppTextStyle.bodytext,
+              style: AppTextStyle.bodytext_12,
             ),
           ),
           SizedBox(height: size.height * 0.05),
@@ -120,7 +119,7 @@ Widget companySetting(
                 onPressed: () {},
                 child: Text(
                   sub,
-                  style: AppTextStyle.bodytext,
+                  style: AppTextStyle.bodytext_12,
                 ),
               ),
             )
@@ -133,7 +132,7 @@ Widget companySetting(
               children: [
                 const Text(
                   "Enable Notification",
-                  style: AppTextStyle.bodytext,
+                  style: AppTextStyle.bodytext_12,
                 ),
                 Switch(
                   value: isNotificationEnabled,
@@ -155,7 +154,7 @@ Widget companySetting(
                   onPressed: () {},
                   child: const Text(
                     "Change Password",
-                    style: AppTextStyle.bodytext,
+                    style: AppTextStyle.bodytext_12,
                   ),
                 ),
               ),
@@ -167,7 +166,7 @@ Widget companySetting(
                 onPressed: () {},
                 child: const Text(
                   "Add an account",
-                  style: AppTextStyle.bodytext,
+                  style: AppTextStyle.bodytext_12,
                 ),
               ),
             )

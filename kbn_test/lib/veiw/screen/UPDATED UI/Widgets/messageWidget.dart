@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/messageScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/showAll_bTn.dart';
 
 class MessageWidget extends StatelessWidget {
@@ -7,6 +8,7 @@ class MessageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 300,
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -33,7 +35,16 @@ class MessageWidget extends StatelessWidget {
               'name', 'Lorem ipsum dolor sit amet consectetur.', 'date'),
           const SizedBox(height: 16),
           // Show All Button
-          ShowAllBtn(onTap: () {})
+          ShowAllBtn(onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return const CompanyMessage();
+                },
+              ),
+            );
+          })
         ],
       ),
     );

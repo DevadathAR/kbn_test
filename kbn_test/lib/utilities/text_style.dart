@@ -2,23 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/colors.dart';
 
 class AppTextStyle {
-  static const TextStyle headertext = TextStyle(
-    fontSize: 30,
+  static const TextStyle smallText = TextStyle(
+    fontSize: 8,
     fontFamily: "Poppins",
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w400,
     color: black,
   );
-  static const TextStyle subheadertext = TextStyle(
-    fontSize: 20,
+  static const TextStyle buttontxt = TextStyle(
+    fontSize: 8,
     fontFamily: "Poppins",
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w400,
+    color: white,
+  );
+  static const TextStyle normalText = TextStyle(
+    fontSize: 10,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w400,
     color: black,
   );
-  static const TextStyle moBsubheadertext = TextStyle(
-    fontSize: 20,
+  static const TextStyle normalW500 = TextStyle(
+    fontSize: 10,
     fontFamily: "Poppins",
     fontWeight: FontWeight.w500,
-    color: black,
+    color: white,
+  );
+  static const TextStyle normalTextGrey = TextStyle(
+    fontSize: 10,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w400,
+    color: textGrey,
   );
   static const TextStyle bodytextwhite = TextStyle(
     fontSize: 12,
@@ -26,59 +38,85 @@ class AppTextStyle {
     fontWeight: FontWeight.w400,
     color: white,
   );
-  static TextStyle bodytextwhiteunderline = const TextStyle(
-      fontSize: 12,
-      fontFamily: "Inter",
-      fontWeight: FontWeight.w400,
-      color: black,
-      decoration: TextDecoration.underline,
-      decorationColor: black);
-  static const TextStyle logoNameText = TextStyle(
-    fontSize: 20,
-    fontFamily: "Poppins",
-    fontWeight: FontWeight.w600,
-    color: white,
-  );
-  static const TextStyle firmHead = TextStyle(
-    fontSize: 25,
-    fontFamily: "Popppins",
-    fontWeight: FontWeight.w600,
-    color: black,
-  );
-  static const TextStyle abouttxt = TextStyle(
-    fontSize: 13,
-    fontFamily: "Popppins",
-    fontWeight: FontWeight.w500,
-    color: black,
-  );
-  static const TextStyle applytxt = TextStyle(
-    fontSize: 10,
-    fontFamily: "Poppins",
-    fontWeight: FontWeight.w500,
-    color: white,
-  );
-  static const TextStyle googletext = TextStyle(
-    fontSize: 20,
-    fontFamily: "Poppins",
+  static const TextStyle bodytext_12 = TextStyle(
+    fontSize: 12,
+    fontFamily: "Inter",
     fontWeight: FontWeight.w400,
     color: black,
   );
-  static const TextStyle postheadtxt = TextStyle(
-    fontSize: 16,
+  static const TextStyle bodytextwhiteunderline = TextStyle(
+    fontSize: 12,
+    fontFamily: "Inter",
+    fontWeight: FontWeight.w400,
+    color: black,
+    decoration: TextDecoration.underline,
+    decorationColor: black,
+  );
+  static const TextStyle thirteenW500 = TextStyle(
+    fontSize: 13,
     fontFamily: "Poppins",
     fontWeight: FontWeight.w500,
     color: black,
   );
-   static const TextStyle tactext = TextStyle(
+  static const TextStyle fourteenW400 = TextStyle(
     fontSize: 14,
     fontFamily: "Poppins",
     fontWeight: FontWeight.w400,
     color: black,
   );
-  static const TextStyle bodytext = TextStyle(
-    fontSize: 12,
-    fontFamily: "Inter",
+  // static const TextStyle fifteenW400 = TextStyle(
+  //   fontSize: 15,
+  //   fontFamily: "Poppins",
+  //   fontWeight: FontWeight.w400,
+  //   color: black,
+  // );
+  static const TextStyle fifteenW600 = TextStyle(
+    fontSize: 15,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w600,
+    color: black,
+  );
+  static const TextStyle fifteenW500 = TextStyle(
+    fontSize: 15,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w500,
+    color: white,
+  );
+  static const TextStyle twentyW400 = TextStyle(
+    fontSize: 20,
+    fontFamily: "Poppins",
     fontWeight: FontWeight.w400,
+    color: black,
+  );
+  static const TextStyle twenty_w500 = TextStyle(
+    fontSize: 20,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w500,
+    color: black,
+  );
+  //   static const TextStyle sideBarTxt = TextStyle(
+  //   fontSize: 20,
+  //   height: 23,
+  //   fontFamily: "Poppins",
+  //   fontWeight: FontWeight.w500,
+  //   color: white,
+  // );
+  // static const TextStyle moBsubheadertext = TextStyle(
+  //   fontSize: 20,
+  //   fontFamily: "Poppins",
+  //   fontWeight: FontWeight.w500,
+  //   color: black,
+  // );
+  static const TextStyle twenty_W600 = TextStyle(
+    fontSize: 20,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w600,
+    color: white,
+  );
+  static const TextStyle twntyFive_W600 = TextStyle(
+    fontSize: 25,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w600,
     color: black,
   );
   static const TextStyle logintext = TextStyle(
@@ -93,82 +131,40 @@ class AppTextStyle {
     fontWeight: FontWeight.w600,
     color: white,
   );
-  static const TextStyle signin = TextStyle(
-    fontSize: 15,
-    fontFamily: "Poppins",
-    fontWeight: FontWeight.w500,
-    color: white,
-  );
-  static const TextStyle flitertxt = TextStyle(
-    fontSize: 16,
-    fontFamily: "Poppins",
-    fontWeight: FontWeight.w400,
-    color: white,
-  );
-  static const TextStyle flitertxtBlack = TextStyle(
-    fontSize: 16,
-    fontFamily: "Poppins",
-    fontWeight: FontWeight.w400,
-    color: black,
-  );
-  static const TextStyle companyName = TextStyle(
-    fontSize: 25,
-    fontFamily: "Poppins",
-    fontWeight: FontWeight.w600,
-    color: black,
-  );
-  static const TextStyle mobCompanyName = TextStyle(
+  static const TextStyle eighteen_W600 = TextStyle(
     fontSize: 18,
     fontFamily: "Poppins",
     fontWeight: FontWeight.w600,
     color: black,
   );
-  static const TextStyle buttontxt = TextStyle(
-    fontSize: 8,
-    fontFamily: "Poppins",
-    fontWeight: FontWeight.w400,
-    color: white,
-  );
- 
 
-  static const TextStyle tactexthead = TextStyle(
-    fontSize: 24,
-    fontFamily: "Poppins",
-    fontWeight: FontWeight.w400,
-    color: black,
-  );
-  static const TextStyle sideBarTxt = TextStyle(
-    fontSize: 20,
-    height: 23,
+  static const TextStyle thirty_w500 = TextStyle(
+    fontSize: 30,
     fontFamily: "Poppins",
     fontWeight: FontWeight.w500,
+    color: black,
+  );
+
+  static const TextStyle sixteen_w500 = TextStyle(
+    fontSize: 16,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w500,
+    color: black,
+  );
+  static const TextStyle sixteen_w400_white = TextStyle(
+    fontSize: 16,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.w400,
     color: white,
   );
-  static const TextStyle normalText = TextStyle(
-    fontSize: 10,
+  static const TextStyle sixteen_w400_black = TextStyle(
+    fontSize: 16,
     fontFamily: "Poppins",
     fontWeight: FontWeight.w400,
     color: black,
   );
-  static const TextStyle normalTextGrey = TextStyle(
-    fontSize: 10,
-    fontFamily: "Poppins",
-    fontWeight: FontWeight.w400,
-    color: textGrey,
-  );
-  static const TextStyle normalHeading = TextStyle(
-    fontSize: 15,
-    fontFamily: "Poppins",
-    fontWeight: FontWeight.w400,
-    color: black,
-  );
-  static TextStyle labelText = const TextStyle(
-      fontSize: 15,
-      fontFamily: "Poppins",
-      fontWeight: FontWeight.w400,
-      color: textGrey);
-  static const TextStyle smallText = TextStyle(
-    fontSize: 5,
+  static const TextStyle twentyFour_W400 = TextStyle(
+    fontSize: 24,
     fontFamily: "Poppins",
     fontWeight: FontWeight.w400,
     color: black,

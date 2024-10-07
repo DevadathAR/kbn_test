@@ -12,7 +12,7 @@ class SignUpUserSelectionWidget extends StatefulWidget {
     super.key,
     required this.appuser,
     required this.isSelected,
-    required this.onTap, 
+    required this.onTap,
     // required this.isMObile,
   });
 
@@ -30,7 +30,7 @@ class _SignUpUserSelectionState extends State<SignUpUserSelectionWidget> {
         colors: widget.isSelected ? tealblue : none,
         txtcolor: widget.isSelected
             ? AppTextStyle.bodytextwhite
-            : AppTextStyle.bodytext,
+            : AppTextStyle.bodytext_12,
       ),
     );
   }
@@ -45,7 +45,7 @@ class SignUpUserSelection extends StatelessWidget {
     super.key,
     required this.appuser,
     this.colors = none,
-    this.txtcolor = AppTextStyle.bodytext,
+    this.txtcolor = AppTextStyle.bodytext_12,
   });
 
   @override
