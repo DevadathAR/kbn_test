@@ -29,29 +29,27 @@ class CompanyApplicantScreen extends StatelessWidget {
       currentPath: path,
       pageName: path,
       child: SizedBox(
-        height: 420,
+        // height: 420,
         width: double.infinity,
-        child: SingleChildScrollView(
-          child: Wrap(
-            spacing: 5,
-            runSpacing: 5,
-            children: [
-              applicantsTable(
-                  context,
-                  // screenwidth > 600 ? screenwidth * 0.5 : screenwidth,
-                  headers,
-                  data,
-                  ["SELECT", "REGECT"]),
-              const SizedBox(width: 5),
-              selectedApplicantsTable(
+        child: Wrap(
+          spacing: 5,
+          runSpacing: 5,
+          children: [
+            applicantsTable(
                 context,
-                // width:   screenwidth > 600 ? screenwidth * 0.3 : screenwidth,
-                data: isCompany ? selectedApplicants : apprvedCompanies,
-                headerTitle: isCompany ? "Selected Applicants" : "To Approve",
-                // currentPath:   path
-              ),
-            ],
-          ),
+                // screenwidth > 600 ? screenwidth * 0.5 : screenwidth,
+                headers,
+                data,
+                ["SELECT", "REGECT"]),
+            const SizedBox(width: 5),
+            selectedApplicantsTable(
+              context,
+              // width:   screenwidth > 600 ? screenwidth * 0.3 : screenwidth,
+              data: isCompany ? selectedApplicants : apprvedCompanies,
+              headerTitle: isCompany ? "Selected Applicants" : "To Approve",
+              // currentPath:   path
+            ),
+          ],
         ),
       ),
     );

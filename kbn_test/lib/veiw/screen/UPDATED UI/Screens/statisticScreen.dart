@@ -37,7 +37,7 @@ class CompanyStatisticScreen extends StatelessWidget {
   Widget _buildRowLayout(context, double screenWidth) {
     // containing total child
     return SizedBox(
-      height: 401,
+      // height: 401,
       // 3 sections
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

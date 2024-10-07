@@ -15,71 +15,66 @@ class CompanyProfileScreen extends StatelessWidget {
     return ScaffoldBuilder(
         currentPath: "Profile",
         pageName: "Profile",
-        child: SizedBox(
-          height: size.height * 0.6222,
-          child: ListView(
-            children: [
-              const SizedBox(
-                height: 10,
-              ),
-              // PageAndDate(context, pageLabel: "Profile"),
-              Wrap(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(
+              height: 10,
+            ),
+            // PageAndDate(context, pageLabel: "Profile"),
+            Wrap(
+              spacing: 10, runSpacing: 10,
+              alignment: WrapAlignment.spaceAround,
+
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                companyAndManager(context,
+                    label: "Company name", sub: "KBN Code", isview: true),
+                // SizedBox(
+                //   width: size.width * 0.005,
+                //   height: size.width > 1200 ? 0 : 5,
+                // ),
+                companyAndManager(context,
+                    label: "Manager name", sub: "Year", isview: true),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: Wrap(
+                spacing: 10, runSpacing: 10,
+                alignment: WrapAlignment.spaceAround,
                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  companyAndManager(context,
-                      label: "Company name", sub: "KBN Code", isview: true),
-                  SizedBox(
-                    width: size.width * 0.005,
-                    height: size.width>1200?0:5,
+                  companyDetails(
+                    context,
+                    label: "Compnay Details",
+                    sub: "Address",
                   ),
-                  companyAndManager(context,
-                      label: "Manager name", sub: "Year", isview: true),
+                  // SizedBox(
+                  //   width: size.width * 0.005,
+                  // ),
+                  otherDetails(
+                    context,
+                    label: "Team Members",
+                  ),
+                  // SizedBox(
+                  //   width: size.width * 0.005,
+                  // ),
+                  otherDetails(
+                    context,
+                    label: "Job Positions",
+                  ),
+                  // SizedBox(
+                  //   width: size.width * 0.005,
+                  // ),
+                  otherDetails(
+                    context,
+                    label: "Commmunity",
+                  )
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: Wrap(
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Wrap(
-                      children: [
-                        companyDetails(
-                          context,
-                          label: "Compnay Details",
-                          sub: "Address",
-                        ),
-                        SizedBox(
-                          width: size.width * 0.005,
-                        ),
-                        otherDetails(
-                          context,
-                          label: "Team Members",
-                        ),
-                        SizedBox(
-                          width: size.width * 0.005,
-                        ),
-                      ],
-                    ),
-                    Wrap(
-                      children: [
-                        otherDetails(
-                          context,
-                          label: "Job Positions",
-                        ),
-                        SizedBox(
-                          width: size.width * 0.005,
-                        ),
-                        otherDetails(
-                          context,
-                          label: "Commmunity",
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ));
   }
 }
@@ -90,83 +85,74 @@ Widget companyAndManager(BuildContext context, {label, sub, isview}) {
   return Container(
     width: size.width > 1200 ? (size.width - 200) * .495 : null,
     // height: 200,
-    height:
-        size.height * 0.35, // Increased height to accommodate the TextFormField
+    // height:
+    //     size.height * 0.35, // Increased height to accommodate the TextFormField
     decoration: const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(6)),
       color: white,
     ),
-    child: Stack(
+    padding: const EdgeInsets.all(20),
+    child: Column(
       children: [
-        Column(
-          children: [
-            // Text to show last updated date
-            const Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: EdgeInsets.only(top: 8.0, right: 8),
-                child: Text(
-                  "Last updated date",
-                  style: AppTextStyle.normalText,
-                ),
-              ),
+        // Text to show last updated date
+        const Align(
+          alignment: Alignment.topRight,
+          child: Padding(
+            padding: EdgeInsets.only(top: 8.0, right: 8),
+            child: Text(
+              "Last updated date",
+              style: AppTextStyle.normalText,
             ),
+          ),
+        ),
 
-            // Image box and other details
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 30),
-                  child: Container(
-                    height: 100,
-                    width: 100,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: black),
-                      borderRadius: const BorderRadius.all(Radius.circular(6)),
-                      color: Colors.transparent,
-                    ),
-                    child: const Image(image: AssetImage(personPng)),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 15.0), // Adjusted padding
-                  child: SizedBox(
-                    height: size.height * 0.3,
-                    width: size.width *
-                        .3, /////sized box will overlap in mobile veiew nne dto fix it
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: label,
-                            labelStyle: AppTextStyle.fourteenW400,
-                            border: InputBorder.none, // Removed border
-                          ),
-                        ),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: sub,
-                            labelStyle: AppTextStyle.normalText,
-                            border: InputBorder.none, // Removed border
-                          ),
-                        ),
-                        TextFormField(
-                          decoration: const InputDecoration(
-                            labelText: "Email ID",
-                            labelStyle: AppTextStyle.normalText,
-                            border: InputBorder.none, // Removed border
-                          ),
-                        ),
-                      ],
+        // Image box and other details
+        Row(
+          children: [
+            Container(
+              // height: 100,
+              width: 100,
+              decoration: BoxDecoration(
+                border: Border.all(color: black),
+                borderRadius: const BorderRadius.all(Radius.circular(6)),
+                color: Colors.transparent,
+              ),
+              child: const Image(image: AssetImage(personPng)),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                children: [
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: label,
+                      labelStyle: AppTextStyle.fourteenW400,
+                      border: InputBorder.none, // Removed border
                     ),
                   ),
-                ),
-              ],
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: sub,
+                      labelStyle: AppTextStyle.normalText,
+                      border: InputBorder.none, // Removed border
+                    ),
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: "Email ID",
+                      labelStyle: AppTextStyle.normalText,
+                      border: InputBorder.none, // Removed border
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: isview ? addAndSave(context) : viewProfile(context),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
-        if (isview) addAndSave(context) else viewProfile(context)
       ],
     ),
   );
@@ -249,7 +235,7 @@ Widget viewProfile(BuildContext context) {
 Widget companyDetails(context, {label, sub, isview}) {
   Size size = MediaQuery.of(context).size;
   return Container(
-    width: size.width < 1200 ? 170 : size.width * 0.2012,
+    width: size.width < 1200 ? 172 : size.width * 0.2012,
     height: size.height * 0.5,
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
@@ -298,7 +284,7 @@ Widget companyDetails(context, {label, sub, isview}) {
 Widget otherDetails(context, {label, sub, isview}) {
   Size size = MediaQuery.of(context).size;
   return Container(
-    width: size.width < 1200 ? 170 : size.width * 0.2012,
+    width: size.width < 1200 ? 172 : size.width * 0.2012,
     height: size.height * 0.5,
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),

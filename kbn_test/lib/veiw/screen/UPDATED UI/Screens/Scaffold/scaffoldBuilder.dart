@@ -49,32 +49,29 @@ class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
               children: [
                 const TopBar(),
                 const SizedBox(height: 10),
-                Flexible(
-                  fit: FlexFit.loose,
-                  child: Padding(
+                Expanded(
+                  child: ListView(
                     padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      children: [
-                        PageAndDate(pageLabel: widget.pageName),
-                        const SizedBox(height: 10),
-                        if (widget.currentPath != "Settings" &&
-                            widget.currentPath != "Profile" &&
-                            widget.currentPath != "Terms") // Added null check
-                          const overViewCards(),
-                        const SizedBox(height: 10),
-                        SizedBox(
-                            height: widget.currentPath != "Settings" &&
-                                    widget.currentPath != "Profile" &&
-                                    widget.currentPath != "Terms"
-                                ? size.width > 900
-                                    ? size.height - 300
-                                    : size.height - 340
-                                : size.width > 900
-                                    ? size.height - 180
-                                    : size.height - 220,
-                            child: widget.child),
-                      ],
-                    ),
+                    children: [
+                      PageAndDate(pageLabel: widget.pageName),
+                      const SizedBox(height: 10),
+                      if (widget.currentPath != "Settings" &&
+                          widget.currentPath != "Profile" &&
+                          widget.currentPath != "Terms") // Added null check
+                        const overViewCards(),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                          // height: widget.currentPath != "Settings" &&
+                          //         widget.currentPath != "Profile" &&
+                          //         widget.currentPath != "Terms"
+                          //     ? size.width > 900
+                          //         ? size.height - 300
+                          //         : size.height - 340
+                          //     : size.width > 900
+                          //         ? size.height - 180
+                          //         : size.height - 220,
+                          child: widget.child),
+                    ],
                   ),
                 ),
               ],

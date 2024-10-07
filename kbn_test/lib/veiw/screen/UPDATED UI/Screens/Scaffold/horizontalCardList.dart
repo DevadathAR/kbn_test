@@ -104,6 +104,7 @@ class _overViewCardsState extends State<overViewCards> {
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: cardData.length,
                     itemBuilder: (context, index) {
                       return Padding(

@@ -16,13 +16,11 @@ class CompanyMessage extends StatelessWidget {
       currentPath: "Messages",
       pageName: "Messages",
       child: SizedBox(
-        height: size.height - 200,
-        child: SingleChildScrollView(
-          child: Wrap(spacing: 10, runSpacing: 10, children: [
-            messagePageList(context),
-            messagePageCompose(context),
-          ]),
-        ),
+        // height: size.height - 200,
+        child: Wrap(spacing: 10, runSpacing: 10, children: [
+          messagePageList(context),
+          messagePageCompose(context),
+        ]),
       ),
     );
   }

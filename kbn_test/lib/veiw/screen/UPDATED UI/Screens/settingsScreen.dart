@@ -16,65 +16,63 @@ class CompanySettingPage extends StatelessWidget {
     return ScaffoldBuilder(
         currentPath: "Settings",
         pageName: "Settings",
-        child: SizedBox(
-          height: size.height * 0.621,
-          child: ListView(
-            children: [
-              const SizedBox(
-                height: 10,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              width: size.width > 1200 ? (size.width - 200) * .49 : null,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  companyAndManager(context,
+                      label: "Company name", sub: "KBN Code", isview: false),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Wrap(
+                      spacing: 16.0, // Set the horizontal space between items
+                      runSpacing: 16.0, // Set the vertical space between runs
+                      alignment:
+                          WrapAlignment.spaceBetween, // Space items evenly
+                      children: [
+                        companySetting(context,
+                            label: "Account",
+                            sub: "Email",
+                            isItem2view: true,
+                            isItem3view: true),
+                        companySetting(context,
+                            label: "Security", sub: "Privacy"),
+                        companySetting(context,
+                            label: "Notification",
+                            sub: "Notification",
+                            isItem1view: false),
+                        companySetting(context,
+                            label: "General", sub: "Language"),
+                        // Wrap(
+                        //   spacing:
+                        //       16.0, // Set the horizontal space between items
+                        //   runSpacing:
+                        //       16.0, // Set the vertical space between runs
+                        //   alignment: WrapAlignment.spaceBetween,
+                        //   children: [
+                        //     companySetting(context,
+                        //         label: "Job Positions",
+                        //         sub: "Notification",
+                        //         isItem1view: false),
+                        //     companySetting(context,
+                        //         label: "Commmunity", sub: "Language"),
+                        //   ],
+                        // )
+                      ],
+                    ),
+                  )
+                ],
               ),
-              SizedBox(
-                width: size.width > 1200 ? (size.width - 200) * .49 : null,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    companyAndManager(context,
-                        label: "Company name", sub: "KBN Code", isview: false),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Wrap(
-                        spacing: 16.0, // Set the horizontal space between items
-                        runSpacing: 16.0, // Set the vertical space between runs
-                        alignment:
-                            WrapAlignment.spaceBetween, // Space items evenly
-                        children: [
-                          companySetting(context,
-                              label: "Account",
-                              sub: "Email",
-                              isItem2view: true,
-                              isItem3view: true),
-                          companySetting(context,
-                              label: "Security", sub: "Privacy"),
-                          companySetting(context,
-                              label: "Notification",
-                              sub: "Notification",
-                              isItem1view: false),
-                          companySetting(context,
-                              label: "General", sub: "Language"),
-                          // Wrap(
-                          //   spacing:
-                          //       16.0, // Set the horizontal space between items
-                          //   runSpacing:
-                          //       16.0, // Set the vertical space between runs
-                          //   alignment: WrapAlignment.spaceBetween,
-                          //   children: [
-                          //     companySetting(context,
-                          //         label: "Job Positions",
-                          //         sub: "Notification",
-                          //         isItem1view: false),
-                          //     companySetting(context,
-                          //         label: "Commmunity", sub: "Language"),
-                          //   ],
-                          // )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ));
   }
 }

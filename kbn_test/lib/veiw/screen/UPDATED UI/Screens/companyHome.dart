@@ -20,47 +20,44 @@ class CompanyHome extends StatelessWidget {
       currentPath: "Overview",
       child: SizedBox(
         // height: 410,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Wrap(
-            spacing: 10.0,
-            runSpacing: 10.0,
-            children: [
-              // First column (Charts and Horizontal Table)
-              SizedBox(
-                width: size.width > 1200 ? 600 : null,
-                child: const Column(
-                  children: [
-                    ChartWidget(),
-                    SizedBox(height: 10),
-                    HorizontalTable(),
-                  ],
-                ),
+        child: Wrap(
+          spacing: 10.0,
+          runSpacing: 10.0,
+          children: [
+            // First column (Charts and Horizontal Table)
+            SizedBox(
+              width: size.width > 1200 ? 600 : null,
+              child: const Column(
+                children: [
+                  ChartWidget(),
+                  SizedBox(height: 10),
+                  HorizontalTable(),
+                ],
               ),
+            ),
 
-              // Second column (Vertical Table)
-              SizedBox(
-                width: size.width > 1200
-                    ? (size.width - 200) * 0.33
-                    : null, // Adjust the width as necessary
-                child: const VerticalTable(),
-              ),
+            // Second column (Vertical Table)
+            SizedBox(
+              width: size.width > 1200
+                  ? (size.width - 200) * 0.33
+                  : null, // Adjust the width as necessary
+              child: const VerticalTable(),
+            ),
 
-              // Third column (Message and Pay Result)
-              SizedBox(
-                width: size.width > 1200
-                    ? (size.width - 200) * 0.2
-                    : null, // Adjust the width as necessary
-                child: const Column(
-                  children: [
-                    MessageWidget(),
-                    SizedBox(height: 10),
-                    isCompany ? PayRemainder() : PayResult(),
-                  ],
-                ),
+            // Third column (Message and Pay Result)
+            SizedBox(
+              width: size.width > 1200
+                  ? (size.width - 200) * 0.2
+                  : null, // Adjust the width as necessary
+              child: const Column(
+                children: [
+                  MessageWidget(),
+                  SizedBox(height: 10),
+                  isCompany ? PayRemainder() : PayResult(),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

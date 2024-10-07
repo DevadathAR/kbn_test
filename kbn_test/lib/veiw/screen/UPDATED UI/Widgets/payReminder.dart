@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/showAll_bTn.dart';
 
@@ -7,7 +8,8 @@ class PayRemainder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String date = DateTime.now().toString();
+    final date = DateTime.now();
+    final dateFormat = DateFormat("dd MMM yyyy");
 
     return Container(
       // height: 200,
@@ -35,7 +37,7 @@ class PayRemainder extends StatelessWidget {
                 child: _buildCard(
                   title: "to admin ,",
                   mainText: "Succesfull",
-                  footerText: "+ GST\n date\n$date",
+                  footerText: "+ GST\n date\n${dateFormat.format(date)}",
                   isAmount: true,
                 ),
               ),
@@ -85,14 +87,18 @@ class PayRemainder extends StatelessWidget {
           ),
 
           // Main content (e.g. "15,000" or "Successful")
-          Text(
-            mainText,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: isAmount ? 24 : 20, // Larger font for the amount
-              color: isAmount ? Colors.green : Colors.black, // Green for amount
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              mainText,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: isAmount ? 24 : 20, // Larger font for the amount
+                color:
+                    isAmount ? Colors.green : Colors.black, // Green for amount
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
 
           // Footer text (e.g. "+ GST" or date)
