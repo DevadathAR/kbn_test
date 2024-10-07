@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kbn_test/UPDATED%20UI/Screens/messageScreen.dart';
+import 'package:kbn_test/UPDATED%20UI/Widgets/commmonTable.dart';
 import 'package:kbn_test/UPDATED%20UI/Widgets/scaffoldBuilder.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
+import 'package:kbn_test/utilities/lists.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+
 
 class CompanyTransation extends StatelessWidget {
   const CompanyTransation({super.key});
@@ -12,17 +15,19 @@ class CompanyTransation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    String path = "Transactions";
 
     return ScaffoldBuilder(
-      currentPath: "Transactions",
-      pageName: "Transaction",
+      currentPath: path,
+      pageName: path,
       child: size.height > 300
           ? SizedBox(
               height: size.height - 300,
               child: SingleChildScrollView(
                 child: Wrap(spacing: 10, runSpacing: 10, children: [
                   transationPageList(context),
-                  paymentFormField(context)
+                  isCompany?
+                  paymentFormField(context):selectedApplicantsTable(context, data: companyTableData, headerTitle: "To Approve",path:path,statusOptions: ["SELECT","REJECT"] )
                 ]),
               ),
             )

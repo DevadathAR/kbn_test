@@ -92,15 +92,12 @@ class CompanyJobpage extends StatelessWidget {
                 Expanded(
                   child: applicantsTable(
                       context,
-                      // size.width > 1200
-                      //     ? (size.width - 200) * 0.49
-                      //     : size.width,
                       jobTableheaders,
                       jobTableData,
                       ["OPEN", "CLOSE"]),
                 ),
                 if (size.width < 1200)
-                  SizedBox(
+                  const SizedBox(
                     height: 5,
                   ),
                 const jobDetailsForm()
@@ -376,8 +373,6 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 0.0),
                   child: Container(
-                    // width: 575,
-                    // width: (size.width - 200) * .32,
                     width: size.width > 1200
                         ? (size.width - 200) * 0.32
                         : size.width > 900

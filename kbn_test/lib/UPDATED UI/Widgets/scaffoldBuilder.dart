@@ -1,11 +1,9 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:kbn_test/UPDATED%20UI/Widgets/drawer.dart';
 import 'package:kbn_test/UPDATED%20UI/Widgets/horizontalCardList.dart';
 import 'package:kbn_test/UPDATED%20UI/Widgets/page_and_date.dart';
 import 'package:kbn_test/UPDATED%20UI/Widgets/sidebar.dart';
 import 'package:kbn_test/UPDATED%20UI/Widgets/topBar.dart';
-import 'package:kbn_test/utilities/colors.dart';
 
 const bool isCompany = true;
 
@@ -40,8 +38,7 @@ class ScaffoldBuilder extends StatelessWidget {
           // Sidebar for larger screens
           if (size.width > 900)
             Sidebar(
-              currentPath: currentPath,
-            ),
+              currentPath: currentPath,),
           Expanded(
             child: Column(
               children: [
@@ -56,21 +53,24 @@ class ScaffoldBuilder extends StatelessWidget {
                       children: [
                         PageAndDate(pageLabel: pageName),
                         const SizedBox(height: 10),
-                        if (currentPath != "Settings" && currentPath != "Profile" && currentPath != "Terms" )
-                        const overViewCards(),
-                                                if (currentPath != "Settings" && currentPath != "Profile" && currentPath != "Terms" )
-
-                        const SizedBox(height: 10),
-                        //  if(size.width > 300)
+                        if (currentPath != "Settings" &&
+                            currentPath != "Profile" &&
+                            currentPath != "Terms")
+                          const overViewCards(),
+                        if (currentPath != "Settings" &&
+                            currentPath != "Profile" &&
+                            currentPath != "Terms")
+                          const SizedBox(height: 10),
                         Container(
-                            height:
-                            currentPath != "Settings" && currentPath != "Profile" && currentPath != "Terms" ?
-                             size.width > 900
-                                ? size.height - 300
-                                : size.height - 340:
-                                size.width > 900
-                                ? size.height - 160
-                                : size.height - 200,
+                            height: currentPath != "Settings" &&
+                                    currentPath != "Profile" &&
+                                    currentPath != "Terms"
+                                ? size.width > 900
+                                    ? size.height - 300
+                                    : size.height - 340
+                                : size.width > 900
+                                    ? size.height - 160
+                                    : size.height - 200,
                             child: child),
                       ],
                     ),

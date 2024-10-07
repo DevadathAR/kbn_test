@@ -3,7 +3,7 @@ import 'package:kbn_test/UPDATED%20UI/Screens/profileScreen.dart';
 import 'package:kbn_test/UPDATED%20UI/Widgets/scaffoldBuilder.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 
 class CompanySettingPage extends StatelessWidget {
   const CompanySettingPage({super.key});

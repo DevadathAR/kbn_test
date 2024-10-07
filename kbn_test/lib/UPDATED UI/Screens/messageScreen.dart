@@ -69,7 +69,7 @@ Widget messagePageList(context) {
 }
 
 Widget buildListItem(context, {name, description, date}) {
-  Size size = MediaQuery.of(context).size;
+  // Size size = MediaQuery.of(context).size;
 
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 10.0),
