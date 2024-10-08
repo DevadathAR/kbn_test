@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
+import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
-import 'package:kbn_test/veiw/widgets_common/goBack.dart';
 import 'package:kbn_test/veiw/widgets_common/home_appbar_box.dart';
 
 class user_T_n_C extends StatelessWidget {
@@ -15,12 +15,12 @@ class user_T_n_C extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Stack(
+      body: Row(
         children: [
-          SizedBox(
-            height: size.height,
-            width: size.width * 1,
-            child: SingleChildScrollView(
+          SingleChildScrollView(
+            child: SizedBox(
+              height: size.height,
+              width: size.width * 1,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -30,7 +30,7 @@ class user_T_n_C extends StatelessWidget {
                     home: const UserHome(),
                     profileImage:
                         "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
-                        
+
                     // logOutTo: const UserHome(),
                   ),
                   const SizedBox(
@@ -40,7 +40,7 @@ class user_T_n_C extends StatelessWidget {
                     padding: EdgeInsets.only(top: 100, bottom: 30, left: 150),
                     child: Text(
                       tachead,
-                      style: AppTextStyle.tactexthead,
+                      style: AppTextStyle.twentyFour_W400,
                     ),
                   ),
                   const Padding(
@@ -48,14 +48,13 @@ class user_T_n_C extends StatelessWidget {
                     child: SizedBox(
                         child: Text(
                       T_n_C_user,
-                      style: AppTextStyle.tactext,
+                      style: AppTextStyle.fourteenW400,
                     )),
                   )
                 ],
               ),
             ),
           ),
-          GoBack(context, homePage: UserHome())
         ],
       ),
     );

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
+import 'package:kbn_test/service/modelClass.dart';
 
 Map<String, dynamic> userDetails = {};
 Map<String, dynamic> jobDetailsResponse = {};
@@ -14,9 +16,7 @@ class ApiServices {
   static const String baseUrl = 'http://192.168.29.37:8000';
   // static const String baseUrl = 'http://192.168.29.197:5500';
 
-
-
-    Future<http.StreamedResponse> signUp({
+  Future<http.StreamedResponse> signUp({
     required String fullName,
     required String email,
     required String password,
@@ -57,7 +57,6 @@ class ApiServices {
     return await request.send();
   }
 
-
   // Login API
   static Future<Map<String, dynamic>> userLogin(
       String email, String password) async {
@@ -66,15 +65,14 @@ class ApiServices {
     var response = await http.post(
       url,
       body: jsonEncode({
-        // 'email': "company2@gmail.com",
+        // 'email': "festa",
         // 'password': "123",
         // 'email': "applicant8@gmail.com",
         // 'password': "123",
         'email': email,
         'password': password,
-        // 'loginType': "Applicant",
       }),
-      headers: {'Content-Type': 'application/json'},
+      headers: headers,
     );
 
     // print("Login response: ${response.statusCode}");
@@ -107,6 +105,24 @@ class ApiServices {
 
   // Company Section
 
+  // View  Applicant Details API
+  static Future<Apiresponse> companyData() async {
+    var url = Uri.parse('$baseUrl/company/data?month=9&year=2024');
+
+    var response = await http.get(url, headers: headers);
+
+    // print('Raw response: ${response.body}');
+
+    if (response.statusCode == 200) {
+      // Decode the JSON response
+      var jsonMap = jsonDecode(response.body);
+      // Return an ApiResponse object
+      return Apiresponse.fromJson(jsonMap);
+    } else {
+      throw Exception('Failed to fetch user details');
+    }
+  }
+
   // Fetch submitted Applicants Data API
   static Future<Map<String, dynamic>> fetchSubmittedApplctns() async {
     var url = Uri.parse('$baseUrl/application/c/?status=submitted');
@@ -127,6 +143,19 @@ class ApiServices {
 
     var response = await http.get(url, headers: headers);
     // print('Selected${response.body}');
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to fetch user details');
+    }
+  }
+
+  // View  Applicant Details API
+  static Future<Map<String, dynamic>> fetchRecruitmentDetails(jobId) async {
+    var url = Uri.parse('$baseUrl/job/vaccancy$jobId');
+
+    var response = await http.get(url, headers: headers);
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -187,28 +216,28 @@ class ApiServices {
     }
   }
 
-  // Updating Vaccancy
-  static Future<Map<String, dynamic>> updateVaccancy(
-    String status,
-    int applicationId,
-  ) async {
-    var url = Uri.parse('$baseUrl/application/$applicationId');
+  // // Updating Vaccancy
+  // static Future<Map<String, dynamic>> updateVaccancy(
+  //   String status,
+  //   int applicationId,
+  // ) async {
+  //   var url = Uri.parse('$baseUrl/job/vaccancy$jobId);
 
-    var response = await http.patch(
-      url,
-      headers: headers,
-      body: jsonEncode({
-        // Correct key-value format
-        'newStatus': status
-      }),
-    );
+  //   var response = await http.patch(
+  //     url,
+  //     headers: headers,
+  //     body: jsonEncode({
+  //       // Correct key-value format
+  //       'newStatus': status
+  //     }),
+  //   );
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to update application');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body);
+  //   } else {
+  //     throw Exception('Failed to update application');
+  //   }
+  // }
 
   // View  Applicant Details API
   static Future<Map<String, dynamic>> fetchApplicantDetails(
@@ -235,8 +264,8 @@ class ApiServices {
         body: jsonEncode(jobData),
       );
 
-      // print('Status Code: ${response.statusCode}');
-      // print('Response Body: ${response.body}');
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
 
       if (response.statusCode == 201) {
         // Successfully created the job
@@ -309,7 +338,7 @@ class ApiServices {
       url,
       headers: headers,
     );
-    // print(response.body);
+    print(response.body);
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -340,6 +369,8 @@ class ApiServices {
   }
 
   //..............................................................
+
+  //user Section
 
   static Future<Map<String, List<String>>> fetchDropdownBoxItems() async {
     final url = Uri.parse('$baseUrl/job/dropbox');

@@ -31,7 +31,7 @@ class BoxButton extends StatelessWidget {
       onTap: onTap,
       child: IntrinsicWidth(
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
           decoration: BoxDecoration(
             border: Border.all(
               color: Colors.black,
@@ -44,7 +44,7 @@ class BoxButton extends StatelessWidget {
             title,
             style: const TextStyle(
               color: tealblue,
-              fontSize: 16,
+              fontSize: 10,
               fontWeight: FontWeight.bold,
             ),
           ),

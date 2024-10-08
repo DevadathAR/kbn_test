@@ -5,13 +5,13 @@ NETWORK''';
 const welcomeComp = "Welcome Back Companies";
 const welcome = "Welcome Back ";
 
-
 const useMail = "continue with email";
 const forget = "forget password?";
 const frgtpswd = "Forget Password";
 const noacc = "Don't you have an account?";
-const tac = '''*The portal may update its terms and conditions, and continued
- use of the service indicates acceptance of any changes.*''';
+const tac =
+    '''*The portal may update its terms and conditions, and continued use of the 
+service indicates acceptance of any changes.*''';
 const terms = "accept all terms & conditions";
 const hi = "Hi,";
 const signup = "SIGN UP";
@@ -31,7 +31,6 @@ const name = "KERALA BUSINESS NETWORK";
 const tachead = "Terms & Conditions";
 const newjob = "Let's Find You A New Job";
 const latestjob = "Latest jobs";
-const filters = "Filters";
 const currentMonth = "Current month";
 const previousMonth = "Previous month";
 const profileSum =
@@ -65,8 +64,7 @@ redistribution is not allowed.
 
 8. Updates : The portal may update these terms, and continued use implies acceptance of the new terms.''';
 
-const T_n_C_company = '''COMPANY PAGE
-
+const T_n_C_company = '''
 Welcome to [Your Company Name]. By accessing and using our services, you agree to the following terms and conditions:
 
 1.  Acceptance of Terms: By using our website or services, you agree to comply with and be bound by these terms and

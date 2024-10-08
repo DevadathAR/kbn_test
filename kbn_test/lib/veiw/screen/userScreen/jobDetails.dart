@@ -158,12 +158,11 @@ class _JobDetailsState extends State<JobDetails> {
                               Expanded(
                                 child: size.width < 1200
                                     ?
-           
+
                                     //////////web view of colum 1///////////
-                                    
-                                     SingleChildScrollView(
+
+                                    SingleChildScrollView(
                                         child: Column(
-                                         
                                           children: [
                                             SizedBox(
                                               width: size.width < 1200
@@ -224,7 +223,7 @@ class _JobDetailsState extends State<JobDetails> {
                                                           child: Text(
                                                             _currentStatus, // Display dynamic status
                                                             style: AppTextStyle
-                                                                .applytxt
+                                                                .normalW500
                                                                 .copyWith(
                                                               color: getTxtColor(
                                                                   _currentStatus),
@@ -317,7 +316,7 @@ class _JobDetailsState extends State<JobDetails> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "Job Requirements",
-                  style: AppTextStyle.abouttxt,
+                  style: AppTextStyle.thirteenW500,
                 ),
               ),
               const SizedBox(height: 10),
@@ -415,7 +414,7 @@ class _JobDetailsState extends State<JobDetails> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "Job Summary",
-                  style: AppTextStyle.abouttxt,
+                  style: AppTextStyle.thirteenW500,
                 ),
               ),
               Text(
@@ -442,7 +441,7 @@ class _JobDetailsState extends State<JobDetails> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           "Key Responsibilities",
-                          style: AppTextStyle.abouttxt,
+                          style: AppTextStyle.thirteenW500,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -577,11 +576,11 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
               children: [
                 Text(
                   widget.jobTitle,
-                  style: AppTextStyle.firmHead,
+                  style: AppTextStyle.twntyFive_W600,
                 ),
                 Text(
                   widget.firmname,
-                  style: AppTextStyle.googletext,
+                  style: AppTextStyle.twentyW400,
                 ),
               ],
             ),
@@ -594,7 +593,7 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "About Company",
-                  style: AppTextStyle.abouttxt,
+                  style: AppTextStyle.thirteenW500,
                 ),
               ),
               Text(
@@ -627,7 +626,7 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
                   child: Center(
                     child: Text(
                       _currentStatus, // Display dynamic status
-                      style: AppTextStyle.applytxt.copyWith(
+                      style: AppTextStyle.normalW500.copyWith(
                         color: getTxtColor(_currentStatus),
                       ),
                     ),
