@@ -1,11 +1,12 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kbn_test/service/modelClass.dart';
+import 'package:kbn_test/service/singletonData.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/messageDisply.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/showAll_bTn.dart';
 
 class CompanyMessage extends StatelessWidget {
@@ -16,81 +17,36 @@ class CompanyMessage extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return ScaffoldBuilder(
-      currentPath: "Messages",
-      pageName: "Messages",
-      child: SizedBox(
-        // height: size.height - 200,
-        child: Wrap(spacing: 10, runSpacing: 10, children: [
-          messagePageList(context),
-          messagePageCompose(context),
-        ]),
-      ),
-    );
+        currentPath: "Messages",
+        pageName: "Messages",
+        child: FutureBuilder(
+          future: ApiDataService().fetchCompanyData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            if (!snapshot.hasData || snapshot.data == null) {
+              return const Center(child: Text("No data available"));
+            }
+            // Data is successfully fetched
+            Apiresponse companyData = snapshot.data!;
+
+            return SizedBox(
+              // height: size.height - 200,
+              child: Wrap(spacing: 10, runSpacing: 10, children: [
+                MessagePageList(
+                    messagesPageData:
+                        companyData!.companyData.messagesPageData),
+                messagePageCompose(context),
+              ]),
+            );
+          },
+        ));
   }
 }
-
-Widget messagePageList(context,
-    {hight = 500,
-    viewreplybutton = true,
-    tilehight = 100,
-    imgsize = 60,
-    tilecount = 10,
-    paddingseparation = 15}) {
-  Size size = MediaQuery.of(context).size;
-
-  return Container(
-    height: hight,
-    width: size.width > 1200 ? (size.width - 200) * .49 : null,
-    decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        SizedBox(
-          height: viewreplybutton ? hight : 235,
-          child: ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            itemCount: tilecount,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.all(paddingseparation),
-                child: Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.withOpacity(0.5)),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(6)),
-                        color: white),
-                    height: tilehight,
-                    child: buildListItem(context,
-                        name: "name",
-                        description: "description",
-                        date: "date",
-                        viewreplybutton: viewreplybutton,
-                        imgsize: imgsize)),
-              );
-            },
-          ),
-        ),
-        if (!viewreplybutton)
-          Padding(
-            padding: const EdgeInsets.only(right: 5.0, bottom: 5),
-            child: ShowAllBtn(onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CompanyMessage();
-                  },
-                ),
-              );
-            }),
-          )
-      ],
-    ),
-    // ),
-  );
-}
-
 Widget buildListItem(context,
     {name, description, date, viewreplybutton, imgsize}) {
   Size size = MediaQuery.of(context).size;
@@ -99,7 +55,7 @@ Widget buildListItem(context,
     padding: const EdgeInsets.symmetric(horizontal: 10.0),
     child: Row(
       children: [
-        Image(image: AssetImage(personPng), height: imgsize),
+        Image(image: const AssetImage(personPng), height: imgsize),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -110,11 +66,13 @@ Widget buildListItem(context,
                 style: AppTextStyle.normalText,
               ),
               const SizedBox(height: 4),
-              Text(
-                description,
-                style: AppTextStyle.twelve_w500,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              SizedBox(
+                child: Text(
+                  description,
+                  style: AppTextStyle.twelve_w500,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               )
             ],
           ),
@@ -123,7 +81,7 @@ Widget buildListItem(context,
         Align(
             alignment: Alignment.topRight,
             child: Text(
-              date,
+              date,style: AppTextStyle.normalText,
             )),
         if (viewreplybutton)
           Align(

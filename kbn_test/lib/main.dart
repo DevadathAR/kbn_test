@@ -22,43 +22,43 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
-        title: "KBN_Test",
-        debugShowCheckedModeBanner: false,
-        home:
-            //  CompanyStatisticScreen(),
-            // TermsNconditions(),
-            // CompanyHome()
+    return MaterialApp(
+      title: "KBN_Test",
+      debugShowCheckedModeBanner: false,
+      home:
+          //  CompanyStatisticScreen(),
+          // TermsNconditions(),
+          // CompanyHome()
 
-        // AdminHome(),
+          // AdminHome(),
 
-        //  CompanyJobpage(),
+          //  CompanyJobpage(),
 
-        // Home(),
+          // Home(),
 
-            FutureBuilder(
-          future: _checkLoginStatus(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            } else if (snapshot.hasData && snapshot.data is String) {
-              // Role-Based navigation
-              switch (snapshot.data) {
-                case 'Company':
-                  return const CompanyHome();
-                case 'Applicant':
-                  return const UserHome();
-                case 'Admin':
-                  return const CompanyHome();
-                default:
-                  return const CompanyLoginPage(); // Fallback
-              }
-            } else {
-              return const CompanyLoginPage(); // Show login if no valid role
+          FutureBuilder(
+        future: _checkLoginStatus(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasData && snapshot.data is String) {
+            // Role-Based navigation
+            switch (snapshot.data) {
+              case 'Company':
+                return const CompanyHome();
+              case 'Applicant':
+                return const UserHome();
+              case 'Admin':
+                return const CompanyHome();
+              default:
+                return const CompanyLoginPage(); // Fallback
             }
-          },
-        ),
-        );
+          } else {
+            return const CompanyLoginPage(); // Show login if no valid role
+          }
+        },
+      ),
+    );
   }
 
   Future<String?> _checkLoginStatus() async {

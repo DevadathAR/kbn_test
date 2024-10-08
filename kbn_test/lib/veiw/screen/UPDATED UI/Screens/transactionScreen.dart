@@ -54,13 +54,13 @@ Widget transationPageList(context) {
 
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
-    // child: Scrollbar(
-    //   thumbVisibility: true,
-    //   trackVisibility: true,
-    //   scrollbarOrientation: ScrollbarOrientation.right,
-    //   interactive: true,
-    //   thickness: 10,
-    //   radius: const Radius.circular(6),
+    child: Scrollbar(
+      thumbVisibility: true,
+      trackVisibility: true,
+      scrollbarOrientation: ScrollbarOrientation.right,
+      interactive: true,
+      thickness: 10,
+      radius: const Radius.circular(6),
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
         itemCount: 10,
@@ -79,7 +79,7 @@ Widget transationPageList(context) {
           );
         },
       ),
-    // ),
+    ),
   );
 }
 

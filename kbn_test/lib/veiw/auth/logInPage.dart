@@ -122,7 +122,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
   }
 
   Widget _buildWebLayout(BuildContext context, double screenWidth) {
-        Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery.of(context).size;
 
     return Stack(
       children: [
@@ -144,13 +144,14 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    
-                    Container(height: 0.5, width:size.width*0.05, color: black),
+                    Container(
+                        height: 0.5, width: size.width * 0.05, color: black),
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 5),
                       child: Text(useMail, style: AppTextStyle.bodytext_12),
                     ),
-                    Container(height: 0.5, width:size.width*0.05, color: black),
+                    Container(
+                        height: 0.5, width: size.width * 0.05, color: black),
                   ],
                 ),
                 const SizedBox(height: 30),

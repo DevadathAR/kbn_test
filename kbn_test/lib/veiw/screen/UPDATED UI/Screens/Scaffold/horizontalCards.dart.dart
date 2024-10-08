@@ -94,8 +94,7 @@
 //       height: 100,
 //       width: 180,
 //       decoration: ShapeDecoration(
-//         // color: const Color(0xFFFDFDFD),
-//         color: white,
+//         color: const Color(0xFFFDFDFD),
 //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
 //       ),
 //       child: Column(

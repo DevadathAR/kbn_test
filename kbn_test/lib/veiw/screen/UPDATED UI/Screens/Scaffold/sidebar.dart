@@ -227,7 +227,7 @@ class _SidebarState extends State<Sidebar> {
                 ],
               ),
               GestureDetector(
-                child: Image.asset(width: 15, height: 15, logOutPng,),
+                child: Image.asset(width: 15, height: 15, logOutPng),
                 onTap: () {
                   showLogoutConfirmation(context);
                 },

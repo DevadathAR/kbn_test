@@ -68,8 +68,7 @@ class TopBar extends StatelessWidget {
                           width: size.width * .17,
                           height: 38,
                           decoration: ShapeDecoration(
-                            // color: const Color(0xFF138395),
-                            color: tealblue,
+                            color: const Color(0xFF138395),
                             shape: RoundedRectangleBorder(
                               side: const BorderSide(width: 0.40),
                               borderRadius: BorderRadius.circular(6),

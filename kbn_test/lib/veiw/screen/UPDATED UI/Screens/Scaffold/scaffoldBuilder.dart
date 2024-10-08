@@ -60,17 +60,7 @@ class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
                           widget.currentPath != "Terms") // Added null check
                         const OverViewCards(),
                       const SizedBox(height: 10),
-                      SizedBox(
-                          // height: widget.currentPath != "Settings" &&
-                          //         widget.currentPath != "Profile" &&
-                          //         widget.currentPath != "Terms"
-                          //     ? size.width > 900
-                          //         ? size.height - 300
-                          //         : size.height - 340
-                          //     : size.width > 900
-                          //         ? size.height - 180
-                          //         : size.height - 220,
-                          child: widget.child),
+                      SizedBox(child: widget.child),
                     ],
                   ),
                 ),

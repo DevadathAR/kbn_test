@@ -22,8 +22,7 @@ class CompanyProfileScreen extends StatelessWidget {
               height: 10,
             ),
             // PageAndDate(context, pageLabel: "Profile"),
-          
-          
+
             Wrap(
               spacing: 10, runSpacing: 10,
               alignment: WrapAlignment.spaceAround,
@@ -42,74 +41,73 @@ class CompanyProfileScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 10.0),
-              child: 
-              
-              size.width > 900?
-              Wrap(
-                spacing: 10, runSpacing: 10,
-                alignment: WrapAlignment.spaceAround,
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  companyDetails(
-                    context,
-                    label: "Compnay Details",
-                    sub: "Address",
-                  ),
-                  // SizedBox(
-                  //   width: size.width * 0.005,
-                  // ),
-                  otherDetails(
-                    context,
-                    label: "Team Members",
-                  ),
-                  // SizedBox(
-                  //   width: size.width * 0.005,
-                  // ),
-                  otherDetails(
-                    context,
-                    label: "Job Positions",
-                  ),
-                  // SizedBox(
-                  //   width: size.width * 0.005,
-                  // ),
-                  otherDetails(
-                    context,
-                    label: "Commmunity",
-                  )
-                ],
-              ):Column(
-                // spacing: 10, runSpacing: 10,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  companyDetails(
-                    context,
-                    label: "Compnay Details",
-                    sub: "Address",
-                  ),
-                  // SizedBox(
-                  //   width: size.width * 0.005,
-                  // ),
-                  otherDetails(
-                    context,
-                    label: "Team Members",
-                  ),
-                  // SizedBox(
-                  //   width: size.width * 0.005,
-                  // ),
-                  otherDetails(
-                    context,
-                    label: "Job Positions",
-                  ),
-                  // SizedBox(
-                  //   width: size.width * 0.005,
-                  // ),
-                  otherDetails(
-                    context,
-                    label: "Commmunity",
-                  )
-                ],
-              ),
+              child: size.width > 900
+                  ? Wrap(
+                      spacing: 10, runSpacing: 10,
+                      alignment: WrapAlignment.spaceAround,
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        companyDetails(
+                          context,
+                          label: "Compnay Details",
+                          sub: "Address",
+                        ),
+                        // SizedBox(
+                        //   width: size.width * 0.005,
+                        // ),
+                        otherDetails(
+                          context,
+                          label: "Team Members",
+                        ),
+                        // SizedBox(
+                        //   width: size.width * 0.005,
+                        // ),
+                        otherDetails(
+                          context,
+                          label: "Job Positions",
+                        ),
+                        // SizedBox(
+                        //   width: size.width * 0.005,
+                        // ),
+                        otherDetails(
+                          context,
+                          label: "Commmunity",
+                        )
+                      ],
+                    )
+                  : Column(
+                      // spacing: 10, runSpacing: 10,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        companyDetails(
+                          context,
+                          label: "Compnay Details",
+                          sub: "Address",
+                        ),
+                        // SizedBox(
+                        //   width: size.width * 0.005,
+                        // ),
+                        otherDetails(
+                          context,
+                          label: "Team Members",
+                        ),
+                        // SizedBox(
+                        //   width: size.width * 0.005,
+                        // ),
+                        otherDetails(
+                          context,
+                          label: "Job Positions",
+                        ),
+                        // SizedBox(
+                        //   width: size.width * 0.005,
+                        // ),
+                        otherDetails(
+                          context,
+                          label: "Commmunity",
+                        )
+                      ],
+                    ),
             )
           ],
         ));
@@ -274,7 +272,7 @@ Widget companyDetails(context, {label, sub, isview}) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 5.0),
     child: Container(
-      width: size.width > 900 ? (size.width-225) * 0.24:null,
+      width: size.width > 900 ? (size.width - 225) * 0.24 : null,
       height: size.height * 0.5,
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
@@ -326,7 +324,7 @@ Widget otherDetails(context, {label, sub, isview}) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 5.0),
     child: Container(
-      width: size.width > 900 ? (size.width-225) * 0.24:null,
+      width: size.width > 900 ? (size.width - 225) * 0.24 : null,
       height: size.height * 0.5,
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(6)), color: white),

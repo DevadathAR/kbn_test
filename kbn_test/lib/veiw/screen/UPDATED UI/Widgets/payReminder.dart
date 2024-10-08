@@ -28,7 +28,7 @@ class PayRemainder extends StatelessWidget {
                 child: _buildCard(
                   title: "to admin ,",
                   mainText: "15,000",
-                  footerText: "+ GST\n date\n$date",
+                  footerText: "+ GST\n date\n${dateFormat.format(date)}",
                   isAmount: true,
                 ),
               ),

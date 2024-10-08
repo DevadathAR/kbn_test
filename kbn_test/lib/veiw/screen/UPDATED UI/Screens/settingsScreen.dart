@@ -40,9 +40,12 @@ class _CompanySettingPageState extends State<CompanySettingPage> {
                   padding: const EdgeInsets.only(top: 10.0),
                   child: size.width > 900
                       ? Wrap(
-                          spacing: 16.0, // Set the horizontal space between items
-                          runSpacing: 16.0, // Set the vertical space between runs
-                          alignment: WrapAlignment.spaceBetween, // Space items evenly
+                          spacing:
+                              16.0, // Set the horizontal space between items
+                          runSpacing:
+                              16.0, // Set the vertical space between runs
+                          alignment:
+                              WrapAlignment.spaceBetween, // Space items evenly
                           children: [
                             companySetting(context,
                                 label: "Account",
@@ -147,11 +150,12 @@ Widget companySetting(
   bool isItem3view = false, // Defaults to true
 }) {
   Size size = MediaQuery.of(context).size;
-  bool isNotificationEnabled = false; // Assuming a variable to track notification state
+  bool isNotificationEnabled =
+      false; // Assuming a variable to track notification state
 
   return Container(
     // width: size.width >     1200 ? size.width * 0.198  : size.width > 900 ? 170: null,
-    width: size.width >     900 ? (size.width-225) * 0.24  :  null,
+    width: size.width > 900 ? (size.width - 225) * 0.24 : null,
 
     height: size.height * 0.5,
     decoration: const BoxDecoration(
@@ -232,7 +236,8 @@ Widget companySetting(
   );
 }
 
-Widget mobScreenSettings(BuildContext context, {required String text, required VoidCallback onTap}) {
+Widget mobScreenSettings(BuildContext context,
+    {required String text, required VoidCallback onTap}) {
   Size size = MediaQuery.of(context).size;
 
   return Padding(

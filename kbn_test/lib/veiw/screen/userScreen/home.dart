@@ -253,6 +253,7 @@ class _UserHomeState extends State<UserHome> {
                             ),
                           ),
                         ),
+                        // Pagination Controls
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -415,14 +416,14 @@ class _UserHomeState extends State<UserHome> {
   int _getCrossAxisCount(Size size) {
     if (size.width < 900) return 1;
     if (size.width < 1200) return 2;
-    // if (size.width < 1200) return 4;
+    if (size.width < 1600) return 3;
     return 4;
   }
 
   double _getChildAspectRatio(Size size) {
     if (size.width < 900) return size.width * 0.1 / size.width * 15;
     if (size.width < 1200) return size.width * 0.15 / size.width * 10;
-    if (size.width < 1600) return size.width * 0.22 / size.width * 5;
+    if (size.width < 1600) return size.width * 0.22 / size.width * 6;
     return size.width * 0.25 / size.width * 5;
   }
 }
