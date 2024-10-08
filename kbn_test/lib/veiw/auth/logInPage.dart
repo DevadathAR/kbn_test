@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
@@ -9,11 +7,9 @@ import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/forgotPass.dart';
 import 'package:kbn_test/veiw/auth/signUp.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/companyHome.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/practiceFile.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets_common/loginTextFeild.dart';
 import 'package:kbn_test/veiw/widgets_common/bg_widg.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 Map<String, dynamic> submittedApplicantsData = {};
@@ -126,6 +122,8 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
   }
 
   Widget _buildWebLayout(BuildContext context, double screenWidth) {
+    Size size = MediaQuery.of(context).size;
+
     return Stack(
       children: [
         peoplebgWIdget(img: companyBg),
@@ -146,12 +144,14 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(height: 0.5, width: 102, color: black),
+                    Container(
+                        height: 0.5, width: size.width * 0.05, color: black),
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 5),
                       child: Text(useMail, style: AppTextStyle.bodytext_12),
                     ),
-                    Container(height: 0.5, width: 102, color: black),
+                    Container(
+                        height: 0.5, width: size.width * 0.05, color: black),
                   ],
                 ),
                 const SizedBox(height: 30),

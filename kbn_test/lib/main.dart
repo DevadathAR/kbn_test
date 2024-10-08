@@ -22,25 +22,25 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return MaterialApp(
       title: "KBN_Test",
       debugShowCheckedModeBanner: false,
       home:
-      //  CompanyStatisticScreen(),
-      // TermsNconditions(),
-      // CompanyHome()
+          //  CompanyStatisticScreen(),
+          // TermsNconditions(),
+          // CompanyHome()
 
-      // AdminHome(),
+          // AdminHome(),
 
-      //  CompanyJobpage(),
+          //  CompanyJobpage(),
 
-      // Home(),
+          // Home(),
 
           FutureBuilder(
         future: _checkLoginStatus(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasData && snapshot.data is String) {
             // Role-Based navigation
             switch (snapshot.data) {

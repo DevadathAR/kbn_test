@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:kbn_test/utilities/colors.dart';
+import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/lists.dart';
-import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/commonTable.dart';
-import 'package:kbn_test/veiw/widgets_common/boxBTN.dart';
-import 'package:kbn_test/veiw/widgets_common/statusUpdate.dart';
 
 class CompanyApplicantScreen extends StatelessWidget {
   const CompanyApplicantScreen({super.key});
@@ -36,11 +33,20 @@ class CompanyApplicantScreen extends StatelessWidget {
           runSpacing: 5,
           children: [
             applicantsTable(
-                context,
-                // screenwidth > 600 ? screenwidth * 0.5 : screenwidth,
-                headers,
-                data,
-                ["SELECT", "REGECT"]),
+              context: context,
+              // screenwidth > 600 ? screenwidth * 0.5 : screenwidth,
+              headers: headers,
+              data: data,
+              statusOptions: ["SELECT", "REGECT"],
+
+              onStatusChange: (newStatus, applicationId) {
+                // Handle status change logic specific to this page
+                print(
+                    "Status changed to $newStatus for application $applicationId");
+                // Example: Call API to update the status
+                ApiServices.updateApplication(newStatus, applicationId);
+              },
+            ),
             const SizedBox(width: 5),
             selectedApplicantsTable(
               context,

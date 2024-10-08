@@ -6,23 +6,22 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 
-class overViewCards extends StatefulWidget {
+class OverViewCards extends StatefulWidget {
   // final List<Map<String, String>> cardData; // Accept the dynamic data
 
-  const overViewCards({
+  const OverViewCards({
     super.key,
   });
 
   @override
-  State<overViewCards> createState() => _overViewCardsState();
+  State<OverViewCards> createState() => _OverViewCardsState();
 }
 
-class _overViewCardsState extends State<overViewCards> {
+class _OverViewCardsState extends State<OverViewCards> {
   Apiresponse? companyData; // To hold the API response
   bool isLoading = true; // To manage the loading state
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _fetchData();
   }
@@ -48,37 +47,33 @@ class _overViewCardsState extends State<overViewCards> {
   @override
   Widget build(BuildContext context) {
     // List of card data
-    final List<Map<String, String>> cardData = companyData != null
+    final companyCommonData = companyData?.companyData.commonData;
+
+    final List<Map<String, String>> cardData = companyCommonData != null
         ? [
             {
-              'title': companyData!.companyData.commonData.companyPosition
-                  .toString(), // Added null check
+              'title': companyCommonData.companyPosition.toString(),
               'subTitle': "Company position on this month",
             },
             {
-              'title': companyData!
-                  .companyData.commonData.applicantsTotal.thisMonth
-                  .toString(), // Added null check
+              'title': companyCommonData.applicantsTotal.thisMonth.toString(),
               'subTitle': "Applicants applied this month",
             },
             {
-              'title': companyData!
-                  .companyData.commonData.applicantsSelected.thisMonth
-                  .toString(), // Added null check
+              'title':
+                  companyCommonData.applicantsSelected.thisMonth.toString(),
               'subTitle': "Applicants have got jobs",
             },
             {
-              'title': companyData!
-                  .companyData.commonData.mostAppliedJob.applicantsCount
-                  .toString(), // Added null check
+              'title':
+                  companyCommonData.mostAppliedJob.applicantsCount.toString(),
               'subTitle':
-                  "Applicants applied for ${companyData!.companyData.commonData.mostAppliedJob.title ?? 'N/A'}", // Added null check
+                  "Applicants applied for ${companyCommonData.mostAppliedJob.title}",
             },
             {
-              'title':
-                  "${companyData!.companyData.commonData.mostAppliedJob.growth ?? '0'}%", // Added null check
+              'title': "${companyCommonData.mostAppliedJob.growth.toString()}%",
               'subTitle':
-                  "Growth in ${companyData!.companyData.commonData.mostAppliedJob.title ?? 'N/A'} jobs", // Added null check
+                  "Growth in ${companyCommonData.mostAppliedJob.title} jobs",
             },
           ]
         : [];
@@ -104,7 +99,7 @@ class _overViewCardsState extends State<overViewCards> {
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
+                    // physics: const NeverScrollableScrollPhysics(),
                     itemCount: cardData.length,
                     itemBuilder: (context, index) {
                       return Padding(

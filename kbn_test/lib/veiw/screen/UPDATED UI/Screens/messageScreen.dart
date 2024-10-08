@@ -4,6 +4,7 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/showAll_bTn.dart';
 
 class CompanyMessage extends StatelessWidget {
   const CompanyMessage({super.key});
@@ -26,54 +27,77 @@ class CompanyMessage extends StatelessWidget {
   }
 }
 
-Widget messagePageList(context) {
+Widget messagePageList(context,
+    {hight = 500,
+    viewreplybutton = true,
+    tilehight = 100,
+    imgsize = 60,
+    tilecount = 10,
+    paddingseparation = 15}) {
   Size size = MediaQuery.of(context).size;
 
   return Container(
-    height: 500,
-    // width: size.width < 1200 ? 700 : size.width * 0.4,
-    // width: 700,
-
+    height: hight,
     width: size.width > 1200 ? (size.width - 200) * .49 : null,
-
     decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
-    child: Scrollbar(
-      thumbVisibility: true,
-      trackVisibility: true,
-      scrollbarOrientation: ScrollbarOrientation.right,
-      interactive: true,
-      thickness: 10,
-      radius: const Radius.circular(6),
-      child: ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: black),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                    color: white),
-                height: 100,
-                child: buildListItem(context,
-                    name: "name", description: "description", date: "date")),
-          );
-        },
-      ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        SizedBox(
+          height: viewreplybutton ? hight : 235,
+          child: ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            itemCount: tilecount,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.all(paddingseparation),
+                child: Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.withOpacity(0.5)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(6)),
+                        color: white),
+                    height: tilehight,
+                    child: buildListItem(context,
+                        name: "name",
+                        description: "description",
+                        date: "date",
+                        viewreplybutton: viewreplybutton,
+                        imgsize: imgsize)),
+              );
+            },
+          ),
+        ),
+        if (!viewreplybutton)
+          Padding(
+            padding: const EdgeInsets.only(right: 5.0, bottom: 5),
+            child: ShowAllBtn(onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CompanyMessage();
+                  },
+                ),
+              );
+            }),
+          )
+      ],
     ),
+    // ),
   );
 }
 
-Widget buildListItem(context, {name, description, date}) {
+Widget buildListItem(context,
+    {name, description, date, viewreplybutton, imgsize}) {
   Size size = MediaQuery.of(context).size;
 
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 10.0),
     child: Row(
       children: [
-        const Image(image: AssetImage(personPng), height: 60),
+        Image(image: const AssetImage(personPng), height: imgsize),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -81,10 +105,12 @@ Widget buildListItem(context, {name, description, date}) {
             children: [
               Text(
                 name,
+                style: AppTextStyle.normalText,
               ),
               const SizedBox(height: 4),
               Text(
                 description,
+                style: AppTextStyle.twelve_w500,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               )
@@ -97,33 +123,34 @@ Widget buildListItem(context, {name, description, date}) {
             child: Text(
               date,
             )),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 10, bottom: 10),
-            child: SizedBox(
-              width: 100,
-              height: 30,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: tealblue,
-                  shape: RoundedRectangleBorder(
-                    // Creates rounded corner buttons
-                    borderRadius:
-                        BorderRadius.circular(10), // Adjust corner radius
+        if (viewreplybutton)
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10, bottom: 10),
+              child: SizedBox(
+                width: 100,
+                height: 30,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: tealblue,
+                    shape: RoundedRectangleBorder(
+                      // Creates rounded corner buttons
+                      borderRadius:
+                          BorderRadius.circular(10), // Adjust corner radius
+                    ),
                   ),
-                ),
-                child: const Expanded(
-                  child: Text(
-                    "Replay",
-                    style: TextStyle(color: white),
+                  child: const Expanded(
+                    child: Text(
+                      "Replay",
+                      style: TextStyle(color: white),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        )
+          )
       ],
     ),
   );

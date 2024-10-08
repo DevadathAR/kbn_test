@@ -1,40 +1,60 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kbn_test/service/singletonData.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/RecruitmentBarChart.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/colorDeclaration.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/statisticTable.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/verticalTable.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
+import '../../../../service/modelClass.dart';
+
 class CompanyStatisticScreen extends StatelessWidget {
-  const CompanyStatisticScreen({super.key});
+
+  const CompanyStatisticScreen({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ScaffoldBuilder(
-      pageName: "Statistics",
-      currentPath: "Statistics",
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // If screen width is greater than 1200, use Row layout
-          if (constraints.maxWidth > 1200) {
-            return _buildRowLayout(context, constraints.maxWidth);
-          } else {
-            // If screen width is less than or equal to 1200, use ListView (stacked) layout
-            return _buildListViewLayout(
-              context,
+        pageName: "Statistics",
+        currentPath: "Statistics",
+        child: FutureBuilder(
+          future: ApiDataService().fetchCompanyData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            if (!snapshot.hasData || snapshot.data == null) {
+              return const Center(child: Text("No data available"));
+            }
+            // Data is successfully fetched
+            Apiresponse companyData = snapshot.data!;
+
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                // If screen width is greater than 1200, use Row layout
+                if (constraints.maxWidth > 1200) {
+                  return _buildRowLayout(
+                      context, constraints.maxWidth, companyData);
+                } else {
+                  // If screen width is less than or equal to 1200, use ListView (stacked) layout
+                  return _buildListViewLayout(context, companyData);
+                }
+              },
             );
-          }
-        },
-      ),
-    );
+          },
+        ));
   }
 
   // Build the two-column layout (for screen width > 1200)
-  Widget _buildRowLayout(context, double screenWidth) {
+  Widget _buildRowLayout(context, double screenWidth, Apiresponse data) {
     // containing total child
     return SizedBox(
       // height: 401,
@@ -59,9 +79,9 @@ class CompanyStatisticScreen extends StatelessWidget {
                     height: 500,
                     width: screenWidth *
                         .34, // Dynamic width for RecruitmentBarChart
-                    child: const Column(
+                    child: Column(
                       children: [
-                        Align(
+                        const Align(
                           alignment: Alignment.topLeft,
                           child: Padding(
                             padding: EdgeInsets.all(5),
@@ -72,6 +92,7 @@ class CompanyStatisticScreen extends StatelessWidget {
                           ),
                         ),
                         RecruitmentBarChart(
+                          data: data.companyData.statisticsPageData.recruitment,
                           mobilelength: 400,
                           length: 400,
                         ),
@@ -126,9 +147,7 @@ class CompanyStatisticScreen extends StatelessWidget {
   }
 
   // Build the stacked (vertical) layout for smaller screens (<= 1200)
-  Widget _buildListViewLayout(
-    context,
-  ) {
+  Widget _buildListViewLayout(context, Apiresponse data) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.only(top: 8),
@@ -139,18 +158,19 @@ class CompanyStatisticScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 color: white,
               ),
-              child: const Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
                     height: 450,
                     width: double.infinity, // Take full width in stacked view
                     child: RecruitmentBarChart(
+                      data: data.companyData.statisticsPageData.recruitment,
                       mobilelength: 400,
                       length: 350,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 450,
                     width: double.infinity, // Take full width in stacked view
                     child: Statisticpagetable(),

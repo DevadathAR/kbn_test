@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kbn_test/service/modelClass.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
@@ -42,10 +43,31 @@ class RadialArc {
 }
 
 class SyncfusionPieChart extends StatelessWidget {
-  const SyncfusionPieChart({super.key});
+  final CommonData commonData; // You will pass CommonData here
+
+  const SyncfusionPieChart({
+    super.key,
+    required this.commonData,
+  });
 
   @override
   Widget build(BuildContext context) {
+    // Extract the required data
+    // final totalApplicantsThisMonth = da;
+
+    final totalApplicantsThisMonth = commonData.applicantsTotal.thisMonth;
+    final totalApplicantsPrevMonth = commonData.applicantsTotal.prevMonth;
+    final selectedApplicantsThisMonth = commonData.applicantsSelected.thisMonth;
+    final selectedApplicantsPrevMonth = commonData.applicantsSelected.prevMonth;
+
+    // Data for the chart
+    // final List<ChartData> chartData = [
+    //   ChartData('Total Applicants (Current Month)', totalApplicantsThisMonth.toDouble()),
+    //   ChartData('Total Applicants (Previous Month)', totalApplicantsPrevMonth.toDouble()),
+    //   ChartData('Selected Applicants (Current Month)', selectedApplicantsThisMonth.toDouble()),
+    //   ChartData('Selected Applicants (Previous Month)', selectedApplicantsPrevMonth.toDouble()),
+    // ];
+
     return SfRadialGauge(
       // backgroundColor: textGrey,
       title: const GaugeTitle(
@@ -57,44 +79,44 @@ class SyncfusionPieChart extends StatelessWidget {
         // Outer Green Arcs
         RadialArc.build(
           isGradient: true,
-          maxValue: 100,
+          maxValue: totalApplicantsThisMonth.toDouble(),
           startAngle: 230,
           endAngle: 230,
           radiusFactor: 1.0,
           arcColor: green,
           thickness: 0.3,
-          value: 100,
+          value: totalApplicantsThisMonth.toDouble(),
         ),
         RadialArc.build(
           isGradient: false,
-          maxValue: 100,
+          maxValue: totalApplicantsThisMonth.toDouble(),
           startAngle: 180,
           endAngle: 180,
           radiusFactor: 1.0,
           arcColor: green,
           thickness: 0.3,
-          value: 30,
+          value: selectedApplicantsThisMonth.toDouble(),
         ),
         // Inner Teal Arcs
         RadialArc.build(
           isGradient: false,
-          maxValue: 100,
+          maxValue: totalApplicantsPrevMonth.toDouble(),
           startAngle: 20,
           endAngle: 20,
           radiusFactor: 0.6,
           arcColor: tealblue, // Your custom teal color
           thickness: 0.4,
-          value: 100,
+          value: totalApplicantsPrevMonth.toDouble(),
         ),
         RadialArc.build(
           isGradient: false,
-          maxValue: 100,
+          maxValue: totalApplicantsPrevMonth.toDouble(),
           startAngle: 360,
           endAngle: 360,
           radiusFactor: 0.6,
           arcColor: yellow,
           thickness: 0.4,
-          value: 30,
+          value: selectedApplicantsPrevMonth.toDouble(),
         ),
       ],
     );

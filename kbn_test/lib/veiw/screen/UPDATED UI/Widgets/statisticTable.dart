@@ -1,32 +1,83 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:kbn_test/utilities/assets_path.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/applicantsScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/colorDeclaration.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/shareButton.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/showAll_bTn.dart';
 
-class Statisticpagetable extends StatelessWidget {
-  const Statisticpagetable({super.key});
+class Statisticpagetable extends StatefulWidget {
+  const Statisticpagetable({Key? key}) : super(key: key);
+
+  @override
+  _StatisticpagetableState createState() => _StatisticpagetableState();
+}
+
+class _StatisticpagetableState extends State<Statisticpagetable> {
+  final GlobalKey _globalKey = GlobalKey();
+
+  // Define the headers and row data
+  final List<String> headers = ['Name', 'Percentage'];
+
+  // Sample data for the table rows
+  final List<List<String>> rowData = [
+    ['Tile A', '25%'],
+    ['Tile B', '40%'],
+    ['Tile C', '15%'],
+    ['Tile D', '10%'],
+    ['Tile E', '50%'],['Tile A', '25%'],
+    ['Tile B', '40%'],
+    ['Tile C', '15%'],
+    ['Tile D', '10%'],
+    ['Tile E', '50%'],['Tile A', '25%'],
+    ['Tile B', '40%'],
+    ['Tile C', '15%'],
+    ['Tile D', '10%'],
+    ['Tile E', '50%'],['Tile A', '25%'],
+    ['Tile B', '40%'],
+    ['Tile C', '15%'],
+    ['Tile D', '10%'],
+    ['Tile E', '50%'],['Tile A', '25%'],
+    ['Tile B', '40%'],
+    ['Tile C', '15%'],
+    ['Tile D', '10%'],
+    ['Tile E', '50%'],
+  ];
+
+  Future<void> shareTableText() async {
+    String tableText = headers.join('\t') + '\n';
+    for (var row in rowData) {
+      tableText += row.join('\t') + '\n';
+    }
+    await Share.share(tableText);
+  }
+
+  // Future<void> shareTableScreenshot() async {
+  //   try {
+  //     RenderRepaintBoundary boundary = _globalKey.currentContext!
+  //         .findRenderObject() as RenderRepaintBoundary;
+  //     ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+  //     ByteData? byteData =
+  //         await image.toByteData(format: ui.ImageByteFormat.png);
+
+  //     if (byteData != null) {
+  //       Uint8List pngBytes = byteData.buffer.asUint8List();
+  //       final tempDir = await getTemporaryDirectory();
+  //       final file =
+  //           await File('${tempDir.path}/table_screenshot.png').create();
+  //       await file.writeAsBytes(pngBytes);
+
+  //       final XFile xFile = XFile(file.path);
+  //       await Share.shareXFiles([xFile], text: 'Table Screenshot');
+  //     }
+  //   } catch (e) {
+  //     print('Error sharing screenshot: $e');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
-    // Define the headers and row data
-    final List<String> headers = [
-      'Name',
-      'Percentage',
-    ];
-
-    // Sample data for the table rows
-    final List<List<String>> rowData = [
-      ['Tile A', '25%'],
-      ['Tile B', '40%'],
-      ['Tile C', '15%'],
-      ['Tile D', '10%'],
-      ['Tile E', '50%'],
-    ];
-
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
       child: Padding(
@@ -42,57 +93,61 @@ class Statisticpagetable extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 5),
-            Table(
-              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-              border: TableBorder.all(
-                color: Colors.grey.withOpacity(0.5), // Border color
-                width: 0.5, // Border width
-              ),
-              columnWidths: const {
-                0: FlexColumnWidth(), // Responsive width for Tile Name column
-                1: FlexColumnWidth(), // Responsive width for Percentage column
-              },
-              children: [
-                // Add the header row
-                TableRow(
-                  children: [
-                    _buildHeaderCell(headers[0]), // 'Tile Name'
-                    _buildHeaderCell(headers[1]), // 'Percentage'
-                  ],
+            RepaintBoundary(
+              key: _globalKey,
+              child: Table(
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                border: TableBorder.all(
+                  color: Colors.grey.withOpacity(0.5),
+                  width: 0.5,
                 ),
-                // Add the data rows
-                for (var row in rowData)
+                columnWidths: const {
+                  0: FlexColumnWidth(),
+                  1: FlexColumnWidth(),
+                },
+                children: [
                   TableRow(
-                    children: [
-                      _buildDataCell(row[0]), // Tile Name
-                      _buildDataCell(row[1]), // Percentage
-                    ],
+                    children: headers
+                        .map((header) => _buildHeaderCell(header))
+                        .toList(),
                   ),
+                  ...rowData.map((row) => TableRow(
+                        children:
+                            row.map((cell) => _buildDataCell(cell)).toList(),
+                      )),
+                ],
+              ),
+            ),
+            const SizedBox(height: 5),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: shareTableText,
+                  child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: tealblue,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: SvgPicture.asset(
+                        shareIcon,
+                        width: 10,
+                        height: 10,
+                        color: white,
+                      )),
+                )
               ],
             ),
-            const SizedBox(
-                height: 5), // Spacing between table and the "Show all" button
-            shareBTN(onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CompanyApplicantScreen();
-                  },
-                ),
-              );
-            }),
           ],
         ),
       ),
     );
   }
 
-  // Widget for header cell
   Widget _buildHeaderCell(String text) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          vertical: 23.5, horizontal: 5.0), // Increase vertical padding
+      padding: const EdgeInsets.symmetric(vertical: 23.5, horizontal: 5.0),
       child: Text(
         text,
         style: const TextStyle(
@@ -104,11 +159,9 @@ class Statisticpagetable extends StatelessWidget {
     );
   }
 
-  // Widget for data cell
   Widget _buildDataCell(String text) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          vertical: 23.5, horizontal: 5.0), // Increase vertical padding
+      padding: const EdgeInsets.symmetric(vertical: 23.5, horizontal: 5.0),
       child: Text(
         text,
         style: AppTextStyle.normalText,

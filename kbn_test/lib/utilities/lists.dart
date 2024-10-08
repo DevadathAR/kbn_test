@@ -34,6 +34,30 @@ const // Data for the full table
     'resume': 'View',
     'status': 'SELECTED'
   },
+  {
+    'date': '2023-09-24',
+    'name': 'John Doe',
+    'location': 'New York',
+    'designation': 'Developer',
+    'resume': 'View',
+    'status': 'SELECTED'
+  },
+  {
+    'date': '2023-09-24',
+    'name': 'John Doe',
+    'location': 'New York',
+    'designation': 'Developer',
+    'resume': 'View',
+    'status': 'SELECTED'
+  },
+  {
+    'date': '2023-09-24',
+    'name': 'John Doe',
+    'location': 'New York',
+    'designation': 'Developer',
+    'resume': 'View',
+    'status': 'SELECTED'
+  },
 ];
 
 // Data for the selected applicants table

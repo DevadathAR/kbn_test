@@ -107,7 +107,7 @@ class ApiServices {
 
   // View  Applicant Details API
   static Future<Apiresponse> companyData() async {
-    var url = Uri.parse('$baseUrl/company/overview2?month=9&year=2024');
+    var url = Uri.parse('$baseUrl/company/data?month=9&year=2024');
 
     var response = await http.get(url, headers: headers);
 
@@ -314,18 +314,18 @@ class ApiServices {
     }
   }
 
-  static Future<Map<String, dynamic>> fetchCompanyDetails(int companyId) async {
-    var url = Uri.parse('$baseUrl/admin/c/$companyId');
+  // static Future<Map<String, dynamic>> fetchCompanyDetails(int companyId) async {
+  //   var url = Uri.parse('$baseUrl/admin/c/$companyId');
 
-    var response = await http.get(url, headers: headers);
-    // print('CompanyDetails...........${response.body}');
+  //   var response = await http.get(url, headers: headers);
+  //   // print('CompanyDetails...........${response.body}');
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to fetch company details');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body);
+  //   } else {
+  //     throw Exception('Failed to fetch company details');
+  //   }
+  // }
 
   // Updating Approval
   static Future<Map<String, dynamic>> approveCompany(

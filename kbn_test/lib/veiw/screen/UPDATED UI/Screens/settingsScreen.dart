@@ -3,77 +3,141 @@ import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/profileScreen.dart';
-
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 
-class CompanySettingPage extends StatelessWidget {
+class CompanySettingPage extends StatefulWidget {
   const CompanySettingPage({super.key});
+
+  @override
+  _CompanySettingPageState createState() => _CompanySettingPageState();
+}
+
+class _CompanySettingPageState extends State<CompanySettingPage> {
+  String? selectedSetting; // Track which mobScreenSetting is tapped
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return ScaffoldBuilder(
-        currentPath: "Settings",
-        pageName: "Settings",
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(
-              height: 10,
+      currentPath: "Settings",
+      pageName: "Settings",
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            width: size.width > 1200 ? (size.width - 200) * .49 : null,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                companyAndManager(context,
+                    label: "Company name", sub: "KBN Code", isview: false),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: size.width > 900
+                      ? Wrap(
+                          spacing:
+                              16.0, // Set the horizontal space between items
+                          runSpacing:
+                              16.0, // Set the vertical space between runs
+                          alignment:
+                              WrapAlignment.spaceBetween, // Space items evenly
+                          children: [
+                            companySetting(context,
+                                label: "Account",
+                                sub: "Email",
+                                isItem2view: true,
+                                isItem3view: true),
+                            companySetting(context,
+                                label: "Security", sub: "Privacy"),
+                            companySetting(context,
+                                label: "Notification",
+                                sub: "Notification",
+                                isItem1view: false),
+                            companySetting(context,
+                                label: "General", sub: "Language"),
+                          ],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Conditionally render companySetting or mobScreenSettings based on selection
+                            selectedSetting == "Account"
+                                ? companySetting(
+                                    context,
+                                    label: "Account",
+                                    sub: "Email",
+                                    isItem2view: true,
+                                    isItem3view: true,
+                                  )
+                                : mobScreenSettings(
+                                    context,
+                                    text: "Account",
+                                    onTap: () {
+                                      setState(() {
+                                        selectedSetting = "Account";
+                                      });
+                                    },
+                                  ),
+                            selectedSetting == "Security"
+                                ? companySetting(
+                                    context,
+                                    label: "Security",
+                                    sub: "Privacy",
+                                  )
+                                : mobScreenSettings(
+                                    context,
+                                    text: "Security",
+                                    onTap: () {
+                                      setState(() {
+                                        selectedSetting = "Security";
+                                      });
+                                    },
+                                  ),
+                            selectedSetting == "Notification"
+                                ? companySetting(
+                                    context,
+                                    label: "Notification",
+                                    sub: "Notification",
+                                    isItem1view: false,
+                                  )
+                                : mobScreenSettings(
+                                    context,
+                                    text: "Notification",
+                                    onTap: () {
+                                      setState(() {
+                                        selectedSetting = "Notification";
+                                      });
+                                    },
+                                  ),
+                            selectedSetting == "General"
+                                ? companySetting(
+                                    context,
+                                    label: "General",
+                                    sub: "Language",
+                                  )
+                                : mobScreenSettings(
+                                    context,
+                                    text: "General",
+                                    onTap: () {
+                                      setState(() {
+                                        selectedSetting = "General";
+                                      });
+                                    },
+                                  ),
+                          ],
+                        ),
+                )
+              ],
             ),
-            SizedBox(
-              width: size.width > 1200 ? (size.width - 200) * .49 : null,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  companyAndManager(context,
-                      label: "Company name", sub: "KBN Code", isview: false),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Wrap(
-                      spacing: 16.0, // Set the horizontal space between items
-                      runSpacing: 16.0, // Set the vertical space between runs
-                      alignment:
-                          WrapAlignment.spaceBetween, // Space items evenly
-                      children: [
-                        companySetting(context,
-                            label: "Account",
-                            sub: "Email",
-                            isItem2view: true,
-                            isItem3view: true),
-                        companySetting(context,
-                            label: "Security", sub: "Privacy"),
-                        companySetting(context,
-                            label: "Notification",
-                            sub: "Notification",
-                            isItem1view: false),
-                        companySetting(context,
-                            label: "General", sub: "Language"),
-                        // Wrap(
-                        //   spacing:
-                        //       16.0, // Set the horizontal space between items
-                        //   runSpacing:
-                        //       16.0, // Set the vertical space between runs
-                        //   alignment: WrapAlignment.spaceBetween,
-                        //   children: [
-                        //     companySetting(context,
-                        //         label: "Job Positions",
-                        //         sub: "Notification",
-                        //         isItem1view: false),
-                        //     companySetting(context,
-                        //         label: "Commmunity", sub: "Language"),
-                        //   ],
-                        // )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -90,7 +154,9 @@ Widget companySetting(
       false; // Assuming a variable to track notification state
 
   return Container(
-    width: size.width < 1200 ? 170 : size.width * 0.198,
+    // width: size.width >     1200 ? size.width * 0.198  : size.width > 900 ? 170: null,
+    width: size.width > 900 ? (size.width - 225) * 0.24 : null,
+
     height: size.height * 0.5,
     decoration: const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(6)),
@@ -123,9 +189,6 @@ Widget companySetting(
             )
           else
             Wrap(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              // alignment: WrapAlignment.spaceEvenly,
-              // runSpacing: 40,
               spacing: 100,
               children: [
                 const Text(
@@ -135,9 +198,8 @@ Widget companySetting(
                 Switch(
                   value: isNotificationEnabled,
                   onChanged: (bool newValue) {
-                    // Toggle notification state
                     isNotificationEnabled = newValue;
-                    // You can use setState or other state management
+                    // Handle state management or logic when the switch is toggled
                   },
                 ),
               ],
@@ -169,6 +231,29 @@ Widget companySetting(
               ),
             )
         ],
+      ),
+    ),
+  );
+}
+
+Widget mobScreenSettings(BuildContext context,
+    {required String text, required VoidCallback onTap}) {
+  Size size = MediaQuery.of(context).size;
+
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 10.0),
+    child: GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.only(top: 10, left: 30),
+        decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)), color: white),
+        height: 35,
+        width: size.width * 1,
+        child: Text(
+          text,
+          style: AppTextStyle.normalText,
+        ),
       ),
     ),
   );

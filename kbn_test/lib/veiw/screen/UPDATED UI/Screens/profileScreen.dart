@@ -22,6 +22,7 @@ class CompanyProfileScreen extends StatelessWidget {
               height: 10,
             ),
             // PageAndDate(context, pageLabel: "Profile"),
+
             Wrap(
               spacing: 10, runSpacing: 10,
               alignment: WrapAlignment.spaceAround,
@@ -40,39 +41,73 @@ class CompanyProfileScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 10.0),
-              child: Wrap(
-                spacing: 10, runSpacing: 10,
-                alignment: WrapAlignment.spaceAround,
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  companyDetails(
-                    context,
-                    label: "Compnay Details",
-                    sub: "Address",
-                  ),
-                  // SizedBox(
-                  //   width: size.width * 0.005,
-                  // ),
-                  otherDetails(
-                    context,
-                    label: "Team Members",
-                  ),
-                  // SizedBox(
-                  //   width: size.width * 0.005,
-                  // ),
-                  otherDetails(
-                    context,
-                    label: "Job Positions",
-                  ),
-                  // SizedBox(
-                  //   width: size.width * 0.005,
-                  // ),
-                  otherDetails(
-                    context,
-                    label: "Commmunity",
-                  )
-                ],
-              ),
+              child: size.width > 900
+                  ? Wrap(
+                      spacing: 10, runSpacing: 10,
+                      alignment: WrapAlignment.spaceAround,
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        companyDetails(
+                          context,
+                          label: "Compnay Details",
+                          sub: "Address",
+                        ),
+                        // SizedBox(
+                        //   width: size.width * 0.005,
+                        // ),
+                        otherDetails(
+                          context,
+                          label: "Team Members",
+                        ),
+                        // SizedBox(
+                        //   width: size.width * 0.005,
+                        // ),
+                        otherDetails(
+                          context,
+                          label: "Job Positions",
+                        ),
+                        // SizedBox(
+                        //   width: size.width * 0.005,
+                        // ),
+                        otherDetails(
+                          context,
+                          label: "Commmunity",
+                        )
+                      ],
+                    )
+                  : Column(
+                      // spacing: 10, runSpacing: 10,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        companyDetails(
+                          context,
+                          label: "Compnay Details",
+                          sub: "Address",
+                        ),
+                        // SizedBox(
+                        //   width: size.width * 0.005,
+                        // ),
+                        otherDetails(
+                          context,
+                          label: "Team Members",
+                        ),
+                        // SizedBox(
+                        //   width: size.width * 0.005,
+                        // ),
+                        otherDetails(
+                          context,
+                          label: "Job Positions",
+                        ),
+                        // SizedBox(
+                        //   width: size.width * 0.005,
+                        // ),
+                        otherDetails(
+                          context,
+                          label: "Commmunity",
+                        )
+                      ],
+                    ),
             )
           ],
         ));
@@ -234,85 +269,91 @@ Widget viewProfile(BuildContext context) {
 
 Widget companyDetails(context, {label, sub, isview}) {
   Size size = MediaQuery.of(context).size;
-  return Container(
-    width: size.width < 1200 ? 172 : size.width * 0.2012,
-    height: size.height * 0.5,
-    decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
-    child: Stack(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 15.0, left: 10),
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  label,
-                  style: AppTextStyle.twenty_w500,
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 5.0),
+    child: Container(
+      width: size.width > 900 ? (size.width - 225) * 0.24 : null,
+      height: size.height * 0.5,
+      decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 15.0, left: 10),
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    label,
+                    style: AppTextStyle.twenty_w500,
+                  ),
                 ),
-              ),
-              TextFormField(
-                maxLines: 6,
-                decoration: InputDecoration(
-                  hintText: sub,
-                  border: InputBorder.none,
+                TextFormField(
+                  maxLines: 6,
+                  decoration: InputDecoration(
+                    hintText: sub,
+                    border: InputBorder.none,
+                  ),
+                  textAlign: TextAlign.left, // Center the text and hint
                 ),
-                textAlign: TextAlign.left, // Center the text and hint
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: "Contact num",
-                  border: InputBorder.none,
+                TextFormField(
+                  decoration: const InputDecoration(
+                    hintText: "Contact num",
+                    border: InputBorder.none,
+                  ),
                 ),
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: "Website",
-                  border: InputBorder.none,
+                TextFormField(
+                  decoration: const InputDecoration(
+                    hintText: "Website",
+                    border: InputBorder.none,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        addAndSave(context)
-      ],
+          addAndSave(context)
+        ],
+      ),
     ),
   );
 }
 
 Widget otherDetails(context, {label, sub, isview}) {
   Size size = MediaQuery.of(context).size;
-  return Container(
-    width: size.width < 1200 ? 172 : size.width * 0.2012,
-    height: size.height * 0.5,
-    decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
-    child: Stack(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 15.0, left: 10),
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  label,
-                  style: AppTextStyle.twenty_w500,
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 5.0),
+    child: Container(
+      width: size.width > 900 ? (size.width - 225) * 0.24 : null,
+      height: size.height * 0.5,
+      decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 15.0, left: 10),
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    label,
+                    style: AppTextStyle.twenty_w500,
+                  ),
                 ),
-              ),
-              TextFormField(
-                maxLines: 6,
-                decoration: InputDecoration(
-                  hintText: sub,
-                  border: InputBorder.none,
+                TextFormField(
+                  maxLines: 6,
+                  decoration: InputDecoration(
+                    hintText: sub,
+                    border: InputBorder.none,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        addAndSave(context)
-      ],
+          addAndSave(context)
+        ],
+      ),
     ),
   );
 }

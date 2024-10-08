@@ -1,5 +1,6 @@
 // Reusable method to build a generic table
 import 'package:flutter/material.dart';
+import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
@@ -9,101 +10,117 @@ import 'package:kbn_test/veiw/widgets_common/boxBTN.dart';
 import 'package:kbn_test/veiw/widgets_common/normalText.dart';
 import 'package:kbn_test/veiw/widgets_common/statusUpdate.dart';
 
-Widget applicantsTable(
+Widget applicantsTable({
   context,
-  // double width,
-  List<Map<String, String>> headers,
-  List<Map<String, String>> data,
-  List<String> statusOptions, // Add status options dynamically
-) {
+  required List<Map<String, String>> headers,
+  required List<Map<String, String>> data,
+  required List<String> statusOptions,
+  required Function(String status, int applicationId) onStatusChange,
+} // Ad}d callback parameter
+    ) {
   Size size = MediaQuery.of(context).size;
   return Container(
-      width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
-      height: 400,
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: white,
-      ),
-      child: Column(
-        children: [
-          // Header row (fixed)
-          Table(
-            border: tableHeaderDec(),
-            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-            columnWidths:
-                _generateColumnWidths(headers.length), // Dynamic widths
-
-            children: [
-              TableRow(
-                children: headers.map((header) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 23.5, horizontal: 5.0),
-                    child: Text(
-                      header['header']!,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+    width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
+    height: 400,
+    padding: const EdgeInsets.all(16.0),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+      color: Colors.white,
+    ),
+    child: Column(
+      children: [
+        // Header row
+        Table(
+          border: tableHeaderDec(),
+          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+          columnWidths: _generateColumnWidths(headers.length),
+          children: [
+            TableRow(
+              children: headers.map((header) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 18.5,
+                    horizontal: 5.0,
+                  ),
+                  child: Text(
+                    header['header']!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 10,
                     ),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
-          // Data rows (scrollable)
-          Expanded(
-            child: SingleChildScrollView(
-              child: Table(
-                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                border: TableBorder(
-                  horizontalInside: BorderSide(
-                      color: Colors.grey.withOpacity(0.5), width: 0.5),
-                  verticalInside: BorderSide(
-                      color: Colors.grey.withOpacity(0.5), width: 0.5),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+        // Data rows
+        Expanded(
+          child: SingleChildScrollView(
+            child: Table(
+              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+              border: TableBorder(
+                horizontalInside: BorderSide(
+                  color: Colors.grey.withOpacity(0.5),
+                  width: 0.5,
                 ),
-                columnWidths:
-                    _generateColumnWidths(headers.length), // Dynamic widths
-
-                children: [
-                  ...data.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final row = entry.value;
-                    return TableRow(
-                      children: headers.map((header) {
-                        if (header['key'] == 'status') {
-                          // Use the custom status widget in the 'status' column
-                          return CustomStatusColumn(
-                            status: row['status'] ?? '',
-                            applicationId:
-                                index, // Assuming the index is used as the applicationId
-                            onSelect: () {
-                              print('Status selected for application $index');
-                            },
-                            onStatusChange: () {
-                              // Define logic to handle status change and refresh
-                            },
-                            statusOptions: statusOptions,
-                          );
-                        } else {
-                          // Default data cell for other columns
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 23.5, horizontal: 5.0),
-                            child: Text(
-                              row[header['key']] ?? '',
-                              textAlign: TextAlign.center,
-                            ),
-                          );
-                        }
-                      }).toList(),
-                    );
-                  }),
-                ],
+                verticalInside: BorderSide(
+                  color: Colors.grey.withOpacity(0.5),
+                  width: 0.5,
+                ),
               ),
+              columnWidths: _generateColumnWidths(headers.length),
+              children: [
+                ...data.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final row = entry.value;
+                  return TableRow(
+                    children: headers.map((header) {
+                      if (header['key'] == 'status') {
+                        return CustomStatusColumn(
+                          status: row['status'] ?? '',
+                          onSelect: () {
+                            // Implement the action for select button
+                            print(
+                                'Select pressed for application ID: ${row['applicationId']}');
+                          },
+                          applicationId:
+                              int.tryParse(row['applicationId'] ?? '0') ?? 0,
+                          onStatusChange: () {
+                            // Logic to refresh data
+                          },
+                          statusOptions: statusOptions,
+                          onStatusUpdate: (newStatus) {
+                            // Logic to handle status update
+                            print(
+                                'Status changed to: $newStatus for applicationId: ${row['applicationId']}');
+                            // Add any custom logic here, such as making an API call
+                          },
+                        );
+                      } else {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 23.5,
+                            horizontal: 5.0,
+                          ),
+                          child: Text(
+                            row[header['key']] ?? '',
+                            textAlign: TextAlign.center,
+                            style: AppTextStyle.normalText,
+                          ),
+                        );
+                      }
+                    }).toList(),
+                  );
+                }),
+              ],
             ),
           ),
-        ],
-      ));
+        ),
+      ],
+    ),
+  );
 }
 
 /// Helper function to generate column widths based on the number of headers
@@ -118,12 +135,11 @@ Map<int, TableColumnWidth> _generateColumnWidths(int headerCount) {
 
 class CustomStatusColumn extends StatefulWidget {
   final String status;
-  final VoidCallback onSelect; // Callback for when Select is pressed
+  final VoidCallback onSelect;
   final int applicationId;
-  final VoidCallback onStatusChange; // Callback to refresh data
-  final List<String> statusOptions; // List of status options to show
-
-  // final Function ()?
+  final VoidCallback onStatusChange;
+  final List<String> statusOptions;
+  final Function(String newStatus) onStatusUpdate;
 
   const CustomStatusColumn({
     super.key,
@@ -132,6 +148,7 @@ class CustomStatusColumn extends StatefulWidget {
     required this.applicationId,
     required this.onStatusChange,
     required this.statusOptions,
+    required this.onStatusUpdate,
   });
 
   @override
@@ -144,20 +161,33 @@ class _CustomStatusColumnState extends State<CustomStatusColumn> {
   @override
   void initState() {
     super.initState();
-    status = widget.status;
+    status = widget.status; // Initialize the status with the passed value
   }
 
-  void _setStatus(String newStatus) {
+  Future<void> _setStatus(String newStatus) async {
     setState(() {
-      status = newStatus;
+      status = newStatus; // Update the status locally in the UI
     });
-    // Proceed with the API call
+
     try {
-      // await ApiServices.updateApplication(newStatus, widget.applicationId);
-      widget.onStatusChange();
+      // Make the API call to update the status in the backend
+      await ApiServices.updateApplication(newStatus, widget.applicationId);
+
+      // Call the onStatusUpdate function to handle UI and other logic
+      widget.onStatusUpdate(newStatus);
+
+      // Optionally: Provide feedback, such as a success message or UI indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Status updated to $newStatus')),
+      );
     } catch (e) {
-      print('Error updating status: $e');
+      // Handle any errors, such as API call failure
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update status: $e')),
+      );
     }
+
+    widget.onStatusChange(); // Trigger a UI refresh if needed
   }
 
   @override
@@ -171,8 +201,8 @@ class _CustomStatusColumnState extends State<CustomStatusColumn> {
           children: [
             StatusButton(
               text: option,
-              textColor: index == 0 ? tealblue : Colors.red,
-              onTap: () => _setStatus(option),
+              textColor: index == 0 ? Colors.teal : Colors.red,
+              onTap: () => _setStatus(option), // Update status when clicked
             ),
             const SizedBox(height: 10),
           ],
@@ -181,6 +211,7 @@ class _CustomStatusColumnState extends State<CustomStatusColumn> {
     );
   }
 }
+
 
 Widget selectedApplicantsTable(context,
     {
@@ -270,10 +301,19 @@ Widget selectedApplicantsTable(context,
                           },
                           applicationId:
                               int.tryParse(row['applicationId'] ?? '0') ?? 0,
-                          onStatusChange: () {},
+                          onStatusChange: () {
+                            // Logic to refresh data
+                          },
                           statusOptions:
-                              statusOptions ?? ['Approved', 'Rejected'],
+                              statusOptions ?? ['Approved', 'Pending'],
+                          onStatusUpdate: (newStatus) {
+                            // Logic to handle status update
+                            print(
+                                'Status changed to: $newStatus for applicationId: ${row['applicationId']}');
+                            // Add any custom logic here, such as making an API call
+                          },
                         ),
+
                       // Otherwise, show the ButtonCell
                       if (!hasStatus) _buildButtonCell(context),
                     ],

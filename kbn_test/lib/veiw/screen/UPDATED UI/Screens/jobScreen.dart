@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kbn_test/service/apiServices.dart';
+import 'package:kbn_test/service/modelClass.dart';
+import 'package:kbn_test/service/singletonData.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/commonTable.dart';
 
-class CompanyJobpage extends StatelessWidget {
+class CompanyJobpage extends StatefulWidget {
   const CompanyJobpage({super.key});
 
+  @override
+  State<CompanyJobpage> createState() => _CompanyJobpageState();
+}
+
+class _CompanyJobpageState extends State<CompanyJobpage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -18,97 +25,89 @@ class CompanyJobpage extends StatelessWidget {
       {'header': 'Experience', 'key': 'experience'},
       {'header': 'Location', 'key': 'location'},
       {'header': 'Vaccancy', 'key': 'vaccancy'},
-      {'header': 'No. of applicants', 'key': 'applicantnumber'},
-      {'header': 'Employment type', 'key': 'emptype'},
+      {'header': 'Selected applicants', 'key': 'selectedApplicants'},
       {'header': 'Employment type', 'key': 'emptype'},
       {'header': 'Salary', 'key': 'salary'},
       {'header': 'Status', 'key': 'status'},
-    ];
-
-    List<Map<String, String>> jobTableData = [
-      {
-        'designation': 'Software Engineer',
-        'experience': '3-5 years',
-        'location': 'New York',
-        'vaccancy': '3',
-        'applicantnumber': '25',
-        'emptype': 'Full-time',
-        'salary': '\$70,000',
-        'status': 'Open'
-      },
-      {
-        'designation': 'Data Scientist',
-        'experience': '2-4 years',
-        'location': 'San Francisco',
-        'vaccancy': '2',
-        'applicantnumber': '18',
-        'emptype': 'Full-time',
-        'salary': '\$85,000',
-        'status': 'Open'
-      },
-      {
-        'designation': 'UI/UX Designer',
-        'experience': '1-3 years',
-        'location': 'Remote',
-        'vaccancy': '1',
-        'applicantnumber': '12',
-        'emptype': 'Contract',
-        'salary': '\$50,000',
-        'status': 'Closed'
-      },
-      {
-        'designation': 'Project Manager',
-        'experience': '5-7 years',
-        'location': 'Chicago',
-        'vaccancy': '1',
-        'applicantnumber': '30',
-        'emptype': 'Full-time',
-        'salary': '\$95,000',
-        'status': 'Open'
-      },
-      {
-        'designation': 'Business Analyst',
-        'experience': '4-6 years',
-        'location': 'Boston',
-        'vaccancy': '2',
-        'applicantnumber': '15',
-        'emptype': 'Full-time',
-        'salary': '\$80,000',
-        'status': 'Closed'
-      },
     ];
 
     return ScaffoldBuilder(
       currentPath: "Jobs",
       pageName: "Jobs",
       child: SizedBox(
-        // height: size.height * 0.6,
-        height: 500,
-        child: ListView(
-          children: [
-            Wrap(
-              spacing: 10,
-              children: [
-                Expanded(
-                  child: applicantsTable(
-                      context,
-                      // size.width > 1200
-                      //     ? (size.width - 200) * 0.49
-                      //     : size.width,
-                      jobTableheaders,
-                      jobTableData,
-                      ["OPEN", "CLOSE"]),
-                ),
-                if (size.width < 1200)
-                  const SizedBox(
-                    height: 5,
-                  ),
-                const jobDetailsForm()
-              ],
-            )
-          ],
-        ),
-      ),
+          // height: size.height * 0.6,
+          height: 550,
+          child: FutureBuilder(
+              future: ApiDataService().fetchCompanyData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+                if (!snapshot.hasData || snapshot.data == null) {
+                  return const Center(child: Text("No data available"));
+                }
+                // Data is successfully fetched
+                // Map fetched data to the format required for the table
+                Apiresponse companyData = snapshot.data!;
+            List<Map<String, String>> jobTableData = companyData.companyData.jobsPageData.map((job) {
+              return {
+                'designation': job.designation,
+                'experience': job.experience,
+                'location': job.location.toString().split('.').last, // Convert enum to string
+                'vacancy': job.vacancy.toString(),
+                'selected': job.selected.toString(),
+                'jobType': job.jobType.toUpperCase(), // Convert job type to uppercase
+                'salary': '\$${job.salary}',
+                'status': job.status,
+              };
+            }).toList();
+
+                return ListView(
+                  children: [
+                    Wrap(
+                      spacing: 10,
+                      children: [
+                        Expanded(
+                          child: applicantsTable(
+                            context: context,
+                            headers: jobTableheaders,
+                            data: jobTableData,
+                            statusOptions: ["CLOSE"],
+                            onStatusChange: (newStatus, applicationId) async {
+                              // Call the API to update the status
+                              await ApiServices.updateApplication(
+                                  newStatus, applicationId);
+
+                              // Update the local job data to reflect the new status
+                              setState(() {
+                                var job = jobTableData.firstWhere((job) =>
+                                    job['applicationId'] ==
+                                    applicationId.toString());
+                                job['status'] =
+                                    newStatus; // Update the status locally in the UI
+                              });
+                              // Handle any errors that occur during the status update
+                              // ScaffoldMessenger.of(context).showSnackBar(
+                              //   SnackBar(
+                              //       content:
+                              //           Text('Failed to update status: $e')),
+                              // );
+                            },
+                          ),
+                        ),
+                        if (size.width < 1200)
+                          const SizedBox(
+                            height: 5,
+                          ),
+                        const jobDetailsForm()
+                      ],
+                    )
+                  ],
+                );
+              })),
     );
   }
 }
@@ -236,212 +235,224 @@ class _jobDetailsFormState extends State<jobDetailsForm> {
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(8)), color: white),
       width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                      width: (size.width - 200) * .32,
+                      child: TextFormField(
+                        controller: jobTitleController,
+                        decoration: const InputDecoration(
+                            border:
+                                OutlineInputBorder(borderSide: BorderSide.none),
+                            hintText: "Position",
+                            hintStyle: AppTextStyle.normalText),
+                      )),
+                  const Icon(Icons.edit)
+                ],
+              ),
+            ),
+            _textField(
+                textMaxlines: 3,
+                controller: jobSummaryController,
+                validator: validateRequired,
+                // width: 680,
+                width: size.width > 1200
+                    ? (size.width - 200) * 0.455
+                    : size.width > 900
+                        ? (size.width - 200) * 0.7
+                        : (size.width) * 0.775,
+                hight: 60,
+                label: 'Job Summary'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                SizedBox(
-                    width: (size.width - 200) * .32,
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                          border:
-                              OutlineInputBorder(borderSide: BorderSide.none),
-                          hintText: "Position",
-                          hintStyle: AppTextStyle.normalText),
-                    )),
-                const Icon(Icons.edit)
+                _textField(
+                    textMaxlines: 1,
+                    controller: jobLocationController,
+                    validator: validateRequired,
+                    width: size.width > 1200
+                        ? size.width * 0.19
+                        : size.width > 900
+                            ? (size.width) * 0.22
+                            : size.width * 0.33,
+                    label: 'Location'),
+                _buildDropdown(
+                    width: size.width > 1200
+                        ? size.width * 0.19
+                        : size.width > 900
+                            ? (size.width) * 0.22
+                            : size.width * 0.33,
+                    label: 'Experience',
+                    value: selectedExperience,
+                    items: experiences,
+                    onChanged: (value) => setState(() {
+                          selectedExperience = value;
+                        })),
               ],
             ),
-          ),
-          _textField(
-              textMaxlines: 3,
-              controller: jobSummaryController,
-              validator: validateRequired,
-              // width: 680,
-              width: size.width > 1200
-                  ? (size.width - 200) * 0.455
-                  : size.width > 900
-                      ? (size.width - 200) * 0.7
-                      : (size.width) * 0.775,
-              hight: 60,
-              label: 'Job Summary'),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _textField(
-                  textMaxlines: 1,
-                  controller: jobLocationController,
-                  validator: validateRequired,
-                  width: size.width > 1200
-                      ? size.width * 0.19
-                      : size.width > 900
-                          ? (size.width) * 0.22
-                          : size.width * 0.33,
-                  label: 'Location'),
-              _buildDropdown(
-                  width: size.width > 1200
-                      ? size.width * 0.19
-                      : size.width > 900
-                          ? (size.width) * 0.22
-                          : size.width * 0.33,
-                  label: 'Experience',
-                  value: selectedExperience,
-                  items: experiences,
-                  onChanged: (value) => setState(() {
-                        selectedExperience = value;
-                      })),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _numericField(
-                  validator: numberValidator,
-                  controller: jobVacancyController,
-                  width: size.width > 1200
-                      ? size.width * 0.19
-                      : size.width > 900
-                          ? (size.width) * 0.22
-                          : size.width * 0.33,
-                  label: 'Vaccancy'),
-              _buildDropdown(
-                  width: size.width > 1200
-                      ? size.width * 0.19
-                      : size.width > 900
-                          ? (size.width) * 0.22
-                          : size.width * 0.33,
-                  label: 'Job Mode',
-                  value: selectedJobMode,
-                  items: jobModes,
-                  onChanged: (value) => setState(() {
-                        selectedJobMode = value;
-                      })),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _numericField(
-                  validator: numberValidator,
-                  controller: salaryController,
-                  width: size.width > 1200
-                      ? size.width * 0.19
-                      : size.width > 900
-                          ? (size.width) * 0.22
-                          : size.width * 0.33,
-                  label: 'Salary'),
-              _buildDropdown(
-                  width: size.width > 1200
-                      ? size.width * 0.19
-                      : size.width > 900
-                          ? (size.width) * 0.22
-                          : size.width * 0.33,
-                  label: 'Employment Type',
-                  value: selectedEmploymentType,
-                  items: employmentTypes,
-                  onChanged: (value) => setState(() {
-                        selectedEmploymentType = value;
-                      })),
-            ],
-          ),
-          _textField(
-              textMaxlines: 3,
-              controller: keyRespoController,
-              validator: validateRequired,
-              width: size.width > 1200
-                  ? (size.width - 200) * 0.455
-                  : size.width > 900
-                      ? (size.width - 200) * 0.7
-                      : (size.width) * 0.775,
-              // width: 680,
-              hight: 60,
-              label: 'Key Responsibilities'),
-
-          // requimnts
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: size.width > 1200
-                    ? 25
-                    : size.width > 900
-                        ? (size.width - 200) * 0.15
-                        : (size.width) * 0.11,
-                vertical: 2),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
+            // vaccancy and jobMode
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                  child: Container(
-                    // width: 575,
-                    // width: (size.width - 200) * .32,
+                _numericField(
+                    validator: numberValidator,
+                    controller: jobVacancyController,
                     width: size.width > 1200
-                        ? (size.width - 200) * 0.32
+                        ? size.width * 0.19
                         : size.width > 900
-                            ? (size.width - 200) * 0.5
-                            : (size.width - 100) * 0.5,
+                            ? (size.width) * 0.22
+                            : size.width * 0.33,
+                    label: 'Vaccancy'),
+                _buildDropdown(
+                    width: size.width > 1200
+                        ? size.width * 0.19
+                        : size.width > 900
+                            ? (size.width) * 0.22
+                            : size.width * 0.33,
+                    label: 'Job Mode',
+                    value: selectedJobMode,
+                    items: jobModes,
+                    onChanged: (value) => setState(() {
+                          selectedJobMode = value;
+                        })),
+              ],
+            ),
+            // salary and Employment Type
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _numericField(
+                    validator: numberValidator,
+                    controller: salaryController,
+                    width: size.width > 1200
+                        ? size.width * 0.19
+                        : size.width > 900
+                            ? (size.width) * 0.22
+                            : size.width * 0.33,
+                    label: 'Salary'),
+                _buildDropdown(
+                    width: size.width > 1200
+                        ? size.width * 0.19
+                        : size.width > 900
+                            ? (size.width) * 0.22
+                            : size.width * 0.33,
+                    label: 'Employment Type',
+                    value: selectedEmploymentType,
+                    items: employmentTypes,
+                    onChanged: (value) => setState(() {
+                          selectedEmploymentType = value;
+                        })),
+              ],
+            ),
+            _textField(
+                textMaxlines: 3,
+                controller: keyRespoController,
+                validator: validateRequired,
+                width: size.width > 1200
+                    ? (size.width - 200) * 0.455
+                    : size.width > 900
+                        ? (size.width - 200) * 0.7
+                        : (size.width) * 0.775,
+                // width: 680,
+                hight: 60,
+                label: 'Key Responsibilities'),
 
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            'Requirements',
-                            style: AppTextStyle.normalText
-                                .copyWith(fontWeight: FontWeight.bold),
+            // requimnts
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: size.width > 1200
+                      ? 25
+                      : size.width > 900
+                          ? (size.width - 200) * 0.15
+                          : (size.width) * 0.11,
+                  vertical: 2),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                    child: Container(
+                      // width: 575,
+                      // width: (size.width - 200) * .32,
+                      width: size.width > 1200
+                          ? (size.width - 200) * 0.32
+                          : size.width > 900
+                              ? (size.width - 200) * 0.5
+                              : (size.width - 100) * 0.5,
+
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              'Requirements',
+                              style: AppTextStyle.normalText
+                                  .copyWith(fontWeight: FontWeight.bold),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 1),
+                          const SizedBox(height: 1),
 
-                        // Education Subcategory
-                        _subCategoryField(
-                            maxLines: 1,
-                            controller: educationController,
-                            validator: validateRequired,
-                            hintText: 'Education'),
+                          // Education Subcategory
+                          _subCategoryField(
+                              maxLines: 1,
+                              controller: educationController,
+                              validator: validateRequired,
+                              hintText: 'Education'),
 
-                        // Skills Subcategory
-                        _subCategoryField(
-                            controller: skillsController,
-                            validator: validateRequired,
-                            hintText: 'Skills',
-                            maxLines: 1),
+                          // Skills Subcategory
+                          _subCategoryField(
+                              controller: skillsController,
+                              validator: validateRequired,
+                              hintText: 'Skills',
+                              maxLines: 1),
 
-                        // Experience Subcategory
-                        _subCategoryField(
-                            validator: validateRequired,
-                            maxLines: 1,
-                            controller: requirementExperienceController,
-                            hintText: 'Experience'),
-                      ],
+                          // Experience Subcategory
+                          _subCategoryField(
+                              validator: validateRequired,
+                              maxLines: 1,
+                              controller: requirementExperienceController,
+                              hintText: 'Experience'),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(2)),
-                      color: tealblue),
-                  width: 100,
-                  child: TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "CREATE",
-                        style: AppTextStyle.fifteenW500,
-                      )),
-                )
-              ],
+                  Container(
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(2)),
+                        color: tealblue),
+                    width: 100,
+                    child: TextButton(
+                        onPressed: () {
+                          // Validate before calling createJob()
+                          if (_formKey.currentState?.validate() ?? false) {
+                            // If all fields are valid, call createJob()
+                            createJob();
+                          }
+                        },
+                        child: const Text(
+                          "CREATE",
+                          style: AppTextStyle.fifteenW500,
+                        )),
+                  )
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

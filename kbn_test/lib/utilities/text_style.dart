@@ -38,6 +38,12 @@ class AppTextStyle {
     fontWeight: FontWeight.w400,
     color: white,
   );
+  static const TextStyle twelve_w500 = TextStyle(
+    fontSize: 12,
+    fontFamily: "Inter",
+    fontWeight: FontWeight.w400,
+    color: black,
+  );
   static const TextStyle bodytext_12 = TextStyle(
     fontSize: 12,
     fontFamily: "Inter",

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kbn_test/service/modelClass.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/messageScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/showAll_bTn.dart';
 
 class MessageWidget extends StatelessWidget {
-  const MessageWidget({super.key});
+    final List<MessagesPageDatum> messages;
+
+  const MessageWidget({super.key, required this.messages});
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kbn_test/service/modelClass.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
@@ -8,12 +9,18 @@ import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/colorDeclaration.dart'
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/latestPie.dart';
 
 class ChartWidget extends StatelessWidget {
-  const ChartWidget({super.key});
+  final CompanyData companyData; // Accept statistics data
+
+  const ChartWidget({
+    super.key,
+    required this.companyData,
+  });
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     bool isSmallScreen = size.width < 900;
+
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
@@ -25,67 +32,80 @@ class ChartWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         color: white,
       ),
-      height:
-          isSmallScreen ? 440 : 250, // Define a fixed height for the container
-      // width: double.infinity,
+      height: isSmallScreen ? 440 : 250, // Fixed height for container
       child: isSmallScreen ? smallScreenLayout() : largeScreenLayout(),
     );
   }
 
+  // Small screen layout: Vertical arrangement of charts
   Column smallScreenLayout() {
     return Column(
-      // Display charts in a column for small screens
       children: [
-        const SizedBox(
+        SizedBox(
           height: 180,
           child: RecruitmentBarChart(
+            data:
+                companyData.statisticsPageData.recruitment, // Pass dynamic data
+
             length: 203,
             mobilelength: 163,
           ),
         ),
         const SizedBox(height: 20), // Add spacing between charts
-        const SizedBox(
+        SizedBox(
           height: 180,
-          child: SyncfusionPieChart(),
+          child: SyncfusionPieChart(
+            commonData: companyData.commonData, // Pass dynamic data
+          ),
         ),
         const SizedBox(height: 10),
-        Container(
-          child: Column(
-            children: [
-              colorDeclaration(title: currentMonth),
-              const SizedBox(height: 5),
-              colorDeclaration(title: previousMonth),
-            ],
-          ),
-        )
+        Column(
+          children: [
+            colorDeclaration(title: currentMonth),
+            const SizedBox(height: 5),
+            colorDeclaration(title: previousMonth),
+          ],
+        ),
       ],
     );
   }
 
+  // Large screen layout: Horizontal arrangement of charts
   Row largeScreenLayout() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        const Flexible(
+        Flexible(
           flex: 2,
-          child: RecruitmentBarChart(length: 203, mobilelength: 163),
+          child: SizedBox(
+            height: 220,
+            child: RecruitmentBarChart(
+              data: companyData
+                  .statisticsPageData.recruitment, // Pass dynamic data
+              length: 220,
+              mobilelength: 163,
+            ),
+          ),
         ),
+        const SizedBox(width: 5),
         Flexible(
           flex: 1,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(
-                height: 180,
-                child: SyncfusionPieChart(),
+              SizedBox(
+                height: 200,
+                child: SyncfusionPieChart(
+                  commonData: companyData.commonData, // Pass dynamic data
+                ),
               ),
               Column(
                 children: [
                   colorDeclaration(title: currentMonth),
                   const SizedBox(height: 5),
-                  colorDeclaration(title: previousMonth)
+                  colorDeclaration(title: previousMonth),
                 ],
-              )
+              ),
             ],
           ),
         ),
