@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/service/modelClass.dart';
-import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/messageScreen.dart';
@@ -27,20 +26,24 @@ class MessagePageList extends StatelessWidget {
   }) : super(key: key);
 
   void _showFullMessage(BuildContext context, MessagesPageDatum message) {
+Size size = MediaQuery.of(context).size;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: none,
           content: Container(
-            width: 400,
+            width: size.width*.6,
             height: 200,
             decoration: BoxDecoration(
+              boxShadow: [BoxShadow(color: Colors.black)],
               color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10),border: Border.all(color: textGrey)
             ),
             child: SingleChildScrollView(
-              child: Padding(
+              child: 
+              Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: ListBody(
                   children: <Widget>[
@@ -130,9 +133,7 @@ class MessagePageList extends StatelessWidget {
 
 
 
-Widget buildListItem(context,
-    {name, description, date, viewreplybutton, imgsize,profilepic}) {
-  // Size size = MediaQuery.of(context).size;
+Widget buildListItem(context,{name, description, date, viewreplybutton, imgsize,profilepic}) {
 
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 10.0),

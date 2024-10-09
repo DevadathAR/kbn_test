@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/apiServices.dart';
-import 'package:kbn_test/veiw/screen/AdminScreen/adminHome.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/companyHome.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/statisticScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/termsNconditions.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/chartWidget.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/practiceFile.dart';
-import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
 import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
-import 'package:kbn_test/veiw/screen/userScreen/jobDetails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -25,18 +17,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: "KBN_Test",
       debugShowCheckedModeBanner: false,
-      home:
-          //  CompanyStatisticScreen(),
-          // TermsNconditions(),
-          // CompanyHome()
-
-          // AdminHome(),
-
-          //  CompanyJobpage(),
-
-          // Home(),
-
-          FutureBuilder(
+      home:FutureBuilder(
         future: _checkLoginStatus(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
