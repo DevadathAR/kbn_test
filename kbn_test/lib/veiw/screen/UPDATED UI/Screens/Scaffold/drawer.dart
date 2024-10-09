@@ -106,34 +106,34 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     }
                   },
                 ),
-                _buildListTile(
-                  path: "Messages",
-                  icon: Icons.notifications,
-                  label: 'Messages',
-                  onTap: () {
-                    if (widget.currentPath != "Messages") {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const CompanyMessage()));
-                    }
-                  },
-                ),
-                _buildListTile(
-                  path: "Transactions",
-                  icon: Icons.credit_card_sharp,
-                  label: 'Transactions',
-                  onTap: () {
-                    if (widget.currentPath != "Transactions") {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CompanyTransation(),
-                        ),
-                      );
-                    }
-                  },
-                ),
+                // _buildListTile(
+                //   path: "Messages",
+                //   icon: Icons.notifications,
+                //   label: 'Messages',
+                //   onTap: () {
+                //     if (widget.currentPath != "Messages") {
+                //       Navigator.pushReplacement(
+                //           context,
+                //           MaterialPageRoute(
+                //               builder: (context) => const CompanyMessage()));
+                //     }
+                //   },
+                // ),
+                // _buildListTile(
+                //   path: "Transactions",
+                //   icon: Icons.credit_card_sharp,
+                //   label: 'Transactions',
+                //   onTap: () {
+                //     if (widget.currentPath != "Transactions") {
+                //       Navigator.pushReplacement(
+                //         context,
+                //         MaterialPageRoute(
+                //           builder: (context) => const CompanyTransation(),
+                //         ),
+                //       );
+                //     }
+                //   },
+                // ),
                 const SizedBox(height: 10),
               ],
             ),
@@ -145,19 +145,19 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
             child: Text("GENERAL", style: AppTextStyle.fourteenW400),
           ),
           const SizedBox(height: 10),
-          _buildListTile(
-            path: "Settings",
-            icon: Icons.settings,
-            label: 'Settings',
-            onTap: () {
-              if (widget.currentPath != "Settings") {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const CompanySettingPage()));
-              }
-            },
-          ),
+          // _buildListTile(
+          //   path: "Settings",
+          //   icon: Icons.settings,
+          //   label: 'Settings',
+          //   onTap: () {
+          //     if (widget.currentPath != "Settings") {
+          //       Navigator.pushReplacement(
+          //           context,
+          //           MaterialPageRoute(
+          //               builder: (context) => const CompanySettingPage()));
+          //     }
+          //   },
+          // ),
           _buildListTile(
             path: "Terms",
             icon: Icons.library_books_outlined,

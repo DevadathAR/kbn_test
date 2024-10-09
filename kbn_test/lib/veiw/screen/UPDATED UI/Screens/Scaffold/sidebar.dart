@@ -114,34 +114,34 @@ class _SidebarState extends State<Sidebar> {
                       }
                     },
                   ),
-                _buildListTile(
-                  path: "Messages",
-                  icon: Icons.notifications,
-                  label: 'Messages',
-                  onTap: () {
-                    if (widget.currentPath != "Messages") {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const CompanyMessage()));
-                    }
-                  },
-                ),
-                _buildListTile(
-                  path: "Transactions",
-                  icon: Icons.credit_card_sharp,
-                  label: 'Transactions',
-                  onTap: () {
-                    if (widget.currentPath != "Transactions") {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CompanyTransation(),
-                        ),
-                      );
-                    }
-                  },
-                ),
+                // _buildListTile(
+                //   path: "Messages",
+                //   icon: Icons.notifications,
+                //   label: 'Messages',
+                //   onTap: () {
+                //     if (widget.currentPath != "Messages") {
+                //       Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //               builder: (context) => const CompanyMessage()));
+                //     }
+                //   },
+                // ),
+                // _buildListTile(
+                //   path: "Transactions",
+                //   icon: Icons.credit_card_sharp,
+                //   label: 'Transactions',
+                //   onTap: () {
+                //     if (widget.currentPath != "Transactions") {
+                //       Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //           builder: (context) => const CompanyTransation(),
+                //         ),
+                //       );
+                //     }
+                //   },
+                // ),
                 const SizedBox(height: 10),
               ],
             ),
@@ -153,19 +153,19 @@ class _SidebarState extends State<Sidebar> {
             child: Text("GENERAL", style: AppTextStyle.fourteenW400),
           ),
           const SizedBox(height: 10),
-          _buildListTile(
-            path: "Settings",
-            icon: Icons.settings,
-            label: 'Settings',
-            onTap: () {
-              if (widget.currentPath != "Settings") {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const CompanySettingPage()));
-              }
-            },
-          ),
+          // _buildListTile(
+          //   path: "Settings",
+          //   icon: Icons.settings,
+          //   label: 'Settings',
+          //   onTap: () {
+          //     if (widget.currentPath != "Settings") {
+          //       Navigator.push(
+          //           context,
+          //           MaterialPageRoute(
+          //               builder: (context) => const CompanySettingPage()));
+          //     }
+          //   },
+          // ),
           _buildListTile(
             path: "Terms",
             icon: Icons.library_books_outlined,
@@ -250,7 +250,7 @@ class _SidebarState extends State<Sidebar> {
       decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(100), topLeft: Radius.circular(100)),
-          color: path == widget.currentPath ? textGrey : null),
+          color: path == widget.currentPath ? bgcolor : null),
       child: ListTile(
         // tileColor: Colors.amber,
         selected: path == widget.currentPath,

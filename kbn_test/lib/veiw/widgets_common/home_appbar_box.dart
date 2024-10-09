@@ -1,11 +1,9 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/logInPage.dart';
-import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Widget HomeAppBarBox(BuildContext context,
@@ -183,7 +181,7 @@ void showLogoutConfirmation(
                         MaterialPageRoute(builder: (context) => backHome),
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       "Back to home",
                       style: AppTextStyle.bodytextwhiteunderline,
                     ),

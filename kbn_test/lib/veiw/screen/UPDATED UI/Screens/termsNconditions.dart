@@ -9,14 +9,16 @@ class TermsNconditions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return ScaffoldBuilder(
       currentPath: "Terms",
       pageName: "Terms and Conditions",
       child: Container(
         padding: const EdgeInsets.all(15),
         width: double.infinity,
+        height: size.height*0.75,
         color: white,
-        child: const SingleChildScrollView(
+        child:  SingleChildScrollView(
           child: Column(
             children: [
               Text(

@@ -48,6 +48,9 @@ class _OverViewCardsState extends State<OverViewCards> {
   Widget build(BuildContext context) {
     // List of card data
     final companyCommonData = companyData?.companyData.commonData;
+    final int applicantGrowth =
+        (companyCommonData?.applicantsTotal.thisMonth ?? 0) -
+            (companyCommonData?.applicantsTotal.prevMonth ?? 0);
 
     final List<Map<String, String>> cardData = companyCommonData != null
         ? [
@@ -65,15 +68,14 @@ class _OverViewCardsState extends State<OverViewCards> {
               'subTitle': "Applicants have got jobs",
             },
             {
-              'title':
-                  companyCommonData.mostAppliedJob.applicantsCount.toString(),
-              'subTitle':
-                  "Applicants applied for ${companyCommonData.mostAppliedJob.title}",
-            },
-            {
               'title': "${companyCommonData.mostAppliedJob.growth.toString()}%",
               'subTitle':
-                  "Growth in ${companyCommonData.mostAppliedJob.title} jobs",
+                  "Applicants for ${companyCommonData.mostAppliedJob.title}",
+            },
+            {
+              'title': applicantGrowth.toString(),
+              'subTitle':
+                  "Total growth on this month",
             },
           ]
         : [];

@@ -17,7 +17,18 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: "KBN_Test",
       debugShowCheckedModeBanner: false,
-      home:FutureBuilder(
+      home:
+          //  CompanyStatisticScreen(),
+          // TermsNconditions(),
+          // CompanyHome()
+
+          // AdminHome(),
+
+          //  CompanyJobpage(),
+
+          // Home(),
+
+          FutureBuilder(
         future: _checkLoginStatus(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -55,7 +66,7 @@ class MainApp extends StatelessWidget {
       var userDetailsResponse = await ApiServices.fetchUserDetails();
       userDetails = userDetailsResponse;
 
-      // print(userDetailsResponse);
+      print(userDetailsResponse);
 
       return role;
     }

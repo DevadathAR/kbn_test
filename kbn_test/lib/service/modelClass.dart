@@ -33,14 +33,14 @@ class CompanyData {
     StatisticsPageData statisticsPageData;
     ApplicantsPageData applicantsPageData;
     List<JobsPageDatum> jobsPageData;
-    List<MessagesPageDatum> messagesPageData;
+    // List<MessagesPageDatum> messagesPageData;
 
     CompanyData({
         required this.commonData,
         required this.statisticsPageData,
         required this.applicantsPageData,
         required this.jobsPageData,
-        required this.messagesPageData,
+        // required this.messagesPageData,
     });
 
     factory CompanyData.fromJson(Map<String, dynamic> json) => CompanyData(
@@ -48,7 +48,7 @@ class CompanyData {
         statisticsPageData: StatisticsPageData.fromJson(json["statisticsPageData"]),
         applicantsPageData: ApplicantsPageData.fromJson(json["applicantsPageData"]),
         jobsPageData: List<JobsPageDatum>.from(json["jobsPageData"].map((x) => JobsPageDatum.fromJson(x))),
-        messagesPageData: List<MessagesPageDatum>.from(json["messagesPageData"].map((x) => MessagesPageDatum.fromJson(x))),
+        // messagesPageData: List<MessagesPageDatum>.from(json["messagesPageData"].map((x) => MessagesPageDatum.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
@@ -56,7 +56,7 @@ class CompanyData {
         "statisticsPageData": statisticsPageData.toJson(),
         "applicantsPageData": applicantsPageData.toJson(),
         "jobsPageData": List<dynamic>.from(jobsPageData.map((x) => x.toJson())),
-        "messagesPageData": List<dynamic>.from(messagesPageData.map((x) => x.toJson())),
+        // "messagesPageData": List<dynamic>.from(messagesPageData.map((x) => x.toJson())),
     };
 }
 
@@ -88,6 +88,7 @@ class Pending {
     ResumeLink resumeLink;
     String email;
     Status status;
+    int applicationId;
 
     Pending({
         required this.date,
@@ -97,9 +98,11 @@ class Pending {
         required this.resumeLink,
         required this.email,
         required this.status,
+        required this.applicationId,
     });
 
     factory Pending.fromJson(Map<String, dynamic> json) => Pending(
+              applicationId: json["applicationId"], // Fetch applicationId from JSON
         date: DateTime.parse(json["date"]),
         applicantName: json["applicantName"],
         location: locationValues.map[json["location"]]!,
@@ -117,6 +120,8 @@ class Pending {
         "resumeLink": resumeLinkValues.reverse[resumeLink],
         "email": email,
         "status": statusValues.reverse[status],
+        "applicationId":
+            applicationId, 
     };
 }
 

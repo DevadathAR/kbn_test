@@ -3,6 +3,7 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:intl/intl.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/jobScreen.dart';
 
 class PageAndDate extends StatelessWidget {
   final String pageLabel;
@@ -49,49 +50,57 @@ class PageAndDate extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
-                  width: 75,
-                  padding: const EdgeInsets.only(bottom: 5, right: 5),
-                  color: none,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          _openSearchModal(context); // Open search modal
-                        },
-                        child: Container(
-                          height: 30,
-                          width: 30,
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(8)),
-                              border: Border.all(color: black)),
-                          child: const Icon(
-                            Icons.search,
-                            color: black,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        height: 30,
-                        width: 30,
-                        decoration: BoxDecoration(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(8)),
-                            color: tealblue,
-                            border: Border.all(color: black)),
-                        child: const Center(
-                          child: Text(
-                            '+',
-                            style: AppTextStyle.twenty_W600,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+                // Container(
+                //   width: 75,
+                //   padding: const EdgeInsets.only(bottom: 5, right: 5),
+                //   color: none,
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //     children: [
+                //       GestureDetector(
+                //         onTap: () {
+                //           _openSearchModal(context); // Open search modal
+                //         },
+                //         child: Container(
+                //           height: 30,
+                //           width: 30,
+                //           decoration: BoxDecoration(
+                //               borderRadius:
+                //                   const BorderRadius.all(Radius.circular(8)),
+                //               border: Border.all(color: black)),
+                //           child: const Icon(
+                //             Icons.search,
+                //             color: black,
+                //           ),
+                //         ),
+                //       ),
+                //       const SizedBox(width: 8),
+                //       GestureDetector(onTap: () {
+                //             Navigator.push(
+                //               context,
+                //               MaterialPageRoute(
+                //                   builder: (context) => CompanyJobpage()),
+                //             );
+                //           },
+                //         child: Container(
+                //           height: 30,
+                //           width: 30,
+                //           decoration: BoxDecoration(
+                //               borderRadius:
+                //                   const BorderRadius.all(Radius.circular(8)),
+                //               color: tealblue,
+                //               border: Border.all(color: black)),
+                //           child: const Center(
+                //             child: Text(
+                //               '+',
+                //               style: AppTextStyle.fifteenW500,
+                //             ),
+                //           ),
+                //         ),
+                //       )
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           const SizedBox(
@@ -107,7 +116,7 @@ class PageAndDate extends StatelessWidget {
                   style: AppTextStyle.sixteen_w400_black,
                 ),
                 // Calendar
-                if (size.width > 900)
+                if (size.width > 900&&pageLabel =="Overview")
                   Container(
                     padding: const EdgeInsets.only(bottom: 5, right: 5),
                     decoration: BoxDecoration(

@@ -39,7 +39,7 @@ class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: textGrey,
+      backgroundColor: bgcolor,
       drawer: SidebarDrawer(currentPath: widget.currentPath),
       body: Row(
         children: [

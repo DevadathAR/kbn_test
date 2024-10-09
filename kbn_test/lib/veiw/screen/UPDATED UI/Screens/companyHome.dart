@@ -6,11 +6,10 @@ import 'package:kbn_test/service/singletonData.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/messageScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/statisticScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/chartWidget.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/messageDisply.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/messageDispaly.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/messageWidget.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/payResult.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/payReminder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/simpleTable.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/verticalTable.dart';
 
@@ -67,12 +66,13 @@ class _CompanyHomeState extends State<CompanyHome> {
       child: SizedBox(
         // height: 410,
         child: Wrap(
+          alignment: WrapAlignment.center,
           spacing: 10.0,
           runSpacing: 10.0,
           children: [
             // First column (Charts and Horizontal Table)
             SizedBox(
-              width: size.width > 1200 ? 600 : null,
+              width: size.width > 1200 ?( size.width-200)*0.49 : null,
               child: Column(
                 children: [
                   GestureDetector(
@@ -98,7 +98,7 @@ class _CompanyHomeState extends State<CompanyHome> {
             // Second column (Vertical Table)
             SizedBox(
               width: size.width > 1200
-                  ? (size.width - 200) * 0.33
+                  ? (size.width - 200) * 0.49
                   : null, // Adjust the width as necessary
               child: VerticalTable(
                   applicantsData: companyData!
@@ -106,26 +106,29 @@ class _CompanyHomeState extends State<CompanyHome> {
             ),
 
             // Third column (Message and Pay Result)
-            SizedBox(
-              width: size.width > 1200
-                  ? (size.width - 200) * 0.2
-                  : null, // Adjust the width as necessary
-              child: Column(
-                children: [
-                  MessagePageList(
-                    height: 270,
-                    imgSize: 20,
-                    paddingSeparation: 5,
-                    /*tileCount: 3,*/ 
-                    tileHeight: 65,
-                    viewReplyButton: false,
-                    messagesPageData: companyData!.companyData.messagesPageData,
-                  ),
-                  SizedBox(height: 10),
-                  isCompany ? PayRemainder() : PayResult(),
-                ],
-              ),
-            ),
+            // SizedBox(
+            //   width: size.width > 1200
+            //       ? (size.width - 200) * 0.2
+            //       : null, // Adjust the width as necessary
+            //   child: Column(
+            //     children: [
+            //       MessagePageList(
+            //         height: 270,
+            //         imgSize: 20,
+            //         paddingSeparation: 5,
+            //         /*tileCount: 3,*/ 
+            //         tileHeight: 65,
+            //         viewReplyButton: false,
+            //         messagesPageData: companyData!.companyData.messagesPageData,
+            //       ),
+            //       // MessageWidget(
+            //       //     messages: companyData!
+            //       //         .companyData.messagesPageData), // Pass data here
+            //       const SizedBox(height: 10),
+            //       isCompany ? const PayRemainder() : const PayResult(),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
