@@ -24,9 +24,9 @@ class _CompanyJobpageState extends State<CompanyJobpage> {
       {'header': 'Designation', 'key': 'designation'},
       {'header': 'Experience', 'key': 'experience'},
       {'header': 'Location', 'key': 'location'},
-      {'header': 'Vaccancy', 'key': 'vaccancy'},
-      {'header': 'Selected applicants', 'key': 'selectedApplicants'},
-      {'header': 'Employment type', 'key': 'emptype'},
+      {'header': 'Vaccancy', 'key': 'vacancy'},
+      {'header': 'Selected applicants', 'key': 'selected'},
+      {'header': 'Employment type', 'key': 'jobType'},
       {'header': 'Salary', 'key': 'salary'},
       {'header': 'Status', 'key': 'status'},
     ];
@@ -52,18 +52,24 @@ class _CompanyJobpageState extends State<CompanyJobpage> {
                 // Data is successfully fetched
                 // Map fetched data to the format required for the table
                 Apiresponse companyData = snapshot.data!;
-            List<Map<String, String>> jobTableData = companyData.companyData.jobsPageData.map((job) {
-              return {
-                'designation': job.designation,
-                'experience': job.experience,
-                'location': job.location.toString().split('.').last, // Convert enum to string
-                'vacancy': job.vacancy.toString(),
-                'selected': job.selected.toString(),
-                'jobType': job.jobType.toUpperCase(), // Convert job type to uppercase
-                'salary': '\$${job.salary}',
-                'status': job.status,
-              };
-            }).toList();
+                List<Map<String, String>> jobTableData =
+                    companyData.companyData.jobsPageData.map((job) {
+                  return {
+                    'id': job.jobId.toString(),
+                    'designation': job.designation,
+                    'experience': job.experience,
+                    'location': job.location
+                        .toString()
+                        .split('.')
+                        .last, // Convert enum to string
+                    'vacancy': job.vacancy.toString(),
+                    'selected': job.selected.toString(),
+                    'jobType': job.jobType
+                        .toUpperCase(), // Convert job type to uppercase
+                    'salary': 'Rs. ${job.salary}',
+                    'status': job.status,
+                  };
+                }).toList();
 
                 return ListView(
                   children: [
@@ -84,17 +90,10 @@ class _CompanyJobpageState extends State<CompanyJobpage> {
                               // Update the local job data to reflect the new status
                               setState(() {
                                 var job = jobTableData.firstWhere((job) =>
-                                    job['applicationId'] ==
-                                    applicationId.toString());
+                                    job['id'] == applicationId.toString());
                                 job['status'] =
                                     newStatus; // Update the status locally in the UI
                               });
-                              // Handle any errors that occur during the status update
-                              // ScaffoldMessenger.of(context).showSnackBar(
-                              //   SnackBar(
-                              //       content:
-                              //           Text('Failed to update status: $e')),
-                              // );
                             },
                           ),
                         ),

@@ -12,7 +12,6 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../../../../service/modelClass.dart';
 
 class CompanyStatisticScreen extends StatelessWidget {
-
   const CompanyStatisticScreen({
     super.key,
   });
@@ -103,7 +102,9 @@ class CompanyStatisticScreen extends StatelessWidget {
                     // color: bluee,
                     height: 500,
                     width: screenWidth * 0.15,
-                    child: const Statisticpagetable(),
+                    child: Statisticpagetable(
+                      data: data.companyData.statisticsPageData.recruitment,
+                    ),
                   ),
                 ],
               ),
@@ -121,8 +122,12 @@ class CompanyStatisticScreen extends StatelessWidget {
                       context,
                       isGradient: true,
                       title: "Current month",
-                      totalApplied: 82,
-                      gotJobs: 60,
+                      totalApplied: data
+                          .companyData.commonData.applicantsTotal.thisMonth
+                          .toDouble(),
+                      gotJobs: data
+                          .companyData.commonData.applicantsSelected.thisMonth
+                          .toDouble(),
                       color: green,
                     ),
                   ),
@@ -132,8 +137,12 @@ class CompanyStatisticScreen extends StatelessWidget {
                       context,
                       isGradient: false,
                       title: "Previous month",
-                      totalApplied: 60,
-                      gotJobs: 30,
+                      totalApplied: data
+                          .companyData.commonData.applicantsTotal.prevMonth
+                          .toDouble(),
+                      gotJobs: data
+                          .companyData.commonData.applicantsSelected.prevMonth
+                          .toDouble(),
                       color: tealblue,
                     ),
                   ),
@@ -170,10 +179,12 @@ class CompanyStatisticScreen extends StatelessWidget {
                       length: 350,
                     ),
                   ),
-                  const SizedBox(
+                  SizedBox(
                     height: 450,
                     width: double.infinity, // Take full width in stacked view
-                    child: Statisticpagetable(),
+                    child: Statisticpagetable(
+                      data: data.companyData.statisticsPageData.recruitment,
+                    ),
                   ),
                 ],
               ),
@@ -189,8 +200,12 @@ class CompanyStatisticScreen extends StatelessWidget {
                       context,
                       isGradient: true,
                       title: "Current month",
-                      totalApplied: 82,
-                      gotJobs: 60,
+                      totalApplied: data
+                          .companyData.commonData.applicantsTotal.thisMonth
+                          .toDouble(),
+                      gotJobs: data
+                          .companyData.commonData.applicantsSelected.thisMonth
+                          .toDouble(),
                       color: green,
                     ),
                   ),
@@ -200,8 +215,12 @@ class CompanyStatisticScreen extends StatelessWidget {
                       context,
                       isGradient: false,
                       title: "Previous month",
-                      totalApplied: 60,
-                      gotJobs: 30,
+                      totalApplied: data
+                          .companyData.commonData.applicantsTotal.prevMonth
+                          .toDouble(),
+                      gotJobs: data
+                          .companyData.commonData.applicantsSelected.thisMonth
+                          .toDouble(),
                       color: tealblue,
                     ),
                   ),
@@ -344,7 +363,7 @@ class IndividualRadialGauge extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "${count}K",
+                    "$count",
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 24,
