@@ -53,7 +53,7 @@ class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
                   child: ListView(
                     padding: const EdgeInsets.all(10.0),
                     children: [
-                      PageAndDate(pageLabel: widget.pageName),
+                      PageAndDate(pageLabel: widget.pageName,currentPage: widget.currentPath,),
                       const SizedBox(height: 10),
                       if (widget.currentPath != "Settings" &&
                           widget.currentPath != "Profile" &&

@@ -214,7 +214,7 @@ class CommonData {
 class Applicants {
     int prevMonth;
     int thisMonth;
-    int growth;
+    double growth;
 
     Applicants({
         required this.prevMonth,

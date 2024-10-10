@@ -116,6 +116,7 @@ class ApiServices {
     if (response.statusCode == 200) {
       // Decode the JSON response
       var jsonMap = jsonDecode(response.body);
+      log(jsonEncode(jsonMap));
       // Return an ApiResponse object
       return Apiresponse.fromJson(jsonMap);
     } else {

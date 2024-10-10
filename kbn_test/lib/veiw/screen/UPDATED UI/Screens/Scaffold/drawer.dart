@@ -10,7 +10,6 @@ import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/profileScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/settingsScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/statisticScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/termsNconditions.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/transactionScreen.dart';
 
 class SidebarDrawer extends StatefulWidget {
   final String currentPath;
