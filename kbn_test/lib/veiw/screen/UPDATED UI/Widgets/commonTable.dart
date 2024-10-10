@@ -4,6 +4,7 @@ import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 import 'package:kbn_test/veiw/widgets_common/boldText.dart';
 import 'package:kbn_test/veiw/widgets_common/boxBTN.dart';
@@ -15,7 +16,9 @@ Widget applicantsTable({
   required List<Map<String, String>> headers,
   required List<Map<String, String>> data,
   required List<String> statusOptions,
-  required Function(String status, int applicationId) onStatusChange,
+  required String status,
+  // required int applicationId,
+  onStatusChange,
 } // Ad}d callback parameter
     ) {
   Size size = MediaQuery.of(context).size;
@@ -79,24 +82,12 @@ Widget applicantsTable({
                     children: headers.map((header) {
                       if (header['key'] == 'status') {
                         return CustomStatusColumn(
-                          status: row['status'] ?? '',
-                          onSelect: () {
-                            // Implement the action for select button
-                            print(
-                                'Select pressed for application ID: ${row['applicationId']}');
-                          },
-                          applicationId:
-                              int.tryParse(row['applicationId'] ?? '0') ?? 0,
+                          status: status,
+                          applicationId: int.tryParse(row['id'] ?? '0') ?? 0,
                           onStatusChange: () {
-                            // Logic to refresh data
+                            onStatusChange(int.tryParse(row['id'] ?? '0') ?? 0);
                           },
                           statusOptions: statusOptions,
-                          onStatusUpdate: (newStatus) {
-                            // Logic to handle status update
-                            print(
-                                'Status changed to: $newStatus for applicationId: ${row['applicationId']}');
-                            // Add any custom logic here, such as making an API call
-                          },
                         );
                       } else {
                         return Padding(
@@ -123,106 +114,16 @@ Widget applicantsTable({
   );
 }
 
-/// Helper function to generate column widths based on the number of headers
-Map<int, TableColumnWidth> _generateColumnWidths(int headerCount) {
-  Map<int, TableColumnWidth> columnWidths = {};
-  for (int i = 0; i < headerCount; i++) {
-    columnWidths[i] =
-        const FlexColumnWidth(); // Adjustable width for each column
-  }
-  return columnWidths;
-}
-
-class CustomStatusColumn extends StatefulWidget {
-  final String status;
-  final VoidCallback onSelect;
-  final int applicationId;
-  final VoidCallback onStatusChange;
-  final List<String> statusOptions;
-  final Function(String newStatus) onStatusUpdate;
-
-  const CustomStatusColumn({
-    super.key,
-    required this.status,
-    required this.onSelect,
-    required this.applicationId,
-    required this.onStatusChange,
-    required this.statusOptions,
-    required this.onStatusUpdate,
-  });
-
-  @override
-  _CustomStatusColumnState createState() => _CustomStatusColumnState();
-}
-
-class _CustomStatusColumnState extends State<CustomStatusColumn> {
-  String status = '';
-
-  @override
-  void initState() {
-    super.initState();
-    status = widget.status; // Initialize the status with the passed value
-  }
-
-  Future<void> _setStatus(String newStatus) async {
-    setState(() {
-      status = newStatus; // Update the status locally in the UI
-    });
-
-    try {
-      // Make the API call to update the status in the backend
-      await ApiServices.updateApplication(newStatus, widget.applicationId);
-
-      // Call the onStatusUpdate function to handle UI and other logic
-      widget.onStatusUpdate(newStatus);
-
-      // Optionally: Provide feedback, such as a success message or UI indicator
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Status updated to $newStatus')),
-      );
-    } catch (e) {
-      // Handle any errors, such as API call failure
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update status: $e')),
-      );
-    }
-
-    widget.onStatusChange(); // Trigger a UI refresh if needed
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: widget.statusOptions.asMap().entries.map((entry) {
-        int index = entry.key;
-        String option = entry.value;
-        return Column(
-          children: [
-            StatusButton(
-              text: option,
-              textColor: index == 0 ? Colors.teal : Colors.red,
-              onTap: () => _setStatus(option), // Update status when clicked
-            ),
-            const SizedBox(height: 10),
-          ],
-        );
-      }).toList(),
-    );
-  }
-}
-
-
 Widget selectedApplicantsTable(context,
-    {
+    {applicantId,
+    status,
+    onstatusChange,
     // required double width,
     required List<Map<String, String>> data,
     required String headerTitle,
     List<String>? statusOptions,
     String? path}) {
-  // Determine the keys based on the conditions
   List<String> keys = isCompany
-//applicant screen header
       ? ['name', 'designation']
       : path == "Transactions"
           ? [
@@ -293,25 +194,13 @@ Widget selectedApplicantsTable(context,
                       // If the row contains 'status', show the CustomStatusColumn
                       if (hasStatus)
                         CustomStatusColumn(
-                          status: row['status'] ?? '',
-                          onSelect: () {
-                            // Implement the action for select button
-                            print(
-                                'Select pressed for application ID: ${row['applicationId']}');
-                          },
-                          applicationId:
-                              int.tryParse(row['applicationId'] ?? '0') ?? 0,
+                          status: status,
+                          applicationId: applicantId,
                           onStatusChange: () {
-                            // Logic to refresh data
+                            onstatusChange;
                           },
                           statusOptions:
                               statusOptions ?? ['Approved', 'Pending'],
-                          onStatusUpdate: (newStatus) {
-                            // Logic to handle status update
-                            print(
-                                'Status changed to: $newStatus for applicationId: ${row['applicationId']}');
-                            // Add any custom logic here, such as making an API call
-                          },
                         ),
 
                       // Otherwise, show the ButtonCell
@@ -326,6 +215,80 @@ Widget selectedApplicantsTable(context,
       ],
     ),
   );
+}
+
+/// Helper function to generate column widths based on the number of headers
+Map<int, TableColumnWidth> _generateColumnWidths(int headerCount) {
+  Map<int, TableColumnWidth> columnWidths = {};
+  for (int i = 0; i < headerCount; i++) {
+    columnWidths[i] =
+        const FlexColumnWidth(); // Adjustable width for each column
+  }
+  return columnWidths;
+}
+
+class CustomStatusColumn extends StatefulWidget {
+  final String status;
+  final int applicationId;
+  final VoidCallback onStatusChange;
+  final List<String> statusOptions;
+
+  const CustomStatusColumn({
+    super.key,
+    required this.status,
+    required this.applicationId,
+    required this.onStatusChange,
+    required this.statusOptions,
+  });
+
+  @override
+  _CustomStatusColumnState createState() => _CustomStatusColumnState();
+}
+
+class _CustomStatusColumnState extends State<CustomStatusColumn> {
+  String status = '';
+
+  @override
+  void initState() {
+    super.initState();
+    status = widget.status; // Initialize the status with the passed value
+  }
+
+  void _setStatus(String newStatus) async {
+    setState(() {
+      status = newStatus;
+    });
+    // Proceed with the API call
+    try {
+      await ApiServices.updateApplication(
+          newStatus, widget.applicationId);
+      widget.onStatusChange();
+    } catch (e) {
+      print('Error updating status: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: widget.statusOptions.asMap().entries.map((entry) {
+        int index = entry.key;
+        String option = entry.value;
+        return Column(
+          children: [
+            StatusButton(
+              text: option,
+              textColor: index == 0 ? Colors.teal : Colors.red,
+              onTap: () =>
+                  _setStatus("${option}ED"), // Update status when clicked
+            ),
+            const SizedBox(height: 10),
+          ],
+        );
+      }).toList(),
+    );
+  }
 }
 
 TableBorder tableHeaderDec() {

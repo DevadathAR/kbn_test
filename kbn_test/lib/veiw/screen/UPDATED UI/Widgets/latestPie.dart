@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kbn_test/service/modelClass.dart';
+import 'package:kbn_test/service/adminMode.dart';
+import 'package:kbn_test/service/companymodelClass.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
@@ -43,11 +44,14 @@ class RadialArc {
 }
 
 class SyncfusionPieChart extends StatelessWidget {
-  final CommonData commonData; // You will pass CommonData here
+  final CompanyData? companyData; // You will pass CommonData here
+
+  final AdminData? adminData;
 
   const SyncfusionPieChart({
     super.key,
-    required this.commonData,
+    this.companyData,
+    this.adminData,
   });
 
   @override
@@ -55,18 +59,14 @@ class SyncfusionPieChart extends StatelessWidget {
     // Extract the required data
     // final totalApplicantsThisMonth = da;
 
-    final totalApplicantsThisMonth = commonData.applicantsTotal.thisMonth;
-    final totalApplicantsPrevMonth = commonData.applicantsTotal.prevMonth;
-    final selectedApplicantsThisMonth = commonData.applicantsSelected.thisMonth;
-    final selectedApplicantsPrevMonth = commonData.applicantsSelected.prevMonth;
-
-    // Data for the chart
-    // final List<ChartData> chartData = [
-    //   ChartData('Total Applicants (Current Month)', totalApplicantsThisMonth.toDouble()),
-    //   ChartData('Total Applicants (Previous Month)', totalApplicantsPrevMonth.toDouble()),
-    //   ChartData('Selected Applicants (Current Month)', selectedApplicantsThisMonth.toDouble()),
-    //   ChartData('Selected Applicants (Previous Month)', selectedApplicantsPrevMonth.toDouble()),
-    // ];
+    final totalApplicantsThisMonth =
+        companyData?.commonData.applicantsTotal.thisMonth;
+    final totalApplicantsPrevMonth =
+        companyData?.commonData.applicantsTotal.prevMonth;
+    final selectedApplicantsThisMonth =
+        companyData?.commonData.applicantsSelected.thisMonth;
+    final selectedApplicantsPrevMonth =
+        companyData?.commonData.applicantsSelected.prevMonth;
 
     return SfRadialGauge(
       // backgroundColor: textGrey,
@@ -79,7 +79,7 @@ class SyncfusionPieChart extends StatelessWidget {
         // Outer Green Arcs
         RadialArc.build(
           isGradient: true,
-          maxValue: totalApplicantsThisMonth.toDouble(),
+          maxValue: totalApplicantsThisMonth!.toDouble(),
           startAngle: 230,
           endAngle: 230,
           radiusFactor: 1.0,
@@ -95,12 +95,12 @@ class SyncfusionPieChart extends StatelessWidget {
           radiusFactor: 1.0,
           arcColor: green,
           thickness: 0.3,
-          value: selectedApplicantsThisMonth.toDouble(),
+          value: selectedApplicantsThisMonth!.toDouble(),
         ),
         // Inner Teal Arcs
         RadialArc.build(
           isGradient: false,
-          maxValue: totalApplicantsPrevMonth.toDouble(),
+          maxValue: totalApplicantsPrevMonth!.toDouble(),
           startAngle: 20,
           endAngle: 20,
           radiusFactor: 0.6,
@@ -116,7 +116,7 @@ class SyncfusionPieChart extends StatelessWidget {
           radiusFactor: 0.6,
           arcColor: yellow,
           thickness: 0.4,
-          value: selectedApplicantsPrevMonth.toDouble(),
+          value: selectedApplicantsPrevMonth!.toDouble(),
         ),
       ],
     );

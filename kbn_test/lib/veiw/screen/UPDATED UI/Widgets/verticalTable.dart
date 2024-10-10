@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:kbn_test/service/adminMode.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/applicantsScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/commonTable.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/showAll_bTn.dart';
 import 'package:kbn_test/veiw/widgets_common/boxBTN.dart';
 
-import '../../../../service/modelClass.dart'; // Make sure your model class path is correct
+import '../../../../service/companymodelClass.dart'; // Make sure your model class path is correct
 
 class VerticalTable extends StatelessWidget {
-  final ApplicantsPageData applicantsData;
+  final ApplicantsPageData? applicantsData;
+  final List<ToBeApprovedCompany>? toApproveData;
 
   const VerticalTable({
     super.key,
-    required this.applicantsData,
+    this.applicantsData,
+    this.toApproveData,
   });
 
   @override
@@ -32,16 +35,15 @@ class VerticalTable extends StatelessWidget {
             '' // Third column for the button
           ];
 
-    // Map applicantsData to table rows (Using `pending` list here for real data)
-    final List<List<dynamic>> rowData =
-        applicantsData.selected.map((applicant) {
-      return isCompany
-          ? [applicant.name, applicant.designation]
-          : [
-              applicant.name,
-              applicant.designation
-            ]; // Placeholder for company data
-    }).toList();
+     // Define table data based on user type
+    final List<List<dynamic>> rowData = isCompany
+        ? applicantsData?.selected.map((applicant) {
+            return [applicant.name, applicant.designation];
+          }).toList() ?? []
+        : toApproveData?.map((company) {
+            return [company.companyName, company.website];
+          }).toList() ?? [];
+
 
     return Container(
       height: 500,
@@ -81,11 +83,11 @@ class VerticalTable extends StatelessWidget {
                   ],
                 ),
                 // Add the data rows dynamically
-                for (var row in rowData.take(5))
+                for (var row in rowData.take(6))
                   TableRow(
                     children: [
-                      _buildDataCell(row[0]), // Name/Company Name
-                      _buildDataCell(row[1]), // Designation/Website Link
+                      _buildDataCell(row[0].toString()), // Name/Company Name
+                      _buildDataCell(row[1].toString()), // Designation/Website Link
                       _buildButtonCell(context), // Button for 'View Details'
                     ],
                   ),

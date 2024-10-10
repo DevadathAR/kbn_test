@@ -567,8 +567,8 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
           children: [
             CircleAvatar(
               radius: 60,
-              backgroundImage:
-                  NetworkImage('${ApiServices.baseUrl}${widget.companyImage}'),
+              backgroundImage: NetworkImage(
+                  '${ApiServices.baseUrl}${widget.companyImage}'),
             ),
             const SizedBox(width: 10),
             Column(

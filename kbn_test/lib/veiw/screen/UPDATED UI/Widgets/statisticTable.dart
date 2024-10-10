@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:kbn_test/service/modelClass.dart';
+import 'package:kbn_test/service/companymodelClass.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:kbn_test/utilities/colors.dart';
@@ -34,10 +34,15 @@ class _StatisticpagetableState extends State<Statisticpagetable> {
   ];
 
   Future<void> shareTableText() async {
-    String tableText = '${headers.join('\t')}\n';
-    for (var row in rowData) {
-      tableText += '${row.join('\t')}\n';
+    // Start with the headers
+    String tableText = '${headers.join('\t-')}\n';
+
+    // Iterate over the widget.data and construct table rows from recruitment data
+    for (var recruitment in widget.data) {
+      tableText += '${recruitment.jobTitle}\t-\t${recruitment.currentMonth}%\n';
     }
+
+    // Share the constructed tableText
     await Share.share(tableText);
   }
 

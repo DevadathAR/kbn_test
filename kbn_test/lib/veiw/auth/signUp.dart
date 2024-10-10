@@ -34,7 +34,8 @@ class _SignupPageState extends State<SignupPage> {
   bool _ischeck = false;
   Uint8List? _selectedImage;
   String? _imageFilename;
-  final ApiServices _apiService = ApiServices(); // Instantiate the ApiService
+  final ApiServices _apiService =
+      ApiServices(); // Instantiate the ApiService
 
   void _signin() {
     if (_ischeck) {

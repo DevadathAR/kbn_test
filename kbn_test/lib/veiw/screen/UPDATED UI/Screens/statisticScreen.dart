@@ -9,7 +9,7 @@ import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/colorDeclaration.dart'
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/statisticTable.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
-import '../../../../service/modelClass.dart';
+import '../../../../service/companymodelClass.dart';
 
 class CompanyStatisticScreen extends StatelessWidget {
   const CompanyStatisticScreen({
@@ -34,7 +34,7 @@ class CompanyStatisticScreen extends StatelessWidget {
               return const Center(child: Text("No data available"));
             }
             // Data is successfully fetched
-            Apiresponse companyData = snapshot.data!;
+            CompanyApiResponse companyData = snapshot.data!;
 
             return LayoutBuilder(
               builder: (context, constraints) {
@@ -53,7 +53,7 @@ class CompanyStatisticScreen extends StatelessWidget {
   }
 
   // Build the two-column layout (for screen width > 1200)
-  Widget _buildRowLayout(context, double screenWidth, Apiresponse data) {
+  Widget _buildRowLayout(context, double screenWidth, CompanyApiResponse data) {
     // containing total child
     return SizedBox(
       // height: 401,
@@ -78,9 +78,9 @@ class CompanyStatisticScreen extends StatelessWidget {
                     height: 500,
                     width: screenWidth *
                         .34, // Dynamic width for RecruitmentBarChart
-                    child: Column(
+                    child: const Column(
                       children: [
-                        const Align(
+                        Align(
                           alignment: Alignment.topLeft,
                           child: Padding(
                             padding: EdgeInsets.all(5),
@@ -91,7 +91,7 @@ class CompanyStatisticScreen extends StatelessWidget {
                           ),
                         ),
                         RecruitmentBarChart(
-                          data: data.companyData.statisticsPageData.recruitment,
+                          // data: data.companyData.statisticsPageData.recruitment,
                           mobilelength: 400,
                           length: 400,
                         ),
@@ -156,7 +156,7 @@ class CompanyStatisticScreen extends StatelessWidget {
   }
 
   // Build the stacked (vertical) layout for smaller screens (<= 1200)
-  Widget _buildListViewLayout(context, Apiresponse data) {
+  Widget _buildListViewLayout(context, CompanyApiResponse data) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.only(top: 8),
@@ -170,11 +170,11 @@ class CompanyStatisticScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 450,
                     width: double.infinity, // Take full width in stacked view
                     child: RecruitmentBarChart(
-                      data: data.companyData.statisticsPageData.recruitment,
+                      // data: data.companyData.statisticsPageData.recruitment,
                       mobilelength: 400,
                       length: 350,
                     ),

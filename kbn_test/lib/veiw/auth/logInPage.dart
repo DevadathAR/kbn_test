@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/apiServices.dart';
+import 'package:kbn_test/service/singletonData.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/forgotPass.dart';
 import 'package:kbn_test/veiw/auth/signUp.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/applicantsScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/companyHome.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets_common/loginTextFeild.dart';
 import 'package:kbn_test/veiw/widgets_common/bg_widg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Map<String, dynamic> submittedApplicantsData = {};
-Map<String, dynamic> selectedApplicantsData = {};
-// int userId = 0;
+bool isCompany = false;
 
 class CompanyLoginPage extends StatefulWidget {
   const CompanyLoginPage({super.key});
@@ -49,8 +47,11 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
             responseData.containsKey('role')) {
           var token = responseData['token'];
           var role = responseData['role'];
-          // ApiServices.headers['Authorization'] = "Bearer $token";
-          // getting User Details
+
+          isCompany = true;
+
+          // ApiDataService().isCompany = role == 'Company';
+
           var userDetailsResponse = await ApiServices.fetchUserDetails();
           userDetails = userDetailsResponse;
 

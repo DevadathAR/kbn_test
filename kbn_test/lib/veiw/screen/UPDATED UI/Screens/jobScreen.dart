@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kbn_test/service/apiServices.dart';
-import 'package:kbn_test/service/modelClass.dart';
+import 'package:kbn_test/service/companymodelClass.dart';
 import 'package:kbn_test/service/singletonData.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
@@ -51,7 +51,7 @@ class _CompanyJobpageState extends State<CompanyJobpage> {
                 }
                 // Data is successfully fetched
                 // Map fetched data to the format required for the table
-                Apiresponse companyData = snapshot.data!;
+                CompanyApiResponse companyData = snapshot.data!;
                 List<Map<String, String>> jobTableData =
                     companyData.companyData.jobsPageData.map((job) {
                   return {
@@ -78,23 +78,14 @@ class _CompanyJobpageState extends State<CompanyJobpage> {
                       children: [
                         Expanded(
                           child: applicantsTable(
+                            // applicationId:
+                            //     int.tryParse(jobTableData[0]['id'] ?? '0') ?? 0,
+                            status: jobTableData[0]['status'].toString(),
                             context: context,
                             headers: jobTableheaders,
                             data: jobTableData,
                             statusOptions: ["CLOSE"],
-                            onStatusChange: (newStatus, applicationId) async {
-                              // Call the API to update the status
-                              await ApiServices.updateApplication(
-                                  newStatus, applicationId);
-
-                              // Update the local job data to reflect the new status
-                              setState(() {
-                                var job = jobTableData.firstWhere((job) =>
-                                    job['id'] == applicationId.toString());
-                                job['status'] =
-                                    newStatus; // Update the status locally in the UI
-                              });
-                            },
+                            onStatusChange: () async {},
                           ),
                         ),
                         if (size.width < 1200)

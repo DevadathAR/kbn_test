@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
-import 'package:kbn_test/service/modelClass.dart';
+import 'package:kbn_test/service/adminMode.dart';
+import 'package:kbn_test/service/companymodelClass.dart';
 
 Map<String, dynamic> userDetails = {};
 Map<String, dynamic> jobDetailsResponse = {};
@@ -105,8 +105,7 @@ class ApiServices {
 
   // Company Section
 
-  // View  Applicant Details API
-  static Future<Apiresponse> companyData() async {
+  static Future<CompanyApiResponse> companyData() async {
     var url = Uri.parse('$baseUrl/company/data?month=9&year=2024');
 
     var response = await http.get(url, headers: headers);
@@ -117,52 +116,69 @@ class ApiServices {
       // Decode the JSON response
       var jsonMap = jsonDecode(response.body);
       // Return an ApiResponse object
-      return Apiresponse.fromJson(jsonMap);
+      return CompanyApiResponse.fromJson(jsonMap);
     } else {
       throw Exception('Failed to fetch user details');
     }
   }
 
-  // Fetch submitted Applicants Data API
-  static Future<Map<String, dynamic>> fetchSubmittedApplctns() async {
-    var url = Uri.parse('$baseUrl/application/c/?status=submitted');
-
-    var response = await http.get(url, headers: headers);
-    // print('ApplicantData${response.body}');
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to fetch user details');
-    }
-  }
-
-  // Fetch selected Applicants Data API
-  static Future<Map<String, dynamic>> fetchSelectedApplctns() async {
-    var url = Uri.parse('$baseUrl/application/c/?status=selected');
-
-    var response = await http.get(url, headers: headers);
-    // print('Selected${response.body}');
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to fetch user details');
-    }
-  }
-
-  // View  Applicant Details API
-  static Future<Map<String, dynamic>> fetchRecruitmentDetails(jobId) async {
-    var url = Uri.parse('$baseUrl/job/vaccancy$jobId');
+  static Future<AdminApiResponse> adminData() async {
+    var url = Uri.parse('$baseUrl/admin/data?month=9&year=2024');
 
     var response = await http.get(url, headers: headers);
 
+    // print('Raw response: ${response.body}');
+
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      // Decode the JSON response
+      var jsonMap = jsonDecode(response.body);
+      // Return an ApiResponse object
+      return AdminApiResponse.fromJson(jsonMap);
     } else {
       throw Exception('Failed to fetch user details');
     }
   }
+
+  // // Fetch submitted Applicants Data API
+  // static Future<Map<String, dynamic>> fetchSubmittedApplctns() async {
+  //   var url = Uri.parse('$baseUrl/application/c/?status=submitted');
+
+  //   var response = await http.get(url, headers: headers);
+  //   // print('ApplicantData${response.body}');
+
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body);
+  //   } else {
+  //     throw Exception('Failed to fetch user details');
+  //   }
+  // }
+
+  // // Fetch selected Applicants Data API
+  // static Future<Map<String, dynamic>> fetchSelectedApplctns() async {
+  //   var url = Uri.parse('$baseUrl/application/c/?status=selected');
+
+  //   var response = await http.get(url, headers: headers);
+  //   // print('Selected${response.body}');
+
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body);
+  //   } else {
+  //     throw Exception('Failed to fetch user details');
+  //   }
+  // }
+
+  // // View  Applicant Details API
+  // static Future<Map<String, dynamic>> fetchRecruitmentDetails(jobId) async {
+  //   var url = Uri.parse('$baseUrl/job/vaccancy$jobId');
+
+  //   var response = await http.get(url, headers: headers);
+
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body);
+  //   } else {
+  //     throw Exception('Failed to fetch user details');
+  //   }
+  // }
 
   // Update Application Data API
   static Future<Map<String, dynamic>> updateApplication(
@@ -216,44 +232,21 @@ class ApiServices {
     }
   }
 
-  // // Updating Vaccancy
-  // static Future<Map<String, dynamic>> updateVaccancy(
-  //   String status,
-  //   int applicationId,
-  // ) async {
-  //   var url = Uri.parse('$baseUrl/job/vaccancy$jobId);
+  // // View  Applicant Details API
+  // static Future<Map<String, dynamic>> fetchApplicantDetails(
+  //     int applicantId) async {
+  //   var url = Uri.parse('$baseUrl/user/$applicantId');
 
-  //   var response = await http.patch(
-  //     url,
-  //     headers: headers,
-  //     body: jsonEncode({
-  //       // Correct key-value format
-  //       'newStatus': status
-  //     }),
-  //   );
+  //   var response = await http.get(url, headers: headers);
+
+  //   // print('viewedApplicant${response.body}');
 
   //   if (response.statusCode == 200) {
   //     return jsonDecode(response.body);
   //   } else {
-  //     throw Exception('Failed to update application');
+  //     throw Exception('Failed to fetch user details');
   //   }
   // }
-
-  // View  Applicant Details API
-  static Future<Map<String, dynamic>> fetchApplicantDetails(
-      int applicantId) async {
-    var url = Uri.parse('$baseUrl/user/$applicantId');
-
-    var response = await http.get(url, headers: headers);
-
-    // print('viewedApplicant${response.body}');
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to fetch user details');
-    }
-  }
 
   static Future<http.Response> createJob(Map<String, dynamic> jobData) async {
     var url = Uri.parse('$baseUrl/job/addJob');
@@ -287,32 +280,32 @@ class ApiServices {
   /// Admin Section...........................................
 
 // Fetch selected Applicants Data API
-  static Future<Map<String, dynamic>> fetchPendingCompanie() async {
-    var url = Uri.parse('$baseUrl/admin/c/pending');
+  // static Future<Map<String, dynamic>> fetchPendingCompanie() async {
+  //   var url = Uri.parse('$baseUrl/admin/c/pending');
 
-    var response = await http.get(url, headers: headers);
-    // print('Pending${response.body}');
+  //   var response = await http.get(url, headers: headers);
+  //   // print('Pending${response.body}');
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to fetch pending details');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body);
+  //   } else {
+  //     throw Exception('Failed to fetch pending details');
+  //   }
+  // }
 
-  // Fetch selected Applicants Data API
-  static Future<Map<String, dynamic>> fetchAprovedCompanies() async {
-    var url = Uri.parse('$baseUrl/admin/c/approved');
+  // // Fetch selected Applicants Data API
+  // static Future<Map<String, dynamic>> fetchAprovedCompanies() async {
+  //   var url = Uri.parse('$baseUrl/admin/c/approved');
 
-    var response = await http.get(url, headers: headers);
-    // print('Approved${response.body}');
+  //   var response = await http.get(url, headers: headers);
+  //   // print('Approved${response.body}');
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to fetch Approved CompanyList');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body);
+  //   } else {
+  //     throw Exception('Failed to fetch Approved CompanyList');
+  //   }
+  // }
 
   // static Future<Map<String, dynamic>> fetchCompanyDetails(int companyId) async {
   //   var url = Uri.parse('$baseUrl/admin/c/$companyId');

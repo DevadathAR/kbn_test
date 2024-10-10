@@ -3,6 +3,7 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/jobScreen.dart';
 
 class TopBar extends StatelessWidget {
   const TopBar({super.key});
@@ -10,6 +11,7 @@ class TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    
 
     return size.width < 900
         ? Column(
@@ -38,7 +40,8 @@ class TopBar extends StatelessWidget {
                       : AppTextStyle.fifteenW600),
             ],
           )
-        : Wrap(
+        : 
+        Wrap(
             children: [
               Container(
                 color: Colors.white,
@@ -51,38 +54,49 @@ class TopBar extends StatelessWidget {
                             ? AppTextStyle.twntyFive_W600
                             : AppTextStyle.fifteenW600),
                     // Search bar and button
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: size.width * .13,
-                          child: const TextField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Search...',
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Container(
-                          alignment: Alignment.center,
-                          width: size.width * .17,
-                          height: 38,
-                          decoration: ShapeDecoration(
-                            color: const Color(0xFF138395),
-                            shape: RoundedRectangleBorder(
-                              side: const BorderSide(width: 0.40),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                          ),
-                          child: const Text(
-                            "+ Add new recruitment",
-                            style: TextStyle(color: white),
-                          ),
-                        ),
-                        // ),
-                        const SizedBox(width: 10),
-                      ],
-                    ),
+                  // if(view) 
+                  //  Row(
+                  //     children: [
+                  //       SizedBox(
+                  //         width: size.width * .13,
+                  //         child: const TextField(
+                  //           decoration: InputDecoration(
+                  //             border: OutlineInputBorder(),
+                  //             hintText: 'Search...',
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       const SizedBox(width: 10),
+                  //       GestureDetector(
+                  //         onTap: () {
+                  //           Navigator.push(
+                  //             context,
+                  //             MaterialPageRoute(
+                  //                 builder: (context) => CompanyJobpage()),
+                  //           );
+                  //         },
+                  //         child: Container(
+                  //           alignment: Alignment.center,
+                  //           width: size.width * .17,
+                  //           height: 38,
+                  //           decoration: ShapeDecoration(
+                  //             color: const Color(0xFF138395),
+                  //             shape: RoundedRectangleBorder(
+                  //               side: const BorderSide(width: 0.40),
+                  //               borderRadius: BorderRadius.circular(6),
+                  //             ),
+                  //           ),
+                  //           child: const Text(
+                  //             "+ Add new recruitment",
+                  //             style: TextStyle(color: Colors.white),
+                  //           ),
+                  //         ),
+                  //       ),
+
+                  //       // ),
+                  //       const SizedBox(width: 10),
+                  //     ],
+                  //   ),
                   ],
                 ),
               ),

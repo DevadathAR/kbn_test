@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:kbn_test/service/adminMode.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/jobScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/showAll_bTn.dart';
 
-import '../../../../service/modelClass.dart';
+import '../../../../service/companymodelClass.dart';
 
 class HorizontalTable extends StatelessWidget {
-  final List<JobsPageDatum> jobsData;
+  final List<JobsPageDatum>? jobsData;
+  final List<ApprovedCompany>? approvedCompData;
 
-  const HorizontalTable({super.key, required this.jobsData});
+  const HorizontalTable({
+    super.key,
+    this.jobsData,
+    this.approvedCompData,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +29,7 @@ class HorizontalTable extends StatelessWidget {
     const int maxColumns = 7;
     const int minColumns = 3;
 
-    // Define the headers
-    // Define headers based on user type (Company or Admin)
+    // Define the headers based on user type (Company or Admin)
     final List<String> headers = isCompany
         ? [
             'Designation',
@@ -33,14 +39,14 @@ class HorizontalTable extends StatelessWidget {
           ]
         : [
             'Company name',
-            'Vacancy',
+            'Vaccancy',
             'Selected',
-            'Status',
           ];
 
     // Calculate how many columns can fit in the available screen width
     int columnCount = ((screenWidth - minHeaderWidth) ~/ minColumnWidth)
         .clamp(minColumns, maxColumns);
+    final dataList = isCompany ? jobsData : approvedCompData;
 
     return Container(
       padding: const EdgeInsets.all(4),
@@ -63,15 +69,17 @@ class HorizontalTable extends StatelessWidget {
                 i: const FlexColumnWidth(), // Responsive width for other columns
             },
             children: [
-              // First row with headers in the first column and job data across other columns
+              // First row with headers in the first column and job/company data across other columns
               for (int i = 0; i < headers.length; i++)
                 TableRow(
                   children: [
                     _buildHeaderCell(
                         headers[i]), // Place header in first column
-                    for (var job in jobsData)
+                    for (var data in dataList ?? [])
                       _buildDataCell(
-                        _getJobFieldData(job, i), // Data in remaining columns
+                        isCompany
+                            ? _getJobFieldData(data as JobsPageDatum, i)
+                            : _getCompanyFieldData(data as ApprovedCompany, i),
                       ),
                   ],
                 ),
@@ -87,8 +95,6 @@ class HorizontalTable extends StatelessWidget {
       ),
     );
   }
-
- 
 
   Widget _buildHeaderCell(String text) {
     return Padding(
@@ -121,6 +127,20 @@ class HorizontalTable extends StatelessWidget {
         return job.selected.toString();
       case 3:
         return job.status;
+      default:
+        return '';
+    }
+  }
+
+  // Get company data based on the index of the header
+  String _getCompanyFieldData(ApprovedCompany company, int index) {
+    switch (index) {
+      case 0:
+        return company.companyName;
+      case 1:
+        return company.totalVacancy;
+      case 2:
+        return company.selected.toString() ;
       default:
         return '';
     }

@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/apiServices.dart';
-import 'package:kbn_test/service/modelClass.dart';
+import 'package:kbn_test/service/companymodelClass.dart';
 
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/drawer.dart';
@@ -10,7 +10,6 @@ import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/page_and_date
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/sidebar.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/topBar.dart';
 
-const bool isCompany = true;
 
 class ScaffoldBuilder extends StatefulWidget {
   final String currentPath;
@@ -39,7 +38,7 @@ class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: textGrey,
+      backgroundColor: bgcolor,
       drawer: SidebarDrawer(currentPath: widget.currentPath),
       body: Row(
         children: [
