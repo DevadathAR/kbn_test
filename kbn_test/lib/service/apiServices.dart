@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
@@ -65,12 +66,14 @@ class ApiServices {
     var response = await http.post(
       url,
       body: jsonEncode({
-        // 'email': "festa",
-        // 'password': "123",
-        // 'email': "applicant8@gmail.com",
-        // 'password': "123",
-        'email': email,
-        'password': password,
+        // 'email': "dev",
+        // 'password': "dev",
+        // 'email': "comp@gmail.com",
+        // 'password': "comp",
+        'email': "lumasolutions@gmail.com",
+        'password': "123",
+        // 'email': email,
+        // 'password': password,
       }),
       headers: headers,
     );
@@ -94,7 +97,7 @@ class ApiServices {
 
     var response = await http.get(url, headers: headers);
 
-    // print('userDetails${response.body}');
+    print('userDetails${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -116,7 +119,7 @@ class ApiServices {
     if (response.statusCode == 200) {
       // Decode the JSON response
       var jsonMap = jsonDecode(response.body);
-      log(jsonEncode(jsonMap));
+      // log(jsonEncode(jsonMap));
       // Return an ApiResponse object
       return Apiresponse.fromJson(jsonMap);
     } else {
@@ -192,7 +195,7 @@ class ApiServices {
   static Future<Map<String, dynamic>> updateAddressDetails(
     String address,
     String contact,
-    String businessType,
+    // String businessType,
     String website,
   ) async {
     var url = Uri.parse('$baseUrl/user/');
@@ -204,7 +207,7 @@ class ApiServices {
         // Correct key-value format
         'address': address,
         'contact': contact,
-        'business_type': businessType,
+        // 'business_type': businessType,
         'company_website': website
       }),
     );
@@ -534,6 +537,57 @@ class ApiServices {
       };
     } else {
       throw Exception("Failed to fetch filtered jobs");
+    }
+  }
+
+  Future<http.StreamedResponse> sendManagerData({
+    // required String companyName,
+    required String managerName,
+    required String email,
+    File? imageFile,
+  }) async {
+    final url = Uri.parse('$baseUrl/company/manager');
+    
+
+    // Prepare form data
+    var request = http.MultipartRequest('POST', url,);
+    // request.fields['company_name'] = companyName;
+    request.headers.addAll(headers);
+    request.fields['managerName'] = managerName;
+    request.fields['managerMail'] = email;
+
+    try {
+      // Send the request and return the response
+      var response = await request.send();
+      return response;
+    } catch (error) {
+      rethrow; // Rethrow any errors to handle them in the UI
+    }
+  }
+  Future<http.StreamedResponse> sendUpdatedCompanyData({
+    // required String companyName,
+    required String address,
+    required String site,
+    required int number,
+    
+  }) async {
+    final url = Uri.parse('$baseUrl/user/');
+    
+
+    // Prepare form data
+    var request = http.MultipartRequest('PATCH', url,);
+    // request.fields['company_name'] = companyName;
+    request.headers.addAll(headers);
+    request.fields['address'] = address;
+    request.fields['company_website'] = site;
+    request.fields['contact'] = number.toString();
+
+    try {
+      // Send the request and return the response
+      var response = await request.send();
+      return response;
+    } catch (error) {
+      rethrow; // Rethrow any errors to handle them in the UI
     }
   }
 }

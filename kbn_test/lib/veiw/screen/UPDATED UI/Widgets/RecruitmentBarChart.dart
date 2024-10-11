@@ -28,8 +28,8 @@ class RecruitmentBarChart extends StatelessWidget {
         // scrollDirection: Axis.vertical,
 
         child: SizedBox(
-          width:
-              data.length * 60, // Dynamically set width based on number of bars
+          width:(size.width)*0.5,
+              // data.length * 60, // Dynamically set width based on number of bars
           child: BarChart(
             BarChartData(
               alignment: BarChartAlignment.spaceAround,

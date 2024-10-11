@@ -1,6 +1,8 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kbn_test/service/apiServices.dart';
-
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
@@ -14,34 +16,116 @@ class CompanyProfileScreen extends StatefulWidget {
 }
 
 class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
+  List<Widget> companyWidgets = [];
+  //  List<Widget> compan = []; // List to store company manager widgets
+  bool _showCompanyManagerForm = true;
+  bool _showCompanyDetails = true;
+  Map<String, dynamic> userDetails = {};
+  bool _isLoading = true; // Loading state variable
 
-  List<Widget> companyWidgets = []; // List to store company manager widgets
+  void initState() {
+    super.initState();
+    _fetchUserDetails(); // Fetch user details when the screen initializes
+  }
+
+  Future<void> _fetchUserDetails() async {
+    try {
+      var details = await ApiServices
+          .fetchUserDetails(); // Call the fetchUserDetails method
+      setState(() {
+        userDetails = details; // Store the fetched user details
+        _isLoading = false; // Update loading state
+      });
+    } catch (error) {
+      // Handle errors if needed
+      setState(() {
+        _isLoading = false; // Update loading state even if there's an error
+      });
+      print('Error fetching user details: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching user details: $error')),
+      );
+    }
+  }
 
   // Function to add a new company manager widget
   void addNewCompany() {
     setState(() {
+      _showCompanyManagerForm = false;
       companyWidgets.add(
         EditableCompanyAndManager(
           onSave: (label, sub, email) {
-            // Replace the editable widget with a non-editable one upon save
             setState(() {
-              companyWidgets.add(NonEditableCompanyAndManager(
-                label: label,
-                sub: sub,
-                email: email,
-              ));
+              // Find the EditableCompanyAndManager that triggered onSave and remove it
+              companyWidgets
+                  .removeWhere((widget) => widget is EditableCompanyAndManager);
+
+              // Optionally, add a non-editable version or another widget after saving
+              companyWidgets.add(
+                companyAndManager(
+                  context,
+                  sub: sub,
+                  email: email,
+                  onSave: (updatedLabel) {
+                    // Handle future updates if necessary
+                  },
+                ),
+              );
             });
           },
         ),
       );
     });
   }
+void editCompanyData() {
+  setState(() {
+    _showCompanyDetails = false;
+
+    // Add EditableCompanyDetails widget for editing
+    companyWidgets.add(
+      EditableCompanyDetails(
+        onSave: (address, site, number) {
+          setState(() {
+            // Remove the EditableCompanyDetails widget after saving
+            companyWidgets.removeWhere((widget) => widget is EditableCompanyDetails);
+
+            // Add the company details widget with the updated information
+            companyWidgets.add(
+              companyDetails(
+                context,
+                label: "Company Details", // You can replace this with the actual company name if available
+                sub: address,
+                site: site,
+                numb: number,
+                
+              ),
+            );
+          });
+        },
+      ),
+    );
+  });
+}
+
+  
+
+  
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-    
+    if (isCompany) {
+      if (userDetails == null) {
+        return const Center(child: Text("No data available"));
+      }
+    } else {
+      if (userDetails == null) {
+        return const Center(child: Text("No data available"));
+      }
+    }
 
     return ScaffoldBuilder(
         currentPath: "Profile",
@@ -52,8 +136,6 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
             const SizedBox(
               height: 10,
             ),
-
-            // PageAndDate(context, pageLabel: "Profile"),
             Wrap(
               alignment: WrapAlignment.spaceBetween,
               children: [
@@ -62,21 +144,18 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                     companyShortView(context),
                     const SizedBox(height: 5),
                     ...companyWidgets,
-                  //   ElevatedButton(
-                  //   onPressed: addNewCompany,
-                  //   child: const Text("Add Company and Manager"),
-                  // ),
-                    companyAndManager(
-                      context,
-                      label: "Company Name",
-                      sub: "Manager Name",
-                      email: "manager@example.com",
-                      onSave: (updatedLabel) {
-                        print("Updated label: $updatedLabel");
-                      },
-                    )
+                    if (_showCompanyManagerForm)
+                      companyAndManager(
+                        context,
+                        sub: "${userDetails['user']['manager_name']}",
+                        email: "${userDetails['user']['manager_email']}",
+                        onSave: (updatedLabel) {
+                          print("Updated label: $updatedLabel");
+                        },
+                      )
                   ],
                 ),
+                if(_showCompanyDetails)
                 companyDetails(context,
                     label: "Company Details",
                     sub: "${userDetails['user']['address']}",
@@ -87,330 +166,9 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
           ],
         ));
   }
-  Widget companyAndManager(
-  BuildContext context, {
-  required String label,
-  required String sub,
-  required String email, // New email parameter
-  required ValueChanged<String> onSave, // Callback to save the updated data
-}) {
-  Size size = MediaQuery.of(context).size;
 
-  return Container(
-    width: size.width > 900 ? (size.width - 200) * .6 : null,
-    height: 250,
-    decoration: const BoxDecoration(
-      borderRadius: BorderRadius.all(Radius.circular(6)),
-      color: Colors.white,
-    ),
-    padding: const EdgeInsets.all(20),
-    child: Column(
-      children: [
-        // Text to show last updated date
-        const Align(
-          alignment: Alignment.topRight,
-          child: Padding(
-            padding: EdgeInsets.only(top: 8.0, right: 8),
-            child: Text(
-              "Last updated date",
-              style: AppTextStyle.normalText, // Adjust as per your AppTextStyle
-            ),
-          ),
-        ),
 
-        // Image box and other details
-        Row(
-          children: [
-            Container(
-              width: 100,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: const BorderRadius.all(Radius.circular(6)),
-                color: Colors.transparent,
-              ),
-              child: const Image(
-                  image: AssetImage(personPng)), // Adjust the image path
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Display label as text
-                  Text(
-                    label,
-                    style: const TextStyle(
-                        fontSize: 16), // Adjust as per AppTextStyle
-                  ),
-                  const SizedBox(height: 10),
-                  // Display sub as text
-                  Text(
-                    sub,
-                    style: const TextStyle(
-                        fontSize: 14), // Adjust as per AppTextStyle
-                  ),
-                  const SizedBox(height: 10),
-                  // Display email as text
-                  Text(
-                    email,
-                    style: const TextStyle(
-                        fontSize: 14), // Adjust as per AppTextStyle
-                  ),
-                  Align(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-            onPressed: addNewCompany,
-            style: ElevatedButton.styleFrom(
-                            backgroundColor: tealblue,
-
-              side: const BorderSide(color: black),
-              shape: RoundedRectangleBorder(
-                // Creates rounded corner buttons
-                borderRadius: BorderRadius.circular(
-                    10), // Change this value for different corner radii
-              ),
-            ),
-            child: const Text(
-              "Update",
-              style: AppTextStyle.bodytextwhite,
-            ),
-          ),),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-}
-
-// Widget to display editable company and manager form
-class EditableCompanyAndManager extends StatefulWidget {
-  final Function(String, String, String) onSave;
-
-  const EditableCompanyAndManager({required this.onSave, Key? key})
-      : super(key: key);
-
-  @override
-  _EditableCompanyAndManagerState createState() =>
-      _EditableCompanyAndManagerState();
-}
-class _EditableCompanyAndManagerState extends State<EditableCompanyAndManager> {
-  final TextEditingController _labelController = TextEditingController();
-  final TextEditingController _subController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   
-  @override
-  Widget build(BuildContext context) {
-      Size size = MediaQuery.of(context).size;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Container(
-        width: size.width > 900 ? (size.width - 200) * .6 : null,
-    height: 250,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(6),
-          color: Colors.white,
-          border: Border.all(color: Colors.black),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              controller: _labelController,
-              
-              decoration: const InputDecoration(labelText: "Company Name",border: InputBorder.none,),
-            ),
-
-            TextFormField(
-              controller: _subController,
-              decoration: const InputDecoration(labelText: "Manager Name",border: InputBorder.none,),
-            ),
-            TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: "Email",border: InputBorder.none,),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child:Align(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-            onPressed: (){widget.onSave(
-                    _labelController.text,
-                    _subController.text,
-                    _emailController.text,
-                  );
-                  Navigator.of(context).pop();},
-            style: ElevatedButton.styleFrom(
-                            backgroundColor: tealblue,
-
-              side: const BorderSide(color: black),
-              shape: RoundedRectangleBorder(
-                // Creates rounded corner buttons
-                borderRadius: BorderRadius.circular(
-                    10), // Change this value for different corner radii
-              ),
-            ),
-            child: const Text(
-              "Save",
-              style: AppTextStyle.bodytextwhite,
-            ),
-          ),),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Widget to display non-editable company and manager details
-class NonEditableCompanyAndManager extends StatelessWidget {
-  final String label;
-  final String sub;
-  final String email;
-
-  const NonEditableCompanyAndManager({
-    required this.label,
-    required this.sub,
-    required this.email,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(6),
-          color: Colors.white,
-          border: Border.all(color: Colors.black),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Company Name: $label"),
-            Text("Manager Name: $sub"),
-            Text("Email: $email"),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-
-
-
-
-
-// Function to display the dialog for editing
-void _showEditDialog(
-  BuildContext context,
-  String label,
-  String sub,
-  String email,
-  ValueChanged<String> onSave,
-) {
-  // Text controllers for the dialog fields
-  TextEditingController labelController = TextEditingController(text: label);
-  TextEditingController subController = TextEditingController(text: sub);
-  TextEditingController emailController = TextEditingController(text: email);
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text("Edit Details"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: labelController,
-              decoration: const InputDecoration(labelText: "Label"),
-            ),
-            TextFormField(
-              controller: subController,
-              decoration: const InputDecoration(labelText: "Sub"),
-            ),
-            TextFormField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: "Email ID"),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            child: const Text("Cancel"),
-            onPressed: () {
-              Navigator.of(context).pop(); // Close the dialog
-            },
-          ),
-          ElevatedButton(
-            child: const Text("Save"),
-            onPressed: () {
-              // Call the save callback with the updated values
-              onSave(labelController.text);
-              Navigator.of(context).pop(); // Close the dialog after saving
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-
-Widget addAndSave(context) {
-  Size size = MediaQuery.of(context).size;
-
-  return Align(
-    alignment: Alignment.bottomRight,
-    child: Padding(
-      padding: const EdgeInsets.only(right: 10, bottom: 10),
-      child: Wrap(
-        children: [
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              side: const BorderSide(color: black),
-              shape: RoundedRectangleBorder(
-                // Creates rounded corner buttons
-                borderRadius: BorderRadius.circular(
-                    10), // Change this value for different corner radii
-              ),
-            ),
-            child: const Text(
-              "Add",
-              style: AppTextStyle.bodytext_12,
-            ),
-          ),
-          SizedBox(width: size.width * 0.005),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: tealblue,
-              shape: RoundedRectangleBorder(
-                // Creates rounded corner buttons
-                borderRadius: BorderRadius.circular(
-                    10), // Change this value for different corner radii
-              ),
-            ),
-            child: const Text(
-              "Save",
-              style: AppTextStyle.bodytextwhite,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
 Widget companyDetails(context, {label, sub, isview, numb, site}) {
   Size size = MediaQuery.of(context).size;
   return Padding(
@@ -460,11 +218,320 @@ Widget companyDetails(context, {label, sub, isview, numb, site}) {
               ],
             ),
           ),
-          addAndSave(context)
+          Align(
+                    alignment: Alignment.bottomRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: ElevatedButton(
+                        onPressed: () {editCompanyData();
+                          
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          side: const BorderSide(color: Colors.teal),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
         ],
       ),
     ),
   );
+}
+
+  //companies details
+  Widget companyAndManager(
+    BuildContext context, {
+    required String sub,
+    required String email, // New email parameter
+    required ValueChanged<String> onSave, // Callback to save the updated data
+  }) {
+    Size size = MediaQuery.of(context).size;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5.0),
+      child: Container(
+        width: size.width > 900 ? (size.width - 200) * .6 : null,
+        height: 250,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+          color: Colors.white,
+        ),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            // Text to show last updated date
+            const Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: EdgeInsets.only(top: 8.0, right: 8),
+                child: Text(
+                  "Last updated date",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+            ),
+
+            // Image box and other details
+            Row(
+              children: [
+                Container(
+                    width: 100,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: const BorderRadius.all(Radius.circular(6)),
+                      color: Colors.transparent,
+                    ),
+                    child: Image(
+                      image: userDetails['user']['manager_profile_image'] ==
+                                  null ||
+                              userDetails['user']['manager_profile_image']
+                                  .isEmpty
+                          ? const AssetImage(personPng)
+                          : NetworkImage(
+                                  "${ApiServices.baseUrl}/${userDetails['user']['manager_profile_image']}")
+                              as ImageProvider,
+                    )),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Display label as text
+                      Text(
+                        "${userDetails['user']['name']}",
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 10),
+                      // Display sub as text
+                      Text(
+                        "${userDetails['user']['manager_name']}" != "null"
+                            ? sub
+                            : "Manager Name",
+                        style: const TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      // Display email as text
+                      Text(
+                        "${userDetails['user']['manager_email']}" != "null"
+                            ? email
+                            : "Manager mail ID",
+                        style: const TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton(
+                          onPressed:
+                              addNewCompany, // Handle adding a new company
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            side: const BorderSide(color: tealblue),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            "${userDetails['user']['manager_email']}" == "null"
+                                ? "Add"
+                                : "Edit",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class EditableCompanyAndManager extends StatefulWidget {
+  final Function(String, String, String) onSave;
+
+  const EditableCompanyAndManager({required this.onSave, Key? key})
+      : super(key: key);
+
+  @override
+  _EditableCompanyAndManagerState createState() =>
+      _EditableCompanyAndManagerState();
+}
+
+class _EditableCompanyAndManagerState extends State<EditableCompanyAndManager> {
+  final TextEditingController _subController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+
+  final ApiServices _apiService = ApiServices(); // API service instance
+
+  Uint8List? _selectedImage;
+  File? _imageFilename;
+
+  // Function to handle form submission
+  Future<void> _submitData() async {
+    // Validate the fields before sending data
+    if (_subController.text.isEmpty || _emailController.text.isEmpty) {
+      // You can display an error message if any field is empty
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all fields!')),
+      );
+      return;
+    }
+
+    try {
+      // Call the API service to send data to the server
+      var response = await _apiService.sendManagerData(
+        managerName: _subController.text,
+        email: _emailController.text,
+        imageFile: _imageFilename, // Can be null if no image is selected
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Data saved successfully!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Failed to save data: ${response.statusCode}')),
+        );
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
+    }
+  }
+
+  Future<void> _selectImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
+      setState(() {
+        _selectedImage = bytes;
+        // _imageFilename = pickedFile.name; // Store the filename
+      });
+    } else {
+      setState(() {
+        _selectedImage = null;
+        _imageFilename = null; // Clear the filename
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Container(
+        width: size.width > 900 ? (size.width - 200) * .6 : null,
+        height: 250,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6),
+          color: Colors.white,
+          border: Border.all(color: Colors.black),
+        ),
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () {
+                _selectImage();
+              },
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: const BorderRadius.all(Radius.circular(6)),
+                  color: Colors.transparent,
+                ),
+                child: _selectedImage != null
+                    ? CircleAvatar(
+                        backgroundImage: MemoryImage(_selectedImage!),
+                      )
+                    : Image.asset(personPng),
+              ),
+            ),
+            SizedBox(
+              width: size.width > 900 ? (size.width - 200) * .45 : null,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      "${userDetails['user']['name']}",
+                      style: AppTextStyle.sixteen_w400_black,
+                    ),
+                  ),
+                  TextFormField(
+                    controller: _subController,
+                    decoration: const InputDecoration(
+                      labelText: "Manager Name",
+                      border: InputBorder.none,
+                    ),
+                  ),
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(
+                      labelText: "Email",
+                      border: InputBorder.none,
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _submitData(); // Call the function to submit data
+                        widget.onSave(
+                          "${userDetails['user']['name']}",
+                          _subController.text,
+                          _emailController.text,
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        side: const BorderSide(color: Colors.black),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text(
+                        "Save",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 Widget companyShortView(BuildContext context, {label, sub, email}) {
@@ -473,10 +540,6 @@ Widget companyShortView(BuildContext context, {label, sub, email}) {
   return Container(
     width: size.width > 900 ? (size.width - 200) * .6 : null,
     height: 200,
-
-    // height: 200,
-    // height:
-    //     size.height * 0.35, // Increased height to accommodate the TextFormField
     decoration: const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(6)),
       color: white,
@@ -555,8 +618,6 @@ Widget companyShortView(BuildContext context, {label, sub, email}) {
 }
 
 Widget viewProfile(BuildContext context) {
-  // Size size = MediaQuery.of(context).size;
-
   return Align(
     alignment: Alignment.bottomRight,
     child: Padding(
@@ -580,4 +641,141 @@ Widget viewProfile(BuildContext context) {
       ),
     ),
   );
+}
+
+class EditableCompanyDetails extends StatefulWidget {
+  final Function(String, String, String) onSave;
+
+  const EditableCompanyDetails({required this.onSave, Key? key})
+      : super(key: key);
+
+  @override
+  _EditableCompanyDetailsState createState() => _EditableCompanyDetailsState();
+}
+
+class _EditableCompanyDetailsState extends State<EditableCompanyDetails> {
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _siteController = TextEditingController();
+  final TextEditingController _numbController = TextEditingController();
+
+  final ApiServices _apiService = ApiServices(); // API service instance
+
+  // Function to handle form submission
+  Future<void> _submitCompanyData() async {
+    // Validate the fields before sending data
+    if (_addressController.text.isEmpty || _siteController.text.isEmpty|| _numbController.text.isEmpty) {
+      // You can display an error message if any field is empty
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all fields!')),
+      );
+      return;
+    }
+
+    try {
+      // Call the API service to send data to the server
+      var response = await _apiService.sendUpdatedCompanyData(
+        address: _addressController.text,
+        site: _siteController.text,
+        number: int.parse(_numbController.text),);
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Data saved successfully!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Failed to save data: ${response.statusCode}')),
+        );
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return Align(alignment: Alignment.center,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Container(
+          width: size.width > 900 ? (size.width - 225) * 0.4 : null,
+        height: 455,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(6),
+            color: Colors.white,
+            border: Border.all(color: Colors.black),
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: size.width > 900 ? (size.width - 200) * .45 : null,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                       "Company Details",
+                        style: AppTextStyle.sixteen_w400_black,
+                      ),
+                    ),
+                    TextFormField(
+                      controller: _addressController,
+                      decoration: const InputDecoration(
+                        labelText: "Address",
+                        border: InputBorder.none,
+                      ),
+                    ),
+                    TextFormField(
+                      controller: _siteController,
+                      decoration: const InputDecoration(
+                        labelText: "web site",
+                        border: InputBorder.none,
+                      ),
+                    ),
+                    TextFormField(
+                      controller: _numbController,
+                      decoration: const InputDecoration(
+                        labelText: "Number",
+                        border: InputBorder.none,
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _submitCompanyData(); // Call the function to submit data
+                          widget.onSave(
+                            _addressController.text,
+                            _siteController.text,
+                            _numbController.text,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          side: const BorderSide(color: Colors.black),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

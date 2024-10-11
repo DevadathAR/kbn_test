@@ -77,7 +77,7 @@ class CompanyStatisticScreen extends StatelessWidget {
                     // color: yellow,
                     height: 500,
                     width: screenWidth *
-                        .34, // Dynamic width for RecruitmentBarChart
+                        .3, // Dynamic width for RecruitmentBarChart
                     child: Column(
                       children: [
                         const Align(
