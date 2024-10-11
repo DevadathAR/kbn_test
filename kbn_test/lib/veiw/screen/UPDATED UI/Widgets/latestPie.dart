@@ -3,6 +3,7 @@ import 'package:kbn_test/service/adminMode.dart';
 import 'package:kbn_test/service/companymodelClass.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class RadialArc {
@@ -59,14 +60,25 @@ class SyncfusionPieChart extends StatelessWidget {
     // Extract the required data
     // final totalApplicantsThisMonth = da;
 
-    final totalApplicantsThisMonth =
-        companyData?.commonData.applicantsTotal.thisMonth;
-    final totalApplicantsPrevMonth =
-        companyData?.commonData.applicantsTotal.prevMonth;
-    final selectedApplicantsThisMonth =
-        companyData?.commonData.applicantsSelected.thisMonth;
-    final selectedApplicantsPrevMonth =
-        companyData?.commonData.applicantsSelected.prevMonth;
+    final totalApplicantsThisMonth = isCompany
+        ? companyData?.commonData.applicantsTotal.thisMonth
+        : adminData?.statisticsPageData.currMonthTotalApplicants;
+
+    final totalApplicantsPrevMonth = isCompany
+        ? companyData?.commonData.applicantsTotal.prevMonth
+        : adminData?.statisticsPageData.prevMonthTotalApplicants;
+
+    final selectedApplicantsThisMonth = isCompany
+        ? companyData?.commonData.applicantsSelected.thisMonth
+        : adminData?.statisticsPageData.currMonthSelectedApplicants;
+
+    final selectedApplicantsPrevMonth = isCompany
+        ? companyData?.commonData.applicantsSelected.prevMonth
+        : adminData?.statisticsPageData.prevMonthSelectedApplicants;
+
+        if (totalApplicantsThisMonth == null || totalApplicantsPrevMonth == null) {
+      return const Center(child: Text("No Pie Data available"));
+    }
 
     return SfRadialGauge(
       // backgroundColor: textGrey,
@@ -79,7 +91,7 @@ class SyncfusionPieChart extends StatelessWidget {
         // Outer Green Arcs
         RadialArc.build(
           isGradient: true,
-          maxValue: totalApplicantsThisMonth!.toDouble(),
+          maxValue: totalApplicantsThisMonth.toDouble(),
           startAngle: 230,
           endAngle: 230,
           radiusFactor: 1.0,

@@ -4,6 +4,7 @@ import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/applicantsScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/jobScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/showAll_bTn.dart';
 
@@ -89,7 +90,9 @@ class HorizontalTable extends StatelessWidget {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const CompanyJobpage()));
+                    builder: (context) => isCompany
+                        ? const CompanyJobpage()
+                        : const CompanyApplicantScreen()));
           })
         ],
       ),
@@ -140,7 +143,7 @@ class HorizontalTable extends StatelessWidget {
       case 1:
         return company.totalVacancy;
       case 2:
-        return company.selected.toString() ;
+        return company.selected.toString();
       default:
         return '';
     }

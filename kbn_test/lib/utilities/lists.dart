@@ -80,62 +80,61 @@ List<Map<String, String>> selectedApplicants = [
 List<Map<String, String>> companyTableHeaders = [
   {'header': 'Date', 'key': 'date'},
   {'header': 'Company name', 'key': 'name'},
-  {'header': 'Location', 'key': 'location'},
+  {'header': 'Vaccancy', 'key': 'vaccancy'},
+  {'header': 'No.of selected', 'key': 'selected'},
   {'header': 'KBN code', 'key': 'kbn'},
-  {'header': 'Link', 'key': 'link'},
-  {'header': 'Payment status', 'key': 'payment'},
-  {'header': 'Status', 'key': 'status'},
+  {'header': 'Status', 'key': 'adminStatus'},
 ];
 
-List<Map<String, String>> companyTableData = [
-  {
-    'date': '2024-09-25',
-    'name': 'Tech Solutions Inc.',
-    'location': 'New York, USA',
-    'kbn': 'KBN12345',
-    'link': 'https://example.com/tech-solutions',
-    'payment': 'Paid',
-    'status': 'Active',
-  },
-  {
-    'date': '2024-09-20',
-    'name': 'Global Innovations Ltd.',
-    'location': 'London, UK',
-    'kbn': 'KBN67890',
-    'link': 'https://example.com/global-innovations',
-    'payment': 'Pending',
-    'status': 'Active',
-  },
-  {
-    'date': '2024-09-18',
-    'name': 'Future Enterprises',
-    'location': 'Berlin, Germany',
-    'kbn': 'KBN98765',
-    'link': 'https://example.com/future-enterprises',
-    'payment': 'Paid',
-    'status': 'Inactive',
-  },
-  {
-    'date': '2024-09-15',
-    'name': 'Innovative Solutions',
-    'location': 'Tokyo, Japan',
-    'kbn': 'KBN54321',
-    'link': 'https://example.com/innovative-solutions',
-    'payment': 'Paid',
-    'status': 'Active',
-  },
-];
+// List<Map<String, String>> companyTableData = [
+//   {
+//     'date': '2024-09-25',
+//     'name': 'Tech Solutions Inc.',
+//     'location': 'New York, USA',
+//     'kbn': 'KBN12345',
+//     'link': 'https://example.com/tech-solutions',
+//     'payment': 'Paid',
+//     'status': 'Active',
+//   },
+//   {
+//     'date': '2024-09-20',
+//     'name': 'Global Innovations Ltd.',
+//     'location': 'London, UK',
+//     'kbn': 'KBN67890',
+//     'link': 'https://example.com/global-innovations',
+//     'payment': 'Pending',
+//     'status': 'Active',
+//   },
+//   {
+//     'date': '2024-09-18',
+//     'name': 'Future Enterprises',
+//     'location': 'Berlin, Germany',
+//     'kbn': 'KBN98765',
+//     'link': 'https://example.com/future-enterprises',
+//     'payment': 'Paid',
+//     'status': 'Inactive',
+//   },
+//   {
+//     'date': '2024-09-15',
+//     'name': 'Innovative Solutions',
+//     'location': 'Tokyo, Japan',
+//     'kbn': 'KBN54321',
+//     'link': 'https://example.com/innovative-solutions',
+//     'payment': 'Paid',
+//     'status': 'Active',
+//   },
+// ];
 
-// Data for the approved  companies table
-List<Map<String, String>> apprvedCompanies = [
-  {'name': 'Luma solutions', 'website': 'www.Luma.com'},
-  {'name': 'Festa solutions', 'website': 'www.festa.com'},
-  {'name': 'rebeca solutions', 'website': 'www.rebeca.com'},
-  {'name': 'inbuilta solutions', 'website': 'www.inbuilta.com'},
-  {'name': 'indica technologies', 'website': 'www.indica.com'},
-  {'name': 'rebel technologys', 'website': 'www.rebel.com'},
-  {'name': 'zigma pvt ltd', 'website': 'www.zigma.com'},
-];
+// // Data for the approved  companies table
+// List<Map<String, String>> apprvedCompanies = [
+//   {'name': 'Luma solutions', 'website': 'www.Luma.com'},
+//   {'name': 'Festa solutions', 'website': 'www.festa.com'},
+//   {'name': 'rebeca solutions', 'website': 'www.rebeca.com'},
+//   {'name': 'inbuilta solutions', 'website': 'www.inbuilta.com'},
+//   {'name': 'indica technologies', 'website': 'www.indica.com'},
+//   {'name': 'rebel technologys', 'website': 'www.rebel.com'},
+//   {'name': 'zigma pvt ltd', 'website': 'www.zigma.com'},
+// ];
 
 // Data for the approved  companies table
 List<Map<String, String>> companyTransactionData = [

@@ -232,21 +232,21 @@ class ApiServices {
     }
   }
 
-  // // View  Applicant Details API
-  // static Future<Map<String, dynamic>> fetchApplicantDetails(
-  //     int applicantId) async {
-  //   var url = Uri.parse('$baseUrl/user/$applicantId');
+  // View  Applicant Details API
+  static Future<Map<String, dynamic>> fetchApplicantDetails(
+      int userId) async {
+    var url = Uri.parse('$baseUrl/user/$userId');
 
-  //   var response = await http.get(url, headers: headers);
+    var response = await http.get(url, headers: headers);
 
-  //   // print('viewedApplicant${response.body}');
+    // print('viewedApplicant${response.body}');
 
-  //   if (response.statusCode == 200) {
-  //     return jsonDecode(response.body);
-  //   } else {
-  //     throw Exception('Failed to fetch user details');
-  //   }
-  // }
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to fetch user details');
+    }
+  }
 
   static Future<http.Response> createJob(Map<String, dynamic> jobData) async {
     var url = Uri.parse('$baseUrl/job/addJob');

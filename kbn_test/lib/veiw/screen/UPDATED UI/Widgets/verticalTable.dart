@@ -5,6 +5,7 @@ import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/applicantsScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/commonTable.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/dialogueBoxes.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/showAll_bTn.dart';
 import 'package:kbn_test/veiw/widgets_common/boxBTN.dart';
 
@@ -13,11 +14,13 @@ import '../../../../service/companymodelClass.dart'; // Make sure your model cla
 class VerticalTable extends StatelessWidget {
   final ApplicantsPageData? applicantsData;
   final List<ToBeApprovedCompany>? toApproveData;
+  final VoidCallback onAdminAproval;
 
   const VerticalTable({
     super.key,
     this.applicantsData,
     this.toApproveData,
+    required this.onAdminAproval,
   });
 
   @override
@@ -35,15 +38,24 @@ class VerticalTable extends StatelessWidget {
             '' // Third column for the button
           ];
 
-     // Define table data based on user type
+    // Define table data based on user type
     final List<List<dynamic>> rowData = isCompany
         ? applicantsData?.selected.map((applicant) {
-            return [applicant.name, applicant.designation];
-          }).toList() ?? []
+              return [
+                applicant.name,
+                applicant.designation,
+                applicant.applicantId
+              ];
+            }).toList() ??
+            []
         : toApproveData?.map((company) {
-            return [company.companyName, company.website];
-          }).toList() ?? [];
-
+              return [
+                company.companyName,
+                company.website,
+                company.companyId,
+              ];
+            }).toList() ??
+            [];
 
     return Container(
       height: 500,
@@ -56,6 +68,13 @@ class VerticalTable extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
+             Align(
+              alignment: Alignment.center,
+              child: Text(
+                !isCompany?"To Approve":"Selected Applicants",
+                style: AppTextStyle.twelve_w500,
+              ),
+            ),
             Table(
               defaultVerticalAlignment: TableCellVerticalAlignment.middle,
               border: TableBorder(
@@ -83,12 +102,31 @@ class VerticalTable extends StatelessWidget {
                   ],
                 ),
                 // Add the data rows dynamically
-                for (var row in rowData.take(6))
+                for (var row in rowData.take(5))
                   TableRow(
                     children: [
                       _buildDataCell(row[0].toString()), // Name/Company Name
-                      _buildDataCell(row[1].toString()), // Designation/Website Link
-                      _buildButtonCell(context), // Button for 'View Details'
+                      _buildDataCell(
+                          row[1].toString()), // Designation/Website Link
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: BoxButton(
+                          title: "View Details",
+                          onTap: () {
+                            isCompany
+                                ? showApplicantProfile(
+                                  designation: row[1],
+                                  applicantId: row[2],
+                                    context: context,
+                                  )
+                                : showCompanyProfileDialog(
+                                    onApproval: onAdminAproval,
+                                    context: context,
+                                    companyId: row[2],
+                                  );
+                          },
+                        ),
+                      ), // Button for 'View Details'
                     ],
                   ),
               ],
@@ -133,19 +171,6 @@ class VerticalTable extends StatelessWidget {
         text,
         style: AppTextStyle.normalText,
         textAlign: TextAlign.center,
-      ),
-    );
-  }
-
-  // Widget for the button cell
-  Widget _buildButtonCell(context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: BoxButton(
-        title: "View Details",
-        onTap: () {
-          showProfileDialog(context);
-        },
       ),
     );
   }

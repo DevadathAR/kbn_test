@@ -29,7 +29,7 @@ class RecruitmentBarChart extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
         scrollDirection: Axis.horizontal,
         child: SizedBox(
-          width: (recruitmentData?.length ?? performanceData?.length ?? 0) * 60,
+          width: size.width*0.5,
           child: BarChart(
             BarChartData(
               alignment: BarChartAlignment.spaceAround,

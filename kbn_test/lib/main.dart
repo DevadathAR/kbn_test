@@ -61,12 +61,18 @@ class MainApp extends StatelessWidget {
     if (token == null) {
       return null; // Not logged in
     } else {
+      // print(role);
+      if (role != 'Admin') {
+        isCompany = true;
+      } else {
+        isCompany = false;
+      }
       ApiServices.headers['Authorization'] = "Bearer $token";
 
       var userDetailsResponse = await ApiServices.fetchUserDetails();
       userDetails = userDetailsResponse;
 
-      print(userDetailsResponse);
+      // print(userDetailsResponse);
 
       return role;
     }

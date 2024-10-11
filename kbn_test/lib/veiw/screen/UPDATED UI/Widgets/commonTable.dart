@@ -6,6 +6,7 @@ import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/dialogueBoxes.dart';
 import 'package:kbn_test/veiw/widgets_common/boldText.dart';
 import 'package:kbn_test/veiw/widgets_common/boxBTN.dart';
 import 'package:kbn_test/veiw/widgets_common/normalText.dart';
@@ -14,9 +15,11 @@ import 'package:kbn_test/veiw/widgets_common/statusUpdate.dart';
 Widget applicantsTable({
   context,
   required List<Map<String, String>> headers,
-  required List<Map<String, String>> data,
   required List<String> statusOptions,
   required String status,
+  List<Map<String, String>>? Data,
+  // List<Map<String, String>>? companiesData,
+
   // required int applicationId,
   onStatusChange,
 } // Ad}d callback parameter
@@ -75,7 +78,7 @@ Widget applicantsTable({
               ),
               columnWidths: _generateColumnWidths(headers.length),
               children: [
-                ...data.asMap().entries.map((entry) {
+                ...Data!.asMap().entries.map((entry) {
                   final index = entry.key;
                   final row = entry.value;
                   return TableRow(
@@ -115,25 +118,15 @@ Widget applicantsTable({
 }
 
 Widget selectedApplicantsTable(context,
-    {applicantId,
-    status,
+    {status,
     onstatusChange,
+    required VoidCallback onAdminAproval,
     // required double width,
     required List<Map<String, String>> data,
     required String headerTitle,
     List<String>? statusOptions,
     String? path}) {
-  List<String> keys = isCompany
-      ? ['name', 'designation']
-      : path == "Transactions"
-          ? [
-              'name',
-              'amount',
-              'payment',
-              'status'
-            ] // Path is "Transactions" and it's not a company
-          //companies Screen header
-          : ['name', 'website']; // Not a company and path is not "Transactions"
+  List<String> keys = isCompany ? ['name', 'designation'] : ['name', 'website'];
   Size size = MediaQuery.of(context).size;
 
   return Container(
@@ -186,25 +179,31 @@ Widget selectedApplicantsTable(context,
               children: [
                 // Iterating over data rows
                 ...data.map((row) {
-                  bool hasStatus = row.containsKey('status');
                   return TableRow(
                     children: [
                       ...keys.map((key) => _buildDataCell(row[key] ?? '')),
-
-                      // If the row contains 'status', show the CustomStatusColumn
-                      if (hasStatus)
-                        CustomStatusColumn(
-                          status: status,
-                          applicationId: applicantId,
-                          onStatusChange: () {
-                            onstatusChange;
-                          },
-                          statusOptions:
-                              statusOptions ?? ['Approved', 'Pending'],
-                        ),
-
-                      // Otherwise, show the ButtonCell
-                      if (!hasStatus) _buildButtonCell(context),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: BoxButton(
+                            title: "View Details",
+                            onTap: () {
+                              isCompany
+                                  ? showApplicantProfile(
+                                      designation: row['designation'] ?? '',
+                                      applicantId:
+                                          int.tryParse(row['id'] ?? '0') ?? 0,
+                                      context: context,
+                                    )
+                                  : showCompanyProfileDialog(
+                                      context: context,
+                                      companyId:
+                                          int.tryParse(row['id'] ?? '0') ?? 0,
+                                      onApproval: () {
+                                        onAdminAproval;
+                                      },
+                                    );
+                            }),
+                      ),
                     ],
                   );
                 }),
@@ -260,8 +259,7 @@ class _CustomStatusColumnState extends State<CustomStatusColumn> {
     });
     // Proceed with the API call
     try {
-      await ApiServices.updateApplication(
-          newStatus, widget.applicationId);
+      await ApiServices.updateApplication(newStatus, widget.applicationId);
       widget.onStatusChange();
     } catch (e) {
       print('Error updating status: $e');
@@ -309,118 +307,5 @@ Widget _buildDataCell(String text) {
       style: AppTextStyle.normalText,
       textAlign: TextAlign.center,
     ),
-  );
-}
-
-// Widget for the button cell
-Widget _buildButtonCell(context) {
-  return Padding(
-    padding: const EdgeInsets.all(10.0),
-    child: BoxButton(
-        title: "View Details",
-        onTap: () {
-          showProfileDialog(context);
-        }),
-  );
-}
-
-void showProfileDialog(BuildContext context) {
-  // Fetch applicant details when the dialog is shown
-  // ApiServices.fetchApplicantDetails(widget.applicantId);
-  showDialog(
-    context: context,
-    barrierColor: semitransp,
-    builder: (BuildContext context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child:
-            // isLoading
-            //     ? const Center(child: CircularProgressIndicator())
-            //     :
-
-            SizedBox(
-          width: 400,
-          height: 248,
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                // Image and summary row
-                Container(
-                  width: 202.82,
-                  height: 202.82,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300], // Background color if no image
-                    borderRadius: BorderRadius.circular(8), // Square corners
-                    image: const DecorationImage(
-                      image: AssetImage(compnyLogo)
-                          as ImageProvider, // Use a placeholder if image is null
-                      fit: BoxFit.cover, // Adjusts image to cover the container
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: 10),
-                // applicant name and designation
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    boldText(text: 'Name', size: 15),
-                    const SizedBox(height: 5),
-                    boldText(text: "Designation", size: 15),
-                    const SizedBox(height: 5),
-                    normalText(text: '8547809771'),
-                    const Spacer(),
-                    box(
-                      width: 118,
-                      height: 28,
-                      child: GestureDetector(
-                        onTap: () => (), // Adding onTap function
-                        child: const Center(
-                          child: Text(
-                            'RESUME',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 10,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    box(
-                      width: 118,
-                      height: 28,
-                      child: GestureDetector(
-                        onTap: () => (), // Adding onTap function
-                        child: const Center(
-                          child: Text(
-                            'CONTACT VIA MAIL',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: tealblue,
-                              fontSize: 10,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    },
   );
 }

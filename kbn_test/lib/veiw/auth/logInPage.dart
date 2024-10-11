@@ -48,8 +48,11 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
           var token = responseData['token'];
           var role = responseData['role'];
 
-          isCompany = true;
-
+          if (role != 'Admin') {
+            isCompany = true;
+          } else {
+            isCompany = false;
+          }
           // ApiDataService().isCompany = role == 'Company';
 
           var userDetailsResponse = await ApiServices.fetchUserDetails();

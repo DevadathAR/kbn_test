@@ -62,7 +62,7 @@ class ChartWidget extends StatelessWidget {
         SizedBox(
           height: 180,
           child: SyncfusionPieChart(
-            companyData: companyData, 
+            companyData: companyData,
             adminData: adminData,
           ),
         ),
@@ -102,27 +102,28 @@ class ChartWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 5),
-        // Flexible(
-        //   flex: 1,
-        //   child: Column(
-        //     mainAxisAlignment: MainAxisAlignment.center,
-        //     children: [
-        //       SizedBox(
-        //         height: 200,
-        //         child: SyncfusionPieChart(
-        //           commonData: companyData.commonData, // Pass dynamic data
-        //         ),
-        //       ),
-        //       Column(
-        //         children: [
-        //           colorDeclaration(title: currentMonth),
-        //           const SizedBox(height: 5),
-        //           colorDeclaration(title: previousMonth),
-        //         ],
-        //       ),
-        //     ],
-        //   ),
-        // ),
+        Flexible(
+          flex: 1,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 200,
+                child: SyncfusionPieChart(
+                  companyData: companyData,
+                  adminData: adminData,
+                ),
+              ),
+              Column(
+                children: [
+                  colorDeclaration(title: currentMonth),
+                  const SizedBox(height: 5),
+                  colorDeclaration(title: previousMonth),
+                ],
+              ),
+            ],
+          ),
+        ),
         const SizedBox(width: 5),
       ],
     );

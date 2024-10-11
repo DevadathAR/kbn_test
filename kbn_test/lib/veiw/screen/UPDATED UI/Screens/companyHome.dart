@@ -34,6 +34,7 @@ class _CompanyHomeState extends State<CompanyHome> {
     try {
       // ignore: prefer_typing_uninitialized_variables
       var data;
+      // print(isCompany);
       if (isCompany) {
         data = await ApiDataService().fetchCompanyData();
         setState(() {
@@ -128,6 +129,9 @@ class _CompanyHomeState extends State<CompanyHome> {
                   ? (size.width - 200) * 0.49
                   : null, // Adjust the width as necessary
               child: VerticalTable(
+                onAdminAproval: () {
+                  ApiDataService().fetchCompanyData();
+                },
                 applicantsData: isCompany
                     ? companyData?.companyData.applicantsPageData
                     : null,

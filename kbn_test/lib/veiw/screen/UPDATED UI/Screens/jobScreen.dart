@@ -83,7 +83,7 @@ class _CompanyJobpageState extends State<CompanyJobpage> {
                             status: jobTableData[0]['status'].toString(),
                             context: context,
                             headers: jobTableheaders,
-                            data: jobTableData,
+                            Data: jobTableData,
                             statusOptions: ["CLOSE"],
                             onStatusChange: () async {},
                           ),
