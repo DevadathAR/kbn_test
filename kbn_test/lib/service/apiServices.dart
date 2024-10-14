@@ -13,9 +13,11 @@ List<dynamic> jobs = [];
 class ApiServices {
   static Map<String, String> headers = {
     'Content-Type': 'application/json',
+    "ngrok-skip-browser-warning": "69420"
   };
-  static const String baseUrl = 'http://192.168.29.37:8000';
-  // static const String baseUrl = 'http://192.168.29.197:5500';
+  static const String baseUrl =
+      // "https://acab-2405-201-f017-980d-fd96-e1c9-8e85-ce21.ngrok-free.app";
+      'http://192.168.29.37:8000';
 
   Future<http.StreamedResponse> signUp({
     required String fullName,
@@ -84,6 +86,8 @@ class ApiServices {
       var data = jsonDecode(response.body);
       var token = data['token']; // Save the token for future requests
       headers['Authorization'] = 'Bearer $token';
+
+      log(jsonEncode(data));
 
       return data;
     } else {
@@ -192,33 +196,33 @@ class ApiServices {
   }
 
   // Update AddressDetails Data API
-  static Future<Map<String, dynamic>> updateAddressDetails(
-    String address,
-    String contact,
-    // String businessType,
-    String website,
-  ) async {
-    var url = Uri.parse('$baseUrl/user/');
+  // static Future<Map<String, dynamic>> updateAddressDetails(
+  //   String address,
+  //   String contact,
+  //   // String businessType,
+  //   String website,
+  // ) async {
+  //   var url = Uri.parse('$baseUrl/user/');
 
-    var response = await http.patch(
-      url,
-      headers: headers,
-      body: jsonEncode({
-        // Correct key-value format
-        'address': address,
-        'contact': contact,
-        // 'business_type': businessType,
-        'company_website': website
-      }),
-    );
-    // print('Address Updated${response.body}');
+  //   var response = await http.patch(
+  //     url,
+  //     headers: headers,
+  //     body: jsonEncode({
+  //       // Correct key-value format
+  //       'address': address,
+  //       'contact': contact,
+  //       // 'business_type': businessType,
+  //       'company_website': website
+  //     }),
+  //   );
+  //   // print('Address Updated${response.body}');
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to update application');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body);
+  //   } else {
+  //     throw Exception('Failed to update application');
+  //   }
+  // }
 
   // // Updating Vaccancy
   // static Future<Map<String, dynamic>> updateVaccancy(
@@ -529,7 +533,7 @@ class ApiServices {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final totalJobs = data["totalJobs"];
-      log(jsonEncode(data));
+      // log(jsonEncode(data));
 
       return {
         'data': data['data'] as List,
@@ -541,20 +545,29 @@ class ApiServices {
   }
 
   Future<http.StreamedResponse> sendManagerData({
-    // required String companyName,
     required String managerName,
     required String email,
-    File? imageFile,
+    Uint8List? selectedImage,
+    String? imageFilename,
+    // String? imageFile, // Accepts the image file directly
   }) async {
     final url = Uri.parse('$baseUrl/company/manager');
-    
 
     // Prepare form data
-    var request = http.MultipartRequest('POST', url,);
-    // request.fields['company_name'] = companyName;
+    var request = http.MultipartRequest('POST', url);
     request.headers.addAll(headers);
     request.fields['managerName'] = managerName;
     request.fields['managerMail'] = email;
+
+    // Check if imageFile is not null and add it to the request
+    if (selectedImage != null&&imageFilename!= null) {
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image', // Key name for the server
+          selectedImage,
+filename: imageFilename,        ),
+      );
+    }
 
     try {
       // Send the request and return the response
@@ -564,30 +577,34 @@ class ApiServices {
       rethrow; // Rethrow any errors to handle them in the UI
     }
   }
-  Future<http.StreamedResponse> sendUpdatedCompanyData({
-    // required String companyName,
-    required String address,
-    required String site,
-    required int number,
-    
-  }) async {
-    final url = Uri.parse('$baseUrl/user/');
-    
 
-    // Prepare form data
-    var request = http.MultipartRequest('PATCH', url,);
-    // request.fields['company_name'] = companyName;
-    request.headers.addAll(headers);
-    request.fields['address'] = address;
-    request.fields['company_website'] = site;
-    request.fields['contact'] = number.toString();
+// Update AddressDetails Data API
+  static Future<Map<String, dynamic>> sendUpdatedCompanyData(
+    String address,
+    String number,
+    String site,
+    
+  ) async {
+    var url = Uri.parse('$baseUrl/user/');
 
-    try {
-      // Send the request and return the response
-      var response = await request.send();
-      return response;
-    } catch (error) {
-      rethrow; // Rethrow any errors to handle them in the UI
+    var response = await http.patch(
+      url,
+      headers: headers,
+      body: jsonEncode({
+        'address': address,
+        'company_website': site,
+        'contact': number,
+      }),
+    );
+
+    // Check for the response body
+    print('Response body: ${response.body}'); // Debugging line
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      // Add more details to your exception
+      throw Exception('Failed to update application: ${response.body}');
     }
   }
 }

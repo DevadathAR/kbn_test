@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
@@ -157,7 +159,8 @@ class _UserHomeState extends State<UserHome> {
                           termscolor: white,
                           profileImage:
                               "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
-                        ),
+                              
+                        ),                        
                         const SizedBox(height: 10),
                         HomeFilterBox(
                           onFilterApplied: (filteredJobs) {
