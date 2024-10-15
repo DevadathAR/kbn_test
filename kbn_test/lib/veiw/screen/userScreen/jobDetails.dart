@@ -526,7 +526,7 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
       if (result['message'] == 'Application Created') {
         setState(() {
           _isApplied = true;
-          _currentStatus = 'Submitted'; // Update status to "Submitted"
+          _currentStatus = 'SUBMITTED'; // Update status to "Submitted"
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Application successfully submitted!')),

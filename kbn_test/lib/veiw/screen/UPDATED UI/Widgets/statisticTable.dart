@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:kbn_test/service/modelClass.dart';
+import 'package:kbn_test/service/companyModelClass.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:kbn_test/utilities/colors.dart';

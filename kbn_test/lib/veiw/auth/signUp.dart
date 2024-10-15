@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
@@ -9,8 +7,6 @@ import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/logInPage.dart';
-import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
-import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets_common/bg_widg.dart';
 import 'package:kbn_test/veiw/widgets_common/loginTextFeild.dart';
 import 'package:kbn_test/veiw/screen/userScreen/userWidgets/userSelection.dart';
@@ -149,7 +145,6 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
 
     return Scaffold(
       body: LayoutBuilder(
@@ -166,7 +161,6 @@ class _SignupPageState extends State<SignupPage> {
 
   // Method for Mobile Layout
   Widget _buildMobileLayout(BoxConstraints constraints) {
-    Size size = MediaQuery.of(context).size;
 
     return SafeArea(
       child: SingleChildScrollView(

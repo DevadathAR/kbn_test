@@ -9,7 +9,7 @@ import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/colorDeclaration.dart'
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/statisticTable.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
-import '../../../../service/modelClass.dart';
+import '../../../../service/companyModelClass.dart';
 
 class CompanyStatisticScreen extends StatelessWidget {
   const CompanyStatisticScreen({

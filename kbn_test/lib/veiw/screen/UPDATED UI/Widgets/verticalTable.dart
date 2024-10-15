@@ -7,7 +7,7 @@ import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/commonTable.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/showAll_bTn.dart';
 import 'package:kbn_test/veiw/widgets_common/boxBTN.dart';
 
-import '../../../../service/modelClass.dart'; // Make sure your model class path is correct
+import '../../../../service/companyModelClass.dart'; // Make sure your model class path is correct
 
 class VerticalTable extends StatelessWidget {
   final ApplicantsPageData applicantsData;

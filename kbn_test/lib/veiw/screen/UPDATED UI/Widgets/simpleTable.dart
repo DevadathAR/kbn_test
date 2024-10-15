@@ -5,7 +5,7 @@ import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuild
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/jobScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/showAll_bTn.dart';
 
-import '../../../../service/modelClass.dart';
+import '../../../../service/companyModelClass.dart';
 
 class HorizontalTable extends StatelessWidget {
   final List<JobsPageDatum> jobsData;
@@ -120,7 +120,7 @@ class HorizontalTable extends StatelessWidget {
       case 2:
         return job.selected.toString();
       case 3:
-        return job.status;
+        return job.status.toString();
       default:
         return '';
     }

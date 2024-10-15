@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
-import 'package:kbn_test/service/modelClass.dart';
+import 'package:kbn_test/service/companyModelClass.dart';
 
 Map<String, dynamic> userDetails = {};
 Map<String, dynamic> jobDetailsResponse = {};
@@ -16,8 +16,8 @@ class ApiServices {
     "ngrok-skip-browser-warning": "69420"
   };
   static const String baseUrl =
-      // "https://acab-2405-201-f017-980d-fd96-e1c9-8e85-ce21.ngrok-free.app";
-      'http://192.168.29.37:8000';
+      "https://acab-2405-201-f017-980d-fd96-e1c9-8e85-ce21.ngrok-free.app";
+      // 'http://192.168.29.37:8000';
 
   Future<http.StreamedResponse> signUp({
     required String fullName,
@@ -114,7 +114,7 @@ class ApiServices {
 
   // View  Applicant Details API
   static Future<Apiresponse> companyData() async {
-    var url = Uri.parse('$baseUrl/company/data?month=9&year=2024');
+    var url = Uri.parse('$baseUrl/company/data?month=10&year=2024');
 
     var response = await http.get(url, headers: headers);
 
@@ -475,7 +475,7 @@ class ApiServices {
       throw Exception('Failed to apply for job: ${response.body}');
     }
   }
-
+/*
   static Future<List<dynamic>> fetchJobTitles() async {
     var url = Uri.parse('$baseUrl/job/filter');
 
@@ -488,7 +488,7 @@ class ApiServices {
     } else {
       throw Exception('Failed to fetch job titles');
     }
-  }
+  } */
 
   // Fetch Filtered Jobs
   static Future<Map<String, dynamic>> fetchFilteredJobs({
@@ -533,7 +533,7 @@ class ApiServices {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final totalJobs = data["totalJobs"];
-      // log(jsonEncode(data));
+      log(jsonEncode(data));
 
       return {
         'data': data['data'] as List,

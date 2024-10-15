@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kbn_test/service/apiServices.dart';
-import 'package:kbn_test/service/modelClass.dart';
+import 'package:kbn_test/service/companyModelClass.dart';
 import 'package:kbn_test/service/singletonData.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';

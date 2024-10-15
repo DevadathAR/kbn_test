@@ -144,181 +144,194 @@ class _UserHomeState extends State<UserHome> {
           : Stack(
               children: [
                 SingleChildScrollView(
-                  child: SizedBox(
-                    height: size.height,
-                    width: size.width,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Center(child: Image(image: AssetImage(kbnLogo))),
-                        HomeAppBarBox(
-                          context,
-                          T_and_C: const user_T_n_C(),
-                          termscolor: white,
-                          profileImage:
-                              "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Center(child: Image(image: AssetImage(kbnLogo))),
+                      HomeAppBarBox(
+                        context,
+                        T_and_C: const user_T_n_C(),
+                        termscolor: white,
+                        profileImage:
+                        // "https://acab-2405-201-f017-980d-fd96-e1c9-8e85-ce21.ngrok-free.app/uploads/csk.jpg"
+                            "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}"==null?"${ApiServices.baseUrl}/${userDetails['user']['profile_image']}":personPng,
+                      ),
+                      const SizedBox(height: 10),
+                      HomeFilterBox(
+                        onFilterApplied: (filteredJobs) {
+                          setState(() {
+                            _jobs = filteredJobs;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 50),
+                        child: Text(
+                          latestjob,
+                          style: AppTextStyle.twentyFour_W400,
                         ),
-                        const SizedBox(height: 10),
-                        HomeFilterBox(
-                          onFilterApplied: (filteredJobs) {
-                            setState(() {
-                              _jobs = filteredJobs;
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 50),
-                          child: Text(
-                            latestjob,
-                            style: AppTextStyle.twentyFour_W400,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-/*
-
-working code GridView.builder job card size need change
-
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 40),
-                            child: GridView.builder(
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: _getCrossAxisCount(size),
-                                crossAxisSpacing: 30,
-                                mainAxisSpacing: 10,
-                                childAspectRatio: _getChildAspectRatio(size),
-                              ),
-                              itemCount: _jobs.length,
-                              itemBuilder: (context, index) {
-                                final job = _jobs[index];
-                                return GestureDetector(
-                                  onTap: () async {
-                                    try {
-                                      await ApiServices.postJobDetails(
-                                          job['jobId']);
-                                      Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) {
-                                          return JobDetails(
-                                            jobId: job['jobId'],
-                                            companyId: job['companyId'],
-                                            firmname:
-                                                job['company_name'].toString(),
-                                            jobTitle: job['title'].toString(),
-                                            jobSummary:
-                                                job['job_summary'].toString(),
-                                            expLevel: job['experience_level']
-                                                .toString(),
-                                            jobMode: job['job_mode'].toString(),
-                                            jobType: job['job_type'].toString(),
-                                            keyResponsibilities:
-                                                job['key_responsibilities']
-                                                    as List<dynamic>,
-                                            jobReq: job['job_requirements']
-                                                as Map<String, dynamic>,
-                                            salary: job['salary'],
-                                            currentVacancy: job['vacancy'],
-                                            workLocation:
-                                                job['location'].toString(),
-                                            companywebsite:
-                                                job['company_website']
-                                                    .toString(),
-                                            datePosted:
-                                                job['created_at'].toString(),
-                                            companyImage:
-                                                job['company_profile_image'],
-                                            status: job['application_status']
-                                                .toString(),
-                                          );
-                                        },
-                                      ));
-                                    } catch (error) {
-                                      print('Error in onTap: $error');
-                                    }
-                                    // Navigate to JobDetails
-                                  },
-                                  child: LatestJobCard(
-                                    firmname: job['company_name'].toString(),
-                                    jobTitle: job['title'].toString(),
-                                    jobSummary: job['job_summary'].toString(),
-                                    expLevel:
-                                        job['experience_level'].toString(),
-                                    jobMode: job['job_mode'].toString(),
-                                    jobType: job['job_type'].toString(),
-                                    companyImage:
-                                        job['company_profile_image'].toString(),
-                                    datePosted: job['created_at'].toString(),
-                                    status:
-                                        job['application_status'].toString(),
-                                  ),
-                                );
-                              },
+                      ),
+                      const SizedBox(height: 10),
+                                    /*
+                                    
+                                    working code GridView.builder job card size need change
+                                    
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: _getCrossAxisCount(size),
+                              crossAxisSpacing: 30,
+                              mainAxisSpacing: 10,
+                              childAspectRatio: _getChildAspectRatio(size),
                             ),
+                            itemCount: _jobs.length,
+                            itemBuilder: (context, index) {
+                              final job = _jobs[index];
+                              return GestureDetector(
+                                onTap: () async {
+                                  try {
+                                    await ApiServices.postJobDetails(
+                                        job['jobId']);
+                                    Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) {
+                                        return JobDetails(
+                                          jobId: job['jobId'],
+                                          companyId: job['companyId'],
+                                          firmname:
+                                              job['company_name'].toString(),
+                                          jobTitle: job['title'].toString(),
+                                          jobSummary:
+                                              job['job_summary'].toString(),
+                                          expLevel: job['experience_level']
+                                              .toString(),
+                                          jobMode: job['job_mode'].toString(),
+                                          jobType: job['job_type'].toString(),
+                                          keyResponsibilities:
+                                              job['key_responsibilities']
+                                                  as List<dynamic>,
+                                          jobReq: job['job_requirements']
+                                              as Map<String, dynamic>,
+                                          salary: job['salary'],
+                                          currentVacancy: job['vacancy'],
+                                          workLocation:
+                                              job['location'].toString(),
+                                          companywebsite:
+                                              job['company_website']
+                                                  .toString(),
+                                          datePosted:
+                                              job['created_at'].toString(),
+                                          companyImage:
+                                              job['company_profile_image'],
+                                          status: job['application_status']
+                                              .toString(),
+                                        );
+                                      },
+                                    ));
+                                  } catch (error) {
+                                    print('Error in onTap: $error');
+                                  }
+                                  // Navigate to JobDetails
+                                },
+                                child: LatestJobCard(
+                                  firmname: job['company_name'].toString(),
+                                  jobTitle: job['title'].toString(),
+                                  jobSummary: job['job_summary'].toString(),
+                                  expLevel:
+                                      job['experience_level'].toString(),
+                                  jobMode: job['job_mode'].toString(),
+                                  jobType: job['job_type'].toString(),
+                                  companyImage:
+                                      job['company_profile_image'].toString(),
+                                  datePosted: job['created_at'].toString(),
+                                  status:
+                                      job['application_status'].toString(),
+                                ),
+                              );
+                            },
                           ),
                         ),
-
-                        */
-
-                                             Expanded(
-  child: Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 40),
-    child: Wrap(
-      spacing: 30, // Horizontal space between items
-      runSpacing: 10, // Vertical space between lines
-      children: _jobs.map((job) {
-        return GestureDetector(
-          onTap: () async {
-            try {
-              await ApiServices.postJobDetails(job['jobId']);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return JobDetails(
-                      jobId: job['jobId'],
-                      companyId: job['companyId'],
-                      firmname: job['company_name'].toString(),
-                      jobTitle: job['title'].toString(),
-                      jobSummary: job['job_summary'].toString(),
-                      expLevel: job['experience_level'].toString(),
-                      jobMode: job['job_mode'].toString(),
-                      jobType: job['job_type'].toString(),
-                      keyResponsibilities: job['key_responsibilities'] as List<dynamic>,
-                      jobReq: job['job_requirements'] as Map<String, dynamic>,
-                      salary: job['salary'],
-                      currentVacancy: job['vacancy'],
-                      workLocation: job['location'].toString(),
-                      companywebsite: job['company_website'].toString(),
-                      datePosted: job['created_at'].toString(),
-                      companyImage: job['company_profile_image'],
-                      status: job['application_status'].toString(),
-                    );
-                  },
-                ),
-              );
-            } catch (error) {
-              print('Error in onTap: $error');
-            }
-          },
-          child: LatestJobCard(
-            firmname: job['company_name'].toString(),
-            jobTitle: job['title'].toString(),
-            jobSummary: job['job_summary'].toString(),
-            expLevel: job['experience_level'].toString(),
-            jobMode: job['job_mode'].toString(),
-            jobType: job['job_type'].toString(),
-            companyImage: job['company_profile_image'].toString(),
-            datePosted: job['created_at'].toString(),
-            status: job['application_status'].toString(),
-          ),
-        );
-      }).toList(),
-    ),
-  ),
-),
-
-                        if(size.width<900)
+                      ),
+                                    
+                      */
+                                    
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                        child: Wrap(
+                          spacing: 30, // Horizontal space between items
+                          runSpacing: 10, // Vertical space between lines
+                          children: _jobs.map((job) {
+                            return GestureDetector(
+                              onTap: () async {
+                                try {
+                                  await ApiServices.postJobDetails(
+                                      job['jobId']);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return JobDetails(
+                                          jobId: job['jobId'],
+                                          companyId: job['companyId'],
+                                          firmname: job['company_name']
+                                              .toString(),
+                                          jobTitle: job['title'].toString(),
+                                          jobSummary:
+                                              job['job_summary'].toString(),
+                                          expLevel: job['experience_level']
+                                              .toString(),
+                                          jobMode:
+                                              job['job_mode'].toString(),
+                                          jobType:
+                                              job['job_type'].toString(),
+                                          keyResponsibilities:
+                                              job['key_responsibilities']
+                                                  as List<dynamic>,
+                                          jobReq: job['job_requirements']
+                                              as Map<String, dynamic>,
+                                          salary: job['salary'],
+                                          currentVacancy: job['vacancy'],
+                                          workLocation:
+                                              job['location'].toString(),
+                                          companywebsite:
+                                              job['company_website']
+                                                  .toString(),
+                                          datePosted:
+                                              job['created_at'].toString(),
+                                          companyImage:
+                                              job['company_profile_image'],
+                                          status: job['application_status']
+                                              .toString(),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                } catch (error) {
+                                  print('Error in onTap: $error');
+                                }
+                              },
+                              child: LatestJobCard(
+                                firmname: job['company_name'].toString(),
+                                jobTitle: job['title'].toString(),
+                                jobSummary: job['job_summary'].toString(),
+                                expLevel:
+                                    job['experience_level'].toString(),
+                                jobMode: job['job_mode'].toString(),
+                                jobType: job['job_type'].toString(),
+                                companyImage:
+                                    job['company_profile_image'].toString(),
+                                datePosted: job['created_at'].toString(),
+                                status:
+                                    job['application_status'].toString(),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      if (size.width < 900)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -335,8 +348,7 @@ working code GridView.builder job card size need change
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
                 if (_shouldShowUploadResume)

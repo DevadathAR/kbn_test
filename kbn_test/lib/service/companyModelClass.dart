@@ -33,14 +33,12 @@ class CompanyData {
     StatisticsPageData statisticsPageData;
     ApplicantsPageData applicantsPageData;
     List<JobsPageDatum> jobsPageData;
-    // List<MessagesPageDatum> messagesPageData;
 
     CompanyData({
         required this.commonData,
         required this.statisticsPageData,
         required this.applicantsPageData,
         required this.jobsPageData,
-        // required this.messagesPageData,
     });
 
     factory CompanyData.fromJson(Map<String, dynamic> json) => CompanyData(
@@ -48,7 +46,6 @@ class CompanyData {
         statisticsPageData: StatisticsPageData.fromJson(json["statisticsPageData"]),
         applicantsPageData: ApplicantsPageData.fromJson(json["applicantsPageData"]),
         jobsPageData: List<JobsPageDatum>.from(json["jobsPageData"].map((x) => JobsPageDatum.fromJson(x))),
-        // messagesPageData: List<MessagesPageDatum>.from(json["messagesPageData"].map((x) => MessagesPageDatum.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
@@ -56,7 +53,6 @@ class CompanyData {
         "statisticsPageData": statisticsPageData.toJson(),
         "applicantsPageData": applicantsPageData.toJson(),
         "jobsPageData": List<dynamic>.from(jobsPageData.map((x) => x.toJson())),
-        // "messagesPageData": List<dynamic>.from(messagesPageData.map((x) => x.toJson())),
     };
 }
 
@@ -81,16 +77,17 @@ class ApplicantsPageData {
 }
 
 class Pending {
+    int applicationId;
     DateTime date;
     String applicantName;
-    Location location;
+    String location;
     String designation;
-    ResumeLink resumeLink;
+    String resumeLink;
     String email;
-    Status status;
-    int applicationId;
+    String status;
 
     Pending({
+        required this.applicationId,
         required this.date,
         required this.applicantName,
         required this.location,
@@ -98,66 +95,30 @@ class Pending {
         required this.resumeLink,
         required this.email,
         required this.status,
-        required this.applicationId,
     });
 
     factory Pending.fromJson(Map<String, dynamic> json) => Pending(
-              applicationId: json["applicationId"], // Fetch applicationId from JSON
+        applicationId: json["applicationId"],
         date: DateTime.parse(json["date"]),
         applicantName: json["applicantName"],
-        location: locationValues.map[json["location"]]!,
+        location: json["location"],
         designation: json["designation"],
-        resumeLink: resumeLinkValues.map[json["resumeLink"]]!,
+        resumeLink: json["resumeLink"],
         email: json["email"],
-        status: statusValues.map[json["status"]]!,
+        status: json["status"],
     );
 
     Map<String, dynamic> toJson() => {
-        "date": date.toIso8601String(),
+        "applicationId": applicationId,
+        "date": "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
         "applicantName": applicantName,
-        "location": locationValues.reverse[location],
+        "location": location,
         "designation": designation,
-        "resumeLink": resumeLinkValues.reverse[resumeLink],
+        "resumeLink": resumeLink,
         "email": email,
-        "status": statusValues.reverse[status],
-        "applicationId":
-            applicationId, 
+        "status": status,
     };
 }
-
-enum Location {
-    BRAZIL,
-    CALICUT,
-    KAKKANAD,
-    KOCHI,
-    LOCATION_KOCHI
-}
-
-final locationValues = EnumValues({
-    "brazil": Location.BRAZIL,
-    "calicut": Location.CALICUT,
-    "kakkanad": Location.KAKKANAD,
-    "kochi": Location.KOCHI,
-    "Kochi": Location.LOCATION_KOCHI
-});
-
-enum ResumeLink {
-    UPLOADS_DEVADATH_AR_PDF,
-    UPLOADS_RECTANGLE_740_PNG
-}
-
-final resumeLinkValues = EnumValues({
-    "/uploads/Devadath.AR.pdf": ResumeLink.UPLOADS_DEVADATH_AR_PDF,
-    "/uploads/Rectangle 740.png": ResumeLink.UPLOADS_RECTANGLE_740_PNG
-});
-
-enum Status {
-    SUBMITTED
-}
-
-final statusValues = EnumValues({
-    "submitted": Status.SUBMITTED
-});
 
 class Selected {
     int applicantId;
@@ -214,7 +175,7 @@ class CommonData {
 class Applicants {
     int prevMonth;
     int thisMonth;
-    double growth;
+    int growth;
 
     Applicants({
         required this.prevMonth,
@@ -263,7 +224,7 @@ class JobsPageDatum {
     int jobId;
     String designation;
     String experience;
-    Location location;
+    String location;
     int vacancy;
     int selected;
     String jobMode;
@@ -288,7 +249,7 @@ class JobsPageDatum {
         jobId: json["jobId"],
         designation: json["designation"],
         experience: json["experience"],
-        location: locationValues.map[json["location"]]!,
+        location: json["location"],
         vacancy: json["vacancy"],
         selected: json["selected"],
         jobMode: json["job_mode"],
@@ -301,57 +262,13 @@ class JobsPageDatum {
         "jobId": jobId,
         "designation": designation,
         "experience": experience,
-        "location": locationValues.reverse[location],
+        "location": location,
         "vacancy": vacancy,
         "selected": selected,
         "job_mode": jobMode,
         "job_type": jobType,
         "salary": salary,
         "status": status,
-    };
-}
-
-class MessagesPageDatum {
-    int threadId;
-    int senderId;
-    String sender;
-    int receiverId;
-    String content;
-    dynamic files;
-    DateTime createdAt;
-    String profileimg;
-
-    MessagesPageDatum({
-        required this.threadId,
-        required this.senderId,
-        required this.sender,
-        required this.receiverId,
-        required this.content,
-        required this.files,
-        required this.createdAt,
-        required this.profileimg,
-    });
-
-    factory MessagesPageDatum.fromJson(Map<String, dynamic> json) => MessagesPageDatum(
-        threadId: json["threadId"],
-        senderId: json["senderId"],
-        sender: json["sender"],
-        receiverId: json["receiverId"],
-        content: json["content"],
-        files: json["files"],
-        profileimg: json["profileImage"],
-        createdAt: DateTime.parse(json["created_at"]),
-    );
-
-    Map<String, dynamic> toJson() => {
-        "threadId": threadId,
-        "senderId": senderId,
-        "sender": sender,
-        "receiverId": receiverId,
-        "content": content,
-        "files": files,
-        "profileImage": profileimg,
-        "created_at": createdAt.toIso8601String(),
     };
 }
 
@@ -393,16 +310,4 @@ class Recruitment {
         "prevMonth": prevMonth,
         "currentMonth": currentMonth,
     };
-}
-
-class EnumValues<T> {
-    Map<String, T> map;
-    late Map<T, String> reverseMap;
-
-    EnumValues(this.map);
-
-    Map<T, String> get reverse {
-            reverseMap = map.map((k, v) => MapEntry(v, k));
-            return reverseMap;
-    }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/apiServices.dart';
-import 'package:kbn_test/service/modelClass.dart';
+import 'package:kbn_test/service/companyModelClass.dart';
 
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/drawer.dart';
@@ -53,7 +53,7 @@ class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
                   child: ListView(
                     padding: const EdgeInsets.all(10.0),
                     children: [
-                      PageAndDate(pageLabel: widget.pageName,currentPage: widget.currentPath,),
+                      PageAndDate(pageLabel: widget.pageName,currentPage: widget.currentPath),
                       const SizedBox(height: 10),
                       if (widget.currentPath != "Settings" &&
                           widget.currentPath != "Profile" &&

@@ -1,5 +1,5 @@
  import 'package:flutter/material.dart';
-import 'package:kbn_test/service/modelClass.dart';
+import 'package:kbn_test/service/companyModelClass.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/RecruitmentBarChart.dart';

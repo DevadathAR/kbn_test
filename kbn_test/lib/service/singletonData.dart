@@ -1,5 +1,5 @@
 import 'package:kbn_test/service/apiServices.dart';
-import 'package:kbn_test/service/modelClass.dart';
+import 'package:kbn_test/service/companyModelClass.dart';
 
 class ApiDataService {
   static final ApiDataService _instance = ApiDataService._internal();
