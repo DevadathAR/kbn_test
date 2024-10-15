@@ -38,7 +38,8 @@ void showApplicantProfile({
     barrierColor: semitransp,
     builder: (BuildContext context) {
       return ApplicantProfileDialog(
-        applicantId: applicantId, designation: '',
+        applicantId: applicantId,
+        designation: '',
       );
     },
   );
@@ -357,17 +358,19 @@ class _CompanyProfileDialogState extends State<CompanyProfileDialog> {
         const Spacer(),
         GestureDetector(
           onTap: () async {
-            await showDialog(
-              context: context,
-              builder: (context) {
-                return WarningDialog(
-                    title: "Confirm Approval",
-                    content: 'Are you sure you want to approve this company?',
-                    onConfirm: () {
-                      approveCompany(onApproval);
-                    });
-              },
-            );
+            approveCompany(onApproval);
+
+            // await showDialog(
+            //   context: context,
+            //   builder: (context) {
+            //     return WarningDialog(
+            //         title: "Confirm Approval",
+            //         content: 'Are you sure you want to approve this company?',
+            //         onConfirm: () {
+            //           approveCompany(onApproval);
+            //         });
+            //   },
+            // );
           },
           child: Container(
             width: 105,

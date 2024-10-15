@@ -87,12 +87,12 @@ class HorizontalTable extends StatelessWidget {
             ],
           ),
           ShowAllBtn(onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => isCompany
-                        ? const CompanyJobpage()
-                        : const CompanyApplicantScreen()));
+            // Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (context) => isCompany
+            //             ? const CompanyJobpage()
+            //             : const CompanyApplicantScreen()));
           })
         ],
       ),

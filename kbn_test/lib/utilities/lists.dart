@@ -61,20 +61,20 @@ const // Data for the full table
 ];
 
 // Data for the selected applicants table
-List<Map<String, String>> selectedApplicants = [
-  {'name': 'John Doe', 'designation': 'Developer'},
-  {'name': 'Jane Smith', 'designation': 'Designer'},
-  {'name': 'John Doe', 'designation': 'Developer'},
-  {'name': 'Jane Smith', 'designation': 'Designer'},
-  {'name': 'John Doe', 'designation': 'Developer'},
-  {'name': 'Jane Smith', 'designation': 'Designer'},
-  {'name': 'John Doe', 'designation': 'Developer'},
-  {'name': 'Jane Smith', 'designation': 'Designer'},
-  {'name': 'John Doe', 'designation': 'Developer'},
-  {'name': 'Jane Smith', 'designation': 'Designer'},
-  {'name': 'John Doe', 'designation': 'Developer'},
-  {'name': 'Jane Smith', 'designation': 'Designer'},
-];
+// List<Map<String, String>> selectedApplicants = [
+//   {'name': 'John Doe', 'designation': 'Developer'},
+//   {'name': 'Jane Smith', 'designation': 'Designer'},
+//   {'name': 'John Doe', 'designation': 'Developer'},
+//   {'name': 'Jane Smith', 'designation': 'Designer'},
+//   {'name': 'John Doe', 'designation': 'Developer'},
+//   {'name': 'Jane Smith', 'designation': 'Designer'},
+//   {'name': 'John Doe', 'designation': 'Developer'},
+//   {'name': 'Jane Smith', 'designation': 'Designer'},
+//   {'name': 'John Doe', 'designation': 'Developer'},
+//   {'name': 'Jane Smith', 'designation': 'Designer'},
+//   {'name': 'John Doe', 'designation': 'Developer'},
+//   {'name': 'Jane Smith', 'designation': 'Designer'},
+// ];
 //....................................................................
 // Headers for the full table
 List<Map<String, String>> companyTableHeaders = [

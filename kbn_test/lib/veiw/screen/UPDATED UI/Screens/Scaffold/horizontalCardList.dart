@@ -59,14 +59,18 @@ class _OverViewCardsState extends State<OverViewCards> {
       // ignore: prefer_typing_uninitialized_variables
       var data;
       if (isCompany) {
-        data = await ApiDataService().fetchCompanyData();
+        // data = await ApiDataService().fetchCompanyData();
+                data = await ApiServices.companyData();
+
         setState(() {
           companyData = data;
           isLoading = false;
         });
       } else {
         // Fetch admin data if the role is 'Admin'
-        data = await ApiDataService().fetchAdminData();
+        // data = await ApiDataService().fetchAdminData();
+                data = await ApiServices.adminData();
+
         setState(() {
           adminData = data;
           isLoading = false;

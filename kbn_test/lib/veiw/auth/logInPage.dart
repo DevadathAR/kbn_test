@@ -40,7 +40,7 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
       String email = _emailConatroller.text;
       String password = _passwordController.text;
 
-      try {
+      // try {
         var responseData = await ApiServices.userLogin(email, password);
 
         if (responseData.containsKey('token') &&
@@ -91,11 +91,11 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
             const SnackBar(content: Text('Invalid username or password.')),
           );
         }
-      } catch (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $error')),
-        );
-      }
+      // } catch (error) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(content: Text('Error: $error')),
+      //   );
+      // }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please check the box to proceed.')),

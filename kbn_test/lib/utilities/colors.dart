@@ -42,7 +42,7 @@ const InnactiveLoginbutton = [
 ];
 //...................................................................................
 
-const bluee = Color.fromARGB(255, 32, 236, 236);
+const bluee = Color.fromARGB(255, 3, 134, 241);
 Color getStatusColor(String status) {
   switch (status) {
     case "SELECTED":
@@ -51,25 +51,25 @@ Color getStatusColor(String status) {
       return Colors.teal;
     case "REJECTED":
       return Colors.red;
-    case "Submitted":
-      return Colors.teal;
+    case "SUBMITTED":
+      return bluee;
     default:
       return const Color.fromARGB(
           198, 0, 0, 0); // Default color if none of the cases match
   }
 }
 
-Color getTxtColor(String status) {
-  switch (status) {
-    case "SELECTED":
-      return white;
-    case "Apply for this Job":
-      return white;
-    case "REJECTED":
-      return white;
-    case "Submitted":
-      return black;
-    default:
-      return white;
-  }
-}
+// Color getTxtColor(String status) {
+//   switch (status) {
+//     case "SELECTED":
+//       return white;
+//     case "Apply for this Job":
+//       return white;
+//     case "REJECTED":
+//       return white;
+//     case "Submitted":
+//       return black;
+//     default:
+//       return white;
+//   }
+// }

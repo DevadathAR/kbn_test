@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/adminMode.dart';
+import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/service/singletonData.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
@@ -36,13 +37,14 @@ class _CompanyStatisticScreenState extends State<CompanyStatisticScreen> {
       // ignore: prefer_typing_uninitialized_variables
       var data;
       if (isCompany) {
-        data = await ApiDataService().fetchCompanyData();
+        data = await ApiServices.companyData();
+        // data = await ApiDataService().fetchCompanyData();
         setState(() {
           _companyData = data;
           _isLoading = false;
         });
       } else {
-        data = await ApiDataService().fetchAdminData();
+        data = await ApiServices.adminData();
         setState(() {
           _adminData = data;
           _isLoading = false;

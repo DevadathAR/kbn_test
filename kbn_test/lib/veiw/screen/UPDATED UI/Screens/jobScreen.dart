@@ -7,6 +7,7 @@ import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/commonTable.dart';
+import 'package:kbn_test/veiw/widgets_common/statusUpdate.dart';
 
 class CompanyJobpage extends StatefulWidget {
   const CompanyJobpage({super.key});
@@ -16,6 +17,9 @@ class CompanyJobpage extends StatefulWidget {
 }
 
 class _CompanyJobpageState extends State<CompanyJobpage> {
+  CompanyApiResponse? _companyData;
+  //
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -38,7 +42,7 @@ class _CompanyJobpageState extends State<CompanyJobpage> {
           // height: size.height * 0.6,
           height: 550,
           child: FutureBuilder(
-              future: ApiDataService().fetchCompanyData(),
+              future: ApiServices.companyData(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -47,7 +51,7 @@ class _CompanyJobpageState extends State<CompanyJobpage> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
                 if (!snapshot.hasData || snapshot.data == null) {
-                  return const Center(child: Text("No data available"));
+                  return const Center(child: Text("No Job Data available"));
                 }
                 // Data is successfully fetched
                 // Map fetched data to the format required for the table
@@ -77,15 +81,23 @@ class _CompanyJobpageState extends State<CompanyJobpage> {
                       spacing: 10,
                       children: [
                         Expanded(
-                          child: applicantsTable(
-                            // applicationId:
-                            //     int.tryParse(jobTableData[0]['id'] ?? '0') ?? 0,
-                            status: jobTableData[0]['status'].toString(),
+                          child: jobDataTable(
                             context: context,
                             headers: jobTableheaders,
                             Data: jobTableData,
-                            statusOptions: ["CLOSE"],
-                            onStatusChange: () async {},
+                            onStatusChange:
+                                (int applicationId, String newStatus) async {
+                              // Update the status for the specific job
+                              setState(() {
+                                jobTableData = jobTableData.map((job) {
+                                  if (int.parse(job['id']!) == applicationId) {
+                                    job['status'] =
+                                        newStatus; // Update the status only for the clicked row
+                                  }
+                                  return job;
+                                }).toList();
+                              });
+                            },
                           ),
                         ),
                         if (size.width < 1200)
@@ -98,6 +110,199 @@ class _CompanyJobpageState extends State<CompanyJobpage> {
                   ],
                 );
               })),
+    );
+  }
+}
+
+Widget jobDataTable({
+  context,
+  required List<Map<String, String>> headers,
+  required List<Map<String, String>> Data,
+  required Function(int applicationId, String newStatus)
+      onStatusChange, // Modify the callback to pass status
+}) {
+  Size size = MediaQuery.of(context).size;
+
+  return Container(
+    width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
+    height: 400,
+    padding: const EdgeInsets.all(16.0),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+      color: Colors.white,
+    ),
+    child: Column(
+      children: [
+        // Header row
+        Table(
+          border: tableHeaderDec(),
+          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+          columnWidths: _generateColumnWidths(headers.length),
+          children: [
+            TableRow(
+              children: headers.map((header) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 18.5,
+                    horizontal: 5.0,
+                  ),
+                  child: Text(
+                    header['header']!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 10,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+        // Data rows
+        Expanded(
+          child: SingleChildScrollView(
+            child: Table(
+              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+              border: TableBorder(
+                horizontalInside: BorderSide(
+                  color: Colors.grey.withOpacity(0.5),
+                  width: 0.5,
+                ),
+                verticalInside: BorderSide(
+                  color: Colors.grey.withOpacity(0.5),
+                  width: 0.5,
+                ),
+              ),
+              columnWidths: _generateColumnWidths(headers.length),
+              children: [
+                ...Data.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final row = entry.value;
+                  return TableRow(
+                    children: headers.map((header) {
+                      if (header['key'] == 'status') {
+                        return CustomJobStatus(
+                          status: row['status'] ??
+                              '', // Pass the row-specific status
+                          applicationId: int.tryParse(row['id'] ?? '0') ?? 0,
+                          onStatusChange: (updatedStatus) {
+                            onStatusChange(int.tryParse(row['id'] ?? '0') ?? 0,
+                                updatedStatus); 
+                          },
+                        );
+                      } else {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 23.5,
+                            horizontal: 5.0,
+                          ),
+                          child: Text(
+                            row[header['key']] ?? '',
+                            textAlign: TextAlign.center,
+                            style: AppTextStyle.normalText,
+                          ),
+                        );
+                      }
+                    }).toList(),
+                  );
+                }),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+/// Helper function to generate column widths based on the number of headers
+Map<int, TableColumnWidth> _generateColumnWidths(int headerCount) {
+  Map<int, TableColumnWidth> columnWidths = {};
+  for (int i = 0; i < headerCount; i++) {
+    columnWidths[i] =
+        const FlexColumnWidth(); // Adjustable width for each column
+  }
+  return columnWidths;
+}
+
+class CustomJobStatus extends StatefulWidget {
+  final String? path;
+  final String status;
+  final int applicationId;
+  final Function(String newStatus) onStatusChange; // Updated callback signature
+
+  const CustomJobStatus({
+    super.key,
+    required this.status,
+    required this.applicationId,
+    required this.onStatusChange,
+    this.path,
+  });
+
+  @override
+  _CustomJobStatusState createState() => _CustomJobStatusState();
+}
+
+class _CustomJobStatusState extends State<CustomJobStatus> {
+  String status = '';
+
+  @override
+  void initState() {
+    super.initState();
+    status = widget.status; // Initialize the status with the passed value
+  }
+
+  void _setStatus(String newStatus) async {
+    setState(() {
+      status = newStatus;
+    });
+    // Proceed with the API call
+    try {
+      await ApiServices.updateJobStatus(status, widget.applicationId);
+      widget.onStatusChange(newStatus); // Call the callback with the new status
+    } catch (e) {
+      print('Error updating status: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (status == "Closed") {
+      return const Text(
+        "Closed",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Colors.red,
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: () {
+        _setStatus("Closed");
+      },
+      child: Container(
+        width: 80,
+        height: 15, // Button height
+        alignment: Alignment.center, // Center align the text
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(4.0),
+        ),
+        child: const Text(
+          "Close",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 10,
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w500,
+            color: tealblue,
+          ),
+        ),
+      ),
     );
   }
 }

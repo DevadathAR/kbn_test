@@ -144,134 +144,210 @@ class _UserHomeState extends State<UserHome> {
           : Stack(
               children: [
                 SingleChildScrollView(
-                  child: SizedBox(
-                    height: size.height,
-                    width: size.width,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Center(child: Image(image: AssetImage(kbnLogo))),
-                        HomeAppBarBox(
-                          context,
-                          T_and_C: const user_T_n_C(),
-                          termscolor: white,
-                          profileImage:
-                              "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Center(child: Image(image: AssetImage(kbnLogo))),
+                      HomeAppBarBox(
+                        context,
+                        T_and_C: const user_T_n_C(),
+                        termscolor: white,
+                        profileImage:
+                            "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
+                      ),
+                      const SizedBox(height: 10),
+                      HomeFilterBox(
+                        onFilterApplied: (filteredJobs) {
+                          setState(() {
+                            _jobs = filteredJobs;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 50),
+                        child: Text(
+                          latestjob,
+                          style: AppTextStyle.twentyFour_W400,
                         ),
-                        const SizedBox(height: 10),
-                        HomeFilterBox(
-                          onFilterApplied: (filteredJobs) {
-                            setState(() {
-                              _jobs = filteredJobs;
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 50),
-                          child: Text(
-                            latestjob,
-                            style: AppTextStyle.twentyFour_W400,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 40),
-                            child: GridView.builder(
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: _getCrossAxisCount(size),
-                                crossAxisSpacing: 30,
-                                mainAxisSpacing: 10,
-                                childAspectRatio: _getChildAspectRatio(size),
-                              ),
-                              itemCount: _jobs.length,
-                              itemBuilder: (context, index) {
-                                final job = _jobs[index];
-                                return GestureDetector(
-                                  onTap: () async {
-                                    try {
-                                      await ApiServices.postJobDetails(
-                                          job['jobId']);
-                                      Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) {
-                                          return JobDetails(
-                                            jobId: job['jobId'],
-                                            companyId: job['companyId'],
-                                            firmname:
-                                                job['company_name'].toString(),
-                                            jobTitle: job['title'].toString(),
-                                            jobSummary:
-                                                job['job_summary'].toString(),
-                                            expLevel: job['experience_level']
-                                                .toString(),
-                                            jobMode: job['job_mode'].toString(),
-                                            jobType: job['job_type'].toString(),
-                                            keyResponsibilities:
-                                                job['key_responsibilities']
-                                                    as List<dynamic>,
-                                            jobReq: job['job_requirements']
-                                                as Map<String, dynamic>,
-                                            salary: job['salary'],
-                                            currentVacancy: job['vacancy'],
-                                            workLocation:
-                                                job['location'].toString(),
-                                            companywebsite:
-                                                job['company_website']
-                                                    .toString(),
-                                            datePosted:
-                                                job['created_at'].toString(),
-                                            companyImage:
-                                                job['company_profile_image'],
-                                            status: job['application_status']
-                                                .toString(),
-                                          );
-                                        },
-                                      ));
-                                    } catch (error) {
-                                      print('Error in onTap: $error');
-                                    }
-                                    // Navigate to JobDetails
-                                  },
-                                  child: LatestJobCard(
-                                    firmname: job['company_name'].toString(),
-                                    jobTitle: job['title'].toString(),
-                                    jobSummary: job['job_summary'].toString(),
-                                    expLevel:
-                                        job['experience_level'].toString(),
-                                    jobMode: job['job_mode'].toString(),
-                                    jobType: job['job_type'].toString(),
-                                    companyImage:
-                                        job['company_profile_image'].toString(),
-                                    datePosted: job['created_at'].toString(),
-                                    status:
-                                        job['application_status'].toString(),
-                                  ),
-                                );
-                              },
+                      ),
+                      const SizedBox(height: 10),
+                                    /*
+                                    
+                                    working code GridView.builder job card size need change
+                                    
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: _getCrossAxisCount(size),
+                              crossAxisSpacing: 30,
+                              mainAxisSpacing: 10,
+                              childAspectRatio: _getChildAspectRatio(size),
                             ),
+                            itemCount: _jobs.length,
+                            itemBuilder: (context, index) {
+                              final job = _jobs[index];
+                              return GestureDetector(
+                                onTap: () async {
+                                  try {
+                                    await ApiServices.postJobDetails(
+                                        job['jobId']);
+                                    Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) {
+                                        return JobDetails(
+                                          jobId: job['jobId'],
+                                          companyId: job['companyId'],
+                                          firmname:
+                                              job['company_name'].toString(),
+                                          jobTitle: job['title'].toString(),
+                                          jobSummary:
+                                              job['job_summary'].toString(),
+                                          expLevel: job['experience_level']
+                                              .toString(),
+                                          jobMode: job['job_mode'].toString(),
+                                          jobType: job['job_type'].toString(),
+                                          keyResponsibilities:
+                                              job['key_responsibilities']
+                                                  as List<dynamic>,
+                                          jobReq: job['job_requirements']
+                                              as Map<String, dynamic>,
+                                          salary: job['salary'],
+                                          currentVacancy: job['vacancy'],
+                                          workLocation:
+                                              job['location'].toString(),
+                                          companywebsite:
+                                              job['company_website']
+                                                  .toString(),
+                                          datePosted:
+                                              job['created_at'].toString(),
+                                          companyImage:
+                                              job['company_profile_image'],
+                                          status: job['application_status']
+                                              .toString(),
+                                        );
+                                      },
+                                    ));
+                                  } catch (error) {
+                                    print('Error in onTap: $error');
+                                  }
+                                  // Navigate to JobDetails
+                                },
+                                child: LatestJobCard(
+                                  firmname: job['company_name'].toString(),
+                                  jobTitle: job['title'].toString(),
+                                  jobSummary: job['job_summary'].toString(),
+                                  expLevel:
+                                      job['experience_level'].toString(),
+                                  jobMode: job['job_mode'].toString(),
+                                  jobType: job['job_type'].toString(),
+                                  companyImage:
+                                      job['company_profile_image'].toString(),
+                                  datePosted: job['created_at'].toString(),
+                                  status:
+                                      job['application_status'].toString(),
+                                ),
+                              );
+                            },
                           ),
                         ),
-                        // Pagination Controls
+                      ),
+                                    
+                      */
+                                    
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                        child: Wrap(
+                          spacing: 30, // Horizontal space between items
+                          runSpacing: 10, // Vertical space between lines
+                          children: _jobs.map((job) {
+                            return GestureDetector(
+                              onTap: () async {
+                                try {
+                                  await ApiServices.postJobDetails(
+                                      job['jobId']);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return JobDetails(
+                                          jobId: job['jobId'],
+                                          companyId: job['companyId'],
+                                          firmname: job['company_name']
+                                              .toString(),
+                                          jobTitle: job['title'].toString(),
+                                          jobSummary:
+                                              job['job_summary'].toString(),
+                                          expLevel: job['experience_level']
+                                              .toString(),
+                                          jobMode:
+                                              job['job_mode'].toString(),
+                                          jobType:
+                                              job['job_type'].toString(),
+                                          keyResponsibilities:
+                                              job['key_responsibilities']
+                                                  as List<dynamic>,
+                                          jobReq: job['job_requirements']
+                                              as Map<String, dynamic>,
+                                          salary: job['salary'],
+                                          currentVacancy: job['vacancy'],
+                                          workLocation:
+                                              job['location'].toString(),
+                                          companywebsite:
+                                              job['company_website']
+                                                  .toString(),
+                                          datePosted:
+                                              job['created_at'].toString(),
+                                          companyImage:
+                                              job['company_profile_image'],
+                                          status: job['application_status']
+                                              .toString(),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                } catch (error) {
+                                  print('Error in onTap: $error');
+                                }
+                              },
+                              child: LatestJobCard(
+                                firmname: job['company_name'].toString(),
+                                jobTitle: job['title'].toString(),
+                                jobSummary: job['job_summary'].toString(),
+                                expLevel:
+                                    job['experience_level'].toString(),
+                                jobMode: job['job_mode'].toString(),
+                                jobType: job['job_type'].toString(),
+                                companyImage:
+                                    job['company_profile_image'].toString(),
+                                datePosted: job['created_at'].toString(),
+                                status:
+                                    job['application_status'].toString(),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      if (size.width < 900)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            PaginatedButton(
+                            TextButton(
                               onPressed: _goToPreviousPage,
-                              child: const Text('Previous'),
+                              child: const Text('<<'),
                             ),
                             const SizedBox(width: 20),
                             Text('Page $_currentPage of $_totalPages'),
                             const SizedBox(width: 20),
-                            PaginatedButton(
+                            TextButton(
                               onPressed: _goToNextPage,
-                              child: const Text('Next'),
+                              child: const Text('>>'),
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
                 if (_shouldShowUploadResume)
@@ -416,14 +492,14 @@ class _UserHomeState extends State<UserHome> {
   int _getCrossAxisCount(Size size) {
     if (size.width < 900) return 1;
     if (size.width < 1200) return 2;
-    if (size.width < 1600) return 3;
+    // if (size.width < 1200) return 4;
     return 4;
   }
 
   double _getChildAspectRatio(Size size) {
     if (size.width < 900) return size.width * 0.1 / size.width * 15;
     if (size.width < 1200) return size.width * 0.15 / size.width * 10;
-    if (size.width < 1600) return size.width * 0.22 / size.width * 6;
+    if (size.width < 1600) return size.width * 0.22 / size.width * 5;
     return size.width * 0.25 / size.width * 5;
   }
 }

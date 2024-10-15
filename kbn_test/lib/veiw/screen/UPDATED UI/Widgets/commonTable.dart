@@ -20,10 +20,9 @@ Widget applicantsTable({
   List<Map<String, String>>? Data,
   // List<Map<String, String>>? companiesData,
 
-  // required int applicationId,
-  onStatusChange,
-} // Ad}d callback parameter
-    ) {
+  required Function(int applicationId)
+      onStatusChange, // Add callback with applicationId parameter
+}) {
   Size size = MediaQuery.of(context).size;
   return Container(
     width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
@@ -87,7 +86,7 @@ Widget applicantsTable({
                         return CustomStatusColumn(
                           status: status,
                           applicationId: int.tryParse(row['id'] ?? '0') ?? 0,
-                          onStatusChange: () {
+                          onStatusChange: (updatedStatus) {
                             onStatusChange(int.tryParse(row['id'] ?? '0') ?? 0);
                           },
                           statusOptions: statusOptions,
@@ -118,7 +117,8 @@ Widget applicantsTable({
 }
 
 Widget selectedApplicantsTable(context,
-    {status,
+    {
+    status,
     onstatusChange,
     required VoidCallback onAdminAproval,
     // required double width,
@@ -229,7 +229,7 @@ Map<int, TableColumnWidth> _generateColumnWidths(int headerCount) {
 class CustomStatusColumn extends StatefulWidget {
   final String status;
   final int applicationId;
-  final VoidCallback onStatusChange;
+  final Function(String newStatus) onStatusChange; // Updated callback signature
   final List<String> statusOptions;
 
   const CustomStatusColumn({
@@ -259,8 +259,10 @@ class _CustomStatusColumnState extends State<CustomStatusColumn> {
     });
     // Proceed with the API call
     try {
-      await ApiServices.updateApplication(newStatus, widget.applicationId);
-      widget.onStatusChange();
+      await ApiServices.updateApplicationStatus(
+          newStatus, widget.applicationId);
+
+      widget.onStatusChange(newStatus); // Call the callback with the new status
     } catch (e) {
       print('Error updating status: $e');
     }

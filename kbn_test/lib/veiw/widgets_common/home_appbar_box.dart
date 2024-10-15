@@ -53,7 +53,7 @@ Widget HomeAppBarBox(BuildContext context,
               // LogOut
               AppBarButtons(context,
                   icon: logOutPng,
-                  iconcolor: Colors.transparent,
+                  // iconcolor: white,
                   isLogout: true,
                   logOutTo: const CompanyLoginPage(),
                   backHome: home),

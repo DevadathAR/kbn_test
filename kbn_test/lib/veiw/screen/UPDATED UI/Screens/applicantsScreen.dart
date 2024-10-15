@@ -35,13 +35,16 @@ class _CompanyApplicantScreenState extends State<CompanyApplicantScreen> {
       // ignore: prefer_typing_uninitialized_variables
       var data;
       if (isCompany) {
-        data = await ApiDataService().fetchCompanyData();
+        // data = await ApiDataService().fetchCompanyData();
+        data = await ApiServices.companyData();
         setState(() {
           _companyData = data;
           _isLoading = false;
         });
       } else {
-        data = await ApiDataService().fetchAdminData();
+        // data = await ApiDataService().fetchAdminData();
+        data = await ApiServices.adminData();
+
         setState(() {
           _adminData = data;
           _isLoading = false;
@@ -63,7 +66,26 @@ class _CompanyApplicantScreenState extends State<CompanyApplicantScreen> {
     setState(() {
       _isLoading = true; // Set loading state
     });
-    await ApiDataService().fetchCompanyData(); // Re-fetch data
+    // await ApiDataService().fetchDataBasedOnRole(); // Re-fetch data
+    CompanyApiResponse data;
+    data = await ApiServices.companyData();
+    _companyData = data;
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _refresAdminData() async {
+    setState(() {
+      _isLoading = true; // Set loading state
+    });
+    // await ApiDataService().fetchDataBasedOnRole(); // Re-fetch data
+    AdminApiResponse data;
+    data = await ApiServices.adminData();
+    _adminData = data;
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -132,23 +154,24 @@ class _CompanyApplicantScreenState extends State<CompanyApplicantScreen> {
             'name': companies.companyName,
             'website': companies.website.toString(),
             'id': companies.companyId.toString(),
-            
           };
         }).toList() ??
         [];
     List<Map<String, String>> approvedCompanies = _adminData
             ?.adminData.companiesPageData.approvedCompanies
-            .map((companies) {
+            .map((company) {
           return {
-            'date': companies.date.toIso8601String(),
-            'name': companies.companyName,
-            'vaccancy': companies.totalVacancy,
-            'selected': companies.selected.toString(),
-            'kbn': companies.kbnCode,
-            'adminStatus': companies.adminStatus,
+            'date': company.date.toIso8601String(), // DateTime to String
+            'name': company.companyName, // Already a String
+            'vaccancy': company.totalVacancy, // Already a String
+            'selected': company.selected.toString(), // Convert int to String
+            'kbn': company.kbnCode?.toString() ??
+                'N/A', // Convert dynamic to String, with fallback
+            'adminStatus': company.adminStatus, // Already a String
           };
         }).toList() ??
         [];
+
     return ScaffoldBuilder(
       currentPath: path,
       pageName: path,
@@ -164,16 +187,17 @@ class _CompanyApplicantScreenState extends State<CompanyApplicantScreen> {
                   : '',
               context: context,
               headers: headers,
-              Data:isCompany? pendingApplications:approvedCompanies,
+              Data: isCompany ? pendingApplications : approvedCompanies,
               statusOptions: ["SELECT", "REJECT"],
-              onStatusChange: () async {
-                await _refreshData();
-                setState(() {});
+              onStatusChange: (int applicationId) async {
+                await _refreshData(); // This will refresh your data after status change
               },
             ),
             const SizedBox(width: 5),
             selectedApplicantsTable(
-              onAdminAproval: ApiDataService().fetchAdminData,
+              onAdminAproval: () async {
+                await _refresAdminData();
+              },
               context,
               data: isCompany ? selectedApplicants : companiesToApprove,
               headerTitle: isCompany ? "Selected Applicants" : "To Approve",

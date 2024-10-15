@@ -41,8 +41,7 @@ class _UploadMyResumeState extends State<UploadMyResume> {
 
       try {
         // Simulate API upload
-        await ApiServices.uploadResume(
-            _selectedFileBytes!, _selectedFileName!);
+        await ApiServices.uploadResume(_selectedFileBytes!, _selectedFileName!);
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('File uploaded successfully!')),

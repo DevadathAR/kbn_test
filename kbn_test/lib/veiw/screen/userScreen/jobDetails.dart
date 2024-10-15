@@ -225,8 +225,7 @@ class _JobDetailsState extends State<JobDetails> {
                                                             style: AppTextStyle
                                                                 .normalW500
                                                                 .copyWith(
-                                                              color: getTxtColor(
-                                                                  _currentStatus),
+                                                              color: white
                                                             ),
                                                           ),
                                                         ),
@@ -527,7 +526,7 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
       if (result['message'] == 'Application Created') {
         setState(() {
           _isApplied = true;
-          _currentStatus = 'Submitted'; // Update status to "Submitted"
+          _currentStatus = 'SUBMITTED'; // Update status to "Submitted"
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Application successfully submitted!')),
@@ -567,8 +566,8 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
           children: [
             CircleAvatar(
               radius: 60,
-              backgroundImage: NetworkImage(
-                  '${ApiServices.baseUrl}${widget.companyImage}'),
+              backgroundImage:
+                  NetworkImage('${ApiServices.baseUrl}${widget.companyImage}'),
             ),
             const SizedBox(width: 10),
             Column(
@@ -627,7 +626,7 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
                     child: Text(
                       _currentStatus, // Display dynamic status
                       style: AppTextStyle.normalW500.copyWith(
-                        color: getTxtColor(_currentStatus),
+                        color: white,
                       ),
                     ),
                   ),

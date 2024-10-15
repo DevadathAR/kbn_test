@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/adminMode.dart';
+import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/service/companymodelClass.dart';
 import 'package:kbn_test/service/singletonData.dart';
 import 'package:kbn_test/veiw/auth/logInPage.dart';
@@ -36,14 +37,17 @@ class _CompanyHomeState extends State<CompanyHome> {
       var data;
       // print(isCompany);
       if (isCompany) {
-        data = await ApiDataService().fetchCompanyData();
+        // data = await ApiDataService().fetchCompanyData();
+        data = await ApiServices.companyData();
+
         setState(() {
           companyData = data;
           isLoading = false;
         });
       } else {
         // Fetch admin data if the role is 'Admin'
-        data = await ApiDataService().fetchAdminData();
+        // data = await ApiDataService().fetchAdminData();
+        data = await ApiServices.adminData();
         setState(() {
           adminData = data;
           isLoading = false;
@@ -68,11 +72,11 @@ class _CompanyHomeState extends State<CompanyHome> {
 
     if (isCompany) {
       if (companyData == null) {
-        return const Center(child: Text("No data available"));
+        return const Center(child: Text("No CompanyData*home available"));
       }
     } else {
       if (adminData == null) {
-        return const Center(child: Text("No data available"));
+        return const Center(child: Text("No Admin Data *home available"));
       }
     }
 
@@ -130,7 +134,8 @@ class _CompanyHomeState extends State<CompanyHome> {
                   : null, // Adjust the width as necessary
               child: VerticalTable(
                 onAdminAproval: () {
-                  ApiDataService().fetchCompanyData();
+                  // ApiDataService().fetchCompanyData();
+                  ApiServices.companyData();
                 },
                 applicantsData: isCompany
                     ? companyData?.companyData.applicantsPageData

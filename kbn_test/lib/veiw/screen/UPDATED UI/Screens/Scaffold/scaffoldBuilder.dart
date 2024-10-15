@@ -10,7 +10,6 @@ import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/page_and_date
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/sidebar.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/topBar.dart';
 
-
 class ScaffoldBuilder extends StatefulWidget {
   final String currentPath;
   final String pageName;
@@ -52,7 +51,10 @@ class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
                   child: ListView(
                     padding: const EdgeInsets.all(10.0),
                     children: [
-                      PageAndDate(pageLabel: widget.pageName),
+                      PageAndDate(
+                        pageLabel: widget.pageName,
+                        currentPage: widget.currentPath,
+                      ),
                       const SizedBox(height: 10),
                       if (widget.currentPath != "Settings" &&
                           widget.currentPath != "Profile" &&
