@@ -65,7 +65,7 @@ class _LatestJobCardState extends State<LatestJobCard> {
       } else if (screenWidth < 1200) {
         return screenWidth * 0.06; // 15% of screen width for medium screens
       } else if (screenWidth < 1600) {
-        return screenWidth * 0.045; // 18% of screen width for large screens
+        return screenWidth * 0.03; // 18% of screen width for large screens
       } else {
         return screenWidth * 0.03; // or any other default value
       }
@@ -77,9 +77,9 @@ class _LatestJobCardState extends State<LatestJobCard> {
       } else if (screenWidth < 1200) {
         return screenWidth * 0.12; // 40% of screen width for medium screens
       } else if (screenWidth < 1600) {
-        return screenWidth * 0.08; // 50% of screen width for large screens
+        return screenWidth * 0.07; // 50% of screen width for large screens
       } else {
-        return screenWidth * 0.06; // or any other default value
+        return screenWidth * 0.05; // or any other default value
       }
     }
 
@@ -94,6 +94,8 @@ class _LatestJobCardState extends State<LatestJobCard> {
     return Padding(
       padding: const EdgeInsets.only(right: 10, bottom: 20, left: 10),
       child: Container(
+        width: 320,
+        height: 250,
         decoration: const BoxDecoration(
           boxShadow: [
             BoxShadow(
@@ -130,10 +132,10 @@ class _LatestJobCardState extends State<LatestJobCard> {
                       ),
                     ],
                   ),
-                  const Image(
-                    image: AssetImage(likePng),
-                    color: black,
-                  )
+                  // const Image(
+                  //   image: AssetImage(likePng),
+                  //   color: black,
+                  // )
                 ],
               ),
             ),
@@ -141,6 +143,7 @@ class _LatestJobCardState extends State<LatestJobCard> {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Text(
                 widget.jobSummary,
+                style: AppTextStyle.normalText,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -177,7 +180,7 @@ class _LatestJobCardState extends State<LatestJobCard> {
                       child: Text(
                         widget.status,
                         style: AppTextStyle.normalW500
-                            .copyWith(color: getTxtColor(widget.status)),
+                            .copyWith(color: white),
                       ),
                     ),
                   ),
@@ -188,7 +191,12 @@ class _LatestJobCardState extends State<LatestJobCard> {
                         padding: EdgeInsets.only(right: 5),
                         child: Image(image: AssetImage(clockPng)),
                       ),
-                      Text(calculateDaysAgo(widget.datePosted))
+                      FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            calculateDaysAgo(widget.datePosted),
+                            style: AppTextStyle.normalText,
+                          ))
                     ],
                   ),
                 ],
@@ -210,7 +218,7 @@ Widget Requirments(context, {required String txt}) {
   } else if (size.width < 1200) {
     containerWidth = size.width * 0.1;
   } else if (size.width < 1600) {
-    containerWidth = size.width * 0.075;
+    containerWidth = size.width * 0.06;
   } else {
     containerWidth = size.width * 0.05; // or any other default value
   }

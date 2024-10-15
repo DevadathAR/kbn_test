@@ -51,25 +51,11 @@ Color getStatusColor(String status) {
       return Colors.teal;
     case "REJECTED":
       return Colors.red;
-    case "Submitted":
-      return Colors.teal;
+    case "SUBMITTED":
+      return const Color.fromARGB(255, 0, 87, 150);
     default:
       return const Color.fromARGB(
           198, 0, 0, 0); // Default color if none of the cases match
   }
 }
 
-Color getTxtColor(String status) {
-  switch (status) {
-    case "SELECTED":
-      return white;
-    case "Apply for this Job":
-      return white;
-    case "REJECTED":
-      return white;
-    case "Submitted":
-      return black;
-    default:
-      return white;
-  }
-}

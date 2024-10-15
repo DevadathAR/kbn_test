@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
-import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 
 class HomeFilterBox extends StatefulWidget {
   final Function(List<dynamic>) onFilterApplied;
 
-  const HomeFilterBox({super.key, required this.onFilterApplied});
+  const HomeFilterBox({Key? key, required this.onFilterApplied})
+      : super(key: key);
 
   @override
   _HomeFilterBoxState createState() => _HomeFilterBoxState();
 }
 
 class _HomeFilterBoxState extends State<HomeFilterBox> {
+  List<dynamic> _jobs = [];
+
   List<String> jobTypes = ["Job Type"];
   List<String> salaryRanges = [
     "Salary",
@@ -36,11 +38,15 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
 
   bool isLoading = true;
 
+  // Pagination state variables
+  int currentPage = 1;
+  int? totalPages = 1;
+
   @override
   void initState() {
     super.initState();
     fetchDropdownBoxItems();
-    // _fetchFilteredJobs();
+    _fetchFilteredJobs(); // Fetch jobs initially
   }
 
   Future<void> fetchDropdownBoxItems() async {
@@ -63,18 +69,52 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
 
   Future<void> _fetchFilteredJobs() async {
     try {
+      setState(() {
+        isLoading = true;
+      });
+
+      // Fetch filtered jobs based on selected filters and current page
       final jobsResponse = await ApiServices.fetchFilteredJobs(
         selectedJobType: selectedJobType,
         selectedSalary: selectedSalary,
         selectedExperience: selectedExperience,
         selectedWorkMode: selectedWorkMode,
         selectedLocation: selectedLocation,
+        pageNumber: currentPage,
       );
 
       final jobs = jobsResponse['data'] as List<dynamic>;
-      widget.onFilterApplied(jobs);
+      final totalJobsPosted = jobsResponse['totalJobs'] as int;
+
+      // Set total pages based on the total number of jobs
+      setState(() {
+        totalPages = (totalJobsPosted == 0) ? 1 : (totalJobsPosted / 8).ceil();
+        widget.onFilterApplied(jobs); // Pass jobs to parent widget
+        isLoading = false;
+      });
     } catch (e) {
       print("Error fetching filtered jobs: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void goToFilteredPreviousPage() {
+    if (currentPage > 1) {
+      setState(() {
+        currentPage--;
+      });
+      _fetchFilteredJobs();
+    }
+  }
+
+  void goToFilteredNextPage() {
+    if (currentPage < totalPages!) {
+      setState(() {
+        currentPage++;
+      });
+      _fetchFilteredJobs();
     }
   }
 
@@ -84,75 +124,100 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
 
     return isLoading
         ? const Center(child: CircularProgressIndicator())
-        : Container(
-            height: 100,
-            width: size.width,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(2)),
-              color: tealblue,
-            ),
-            child: (size.width >= 900)
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      buildDropdown(jobTypes, selectedJobType, (newValue) {
-                        setState(() {
-                          selectedJobType = newValue!;
-                          _fetchFilteredJobs();
-                        });
-                      }),
-                      const VerticalDivider(),
-                      buildDropdown(salaryRanges, selectedSalary, (newValue) {
-                        setState(() {
-                          selectedSalary = newValue!;
-                          _fetchFilteredJobs();
-                        });
-                      }),
-                      const VerticalDivider(),
-                      buildDropdown(experiences, selectedExperience,
-                          (newValue) {
-                        setState(() {
-                          selectedExperience = newValue!;
-                          _fetchFilteredJobs();
-                        });
-                      }),
-                      const VerticalDivider(),
-                      buildDropdown(workModes, selectedWorkMode, (newValue) {
-                        setState(() {
-                          selectedWorkMode = newValue!;
-                          _fetchFilteredJobs();
-                        });
-                      }),
-                      const VerticalDivider(),
-                      buildDropdown(locations, selectedLocation, (newValue) {
-                        setState(() {
-                          selectedLocation = newValue!;
-                          _fetchFilteredJobs();
-                        });
-                      }),
-                    ],
-                  )
-                : GestureDetector(
-                    onTap: () {
-                      Scaffold.of(context).openDrawer();
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.only(left: 25),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+        : Column(
+            children: [
+              Container(
+                height: 100,
+                width: size.width,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(2)),
+                  color: tealblue,
+                ),
+                child: (size.width >= 900)
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Image(image: AssetImage(filterPng)),
-                          Padding(
-                            padding: EdgeInsets.only(left: 15),
-                            child: Text(
-                              "Filters",
-                              style: AppTextStyle.sixteen_w400_white,
-                            ),
-                          ),
+                          buildDropdown(jobTypes, selectedJobType, (newValue) {
+                            setState(() {
+                              selectedJobType = newValue!;
+                              _fetchFilteredJobs();
+                            });
+                          }),
+                          const VerticalDivider(),
+                          buildDropdown(salaryRanges, selectedSalary,
+                              (newValue) {
+                            setState(() {
+                              selectedSalary = newValue!;
+                              _fetchFilteredJobs();
+                            });
+                          }),
+                          const VerticalDivider(),
+                          buildDropdown(experiences, selectedExperience,
+                              (newValue) {
+                            setState(() {
+                              selectedExperience = newValue!;
+                              _fetchFilteredJobs();
+                            });
+                          }),
+                          const VerticalDivider(),
+                          buildDropdown(workModes, selectedWorkMode,
+                              (newValue) {
+                            setState(() {
+                              selectedWorkMode = newValue!;
+                              _fetchFilteredJobs();
+                            });
+                          }),
+                          const VerticalDivider(),
+                          buildDropdown(locations, selectedLocation,
+                              (newValue) {
+                            setState(() {
+                              selectedLocation = newValue!;
+                              _fetchFilteredJobs();
+                            });
+                          }),
                         ],
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          Scaffold.of(context).openDrawer();
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: 25),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Image(image: AssetImage(filterPng)),
+                              Padding(
+                                padding: EdgeInsets.only(left: 15),
+                                child: Text(
+                                  "Filters",
+                                  style: AppTextStyle.sixteen_w400_white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
+              ),
+              const SizedBox(height: 10),
+              if (size.width > 900)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: goToFilteredPreviousPage,
+                      child: const Text('<<'),
                     ),
-                  ),
+                    const SizedBox(width: 20),
+                    Text('Page $currentPage of $totalPages'),
+                    const SizedBox(width: 20),
+                    TextButton(
+                      onPressed: goToFilteredNextPage,
+                      child: const Text('>>'),
+                    ),
+                  ],
+                ),
+            ],
           );
   }
 

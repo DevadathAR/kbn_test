@@ -1,11 +1,12 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/companyDetailsEdits.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/companyManagerEdit.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/companyProfileSubVeiws.dart';
 
 class CompanyProfileScreen extends StatefulWidget {
@@ -16,75 +17,135 @@ class CompanyProfileScreen extends StatefulWidget {
 }
 
 class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
-  List<Widget> companyWidgets = [];
-  bool _showCompanyManagerForm = true;
-  bool _showCompanyDetails = true;
-  bool _isEditingCompanyDetails = false;
+  bool _isLoading = true;
+  bool _hasError = false;
   Map<String, dynamic> userDetails = {};
-  bool _isLoading = true; // Loading state variable
+  bool _isEditingManagerDetails = false;
+  bool _isEditingCompanyDetails = false; // New variable for editing company details
+
+  late TextEditingController _managerNameController;
+  late TextEditingController _managerEmailController;
+  late TextEditingController _addressController; // Controller for address
+  late TextEditingController _websiteController; // Controller for website
+  late TextEditingController _contactController; // Controller for contact
+  Uint8List? _selectedImage;
+  String? _imageFilename;
 
   @override
   void initState() {
     super.initState();
-    _fetchUserDetails(); // Fetch user details when the screen initializes
+    _fetchUserDetails();
   }
 
   Future<void> _fetchUserDetails() async {
+    setState(() {
+      _isLoading = true;
+      _hasError = false;
+    });
     try {
-      var details = await ApiServices.fetchUserDetails(); // Fetch user details
+      var details = await ApiServices.fetchUserDetails();
       setState(() {
-        userDetails = details; // Store the fetched user details
-        _isLoading = false; // Update loading state
+        userDetails = details;
+        _managerNameController = TextEditingController(text: details['user']['manager_name']);
+        _managerEmailController = TextEditingController(text: details['user']['manager_email']);
+        _addressController = TextEditingController(text: details['user']['address']);
+        _websiteController = TextEditingController(text: details['user']['company_website']);
+        _contactController = TextEditingController(text: details['user']['contact']);
+        _isLoading = false;
       });
     } catch (error) {
       setState(() {
-        _isLoading = false; // Update loading state even if there's an error
+        _isLoading = false;
+        _hasError = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching user details: $error')),
-      );
+      _showErrorSnackBar(error.toString());
     }
   }
 
-  // Function to add a new company manager widget
-  void addNewCompany() {
-    setState(() {
-      _showCompanyManagerForm = false;
-      companyWidgets.add(
-        EditableCompanyAndManager(
-          onSave: (label, sub, email) {
-            setState(() {
-              // Remove the EditableCompanyAndManager widget after saving
-              companyWidgets.removeWhere((widget) => widget is EditableCompanyAndManager);
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $message')),
+    );
+  }
 
-              // Add non-editable company manager display widget
-              companyWidgets.add(
-                companyAndManager(
-                  context,
-                  sub: sub,
-                  email: email,
-                  onSave: (updatedLabel) {
-                    // Handle future updates if necessary
-                  },
-                ),
-              );
-            });
-          },
-        ),
+  Future<void> _selectImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() async {
+        _selectedImage = await image.readAsBytes();
+        _imageFilename = image.name;
+      });
+    }
+  }
+
+  Future<void> _saveManagerDetails() async {
+    try {
+      var response = await ApiServices.sendManagerData(
+        managerName: _managerNameController.text,
+        email: _managerEmailController.text,
+        selectedImage: _selectedImage,
+        imageFilename: _imageFilename,
       );
-    });
+
+      if (response.statusCode == 200) {
+        _fetchUserDetails();
+        setState(() {
+          _isEditingManagerDetails = false;
+        });
+        _showErrorSnackBar('Manager details updated successfully!');
+      } else {
+        throw Exception('Failed to update manager details');
+      }
+    } catch (error) {
+      _showErrorSnackBar('Error updating manager details: $error');
+    }
   }
 
-  void editCompanyData() {
-    setState(() {
-      _isEditingCompanyDetails = true;
-    });
+  Future<void> _saveCompanyDetails() async {
+  try {
+    var response = await ApiServices.sendUpdatedCompanyData( 
+      address: _addressController.text,
+      site: _websiteController.text,
+      number: _contactController.text,
+    );
+
+    if (response.statusCode == 200) {
+      _fetchUserDetails();
+      setState(() {
+        _isEditingCompanyDetails = false;
+      });
+      _showErrorSnackBar('Company details updated successfully!');
+    } else {
+      throw Exception('Failed to update company details');
+    }
+  } catch (error) {
+    _showErrorSnackBar('Error updating company details: $error');
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_hasError) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text("Failed to load data"),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _fetchUserDetails,
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
     }
 
     if (userDetails.isEmpty) {
@@ -94,48 +155,101 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
     return ScaffoldBuilder(
       currentPath: "Profile",
       pageName: "Profile",
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 10),
+            companyShortView(context),
+            const SizedBox(height: 20),
+            companyManagerWidget(),
+            const SizedBox(height: 20),
+            companyDetailsWidget(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget companyManagerWidget() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(6),
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 10),
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
+          Row(
             children: [
-              Column(
-                children: [
-                  companyShortView(context),
-                  const SizedBox(height: 5),
-                  ...companyWidgets,
-                  if (_showCompanyManagerForm)
-                    companyAndManager(
-                      context,
-                      sub: "${userDetails['user']['manager_name']}",
-                      email: "${userDetails['user']['manager_email']}",
-                      onSave: (updatedLabel) {
-                        // Handle future updates if necessary
-                      },
-                    ),
-                ],
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: const BorderRadius.all(Radius.circular(6)),
+                ),
+                child: _selectedImage != null
+                    ? Image.memory(_selectedImage!)
+                    : (userDetails['user']['manager_profile_image'] == null ||
+                            userDetails['user']['manager_profile_image'].isEmpty
+                        ? const Image(image: AssetImage(personPng))
+                        : Image.network("${ApiServices.baseUrl}/${userDetails['user']['manager_profile_image']}")),
               ),
-              if (_showCompanyDetails)
-                _isEditingCompanyDetails
-                    ? EditableCompanyDetails(
-                        onSave: (address, site, number) {
-                          setState(() {
-                            _isEditingCompanyDetails = false;
-                          });
-                        },
-                      )
-                    : companyDetails(
-                        context,
-                        label: "Company Details",
-                        sub: "${userDetails['user']['address']}",
-                        site: "${userDetails['user']['company_website']}",
-                        numb: "${userDetails['user']['contact']}",
-                        onSave: (updatedLabel) {
-                          // Handle future updates if necessary
-                        },
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: _managerNameController,
+                      decoration: const InputDecoration(labelText: 'Manager Name'),
+                      readOnly: !_isEditingManagerDetails,
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: _managerEmailController,
+                      decoration: const InputDecoration(labelText: 'Manager Email'),
+                      readOnly: !_isEditingManagerDetails,
+                    ),
+                    const SizedBox(height: 10),
+                    if (_isEditingManagerDetails)
+                      TextButton.icon(
+                        onPressed: _selectImage,
+                        icon: const Icon(Icons.image),
+                        label: const Text("Select Image"),
                       ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 20),
+              if (_isEditingManagerDetails)
+                ElevatedButton(
+                  onPressed: _saveManagerDetails,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child:  Text("Save",style: AppTextStyle.bodytextwhite,),
+                ),
+              if (!_isEditingManagerDetails)
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _isEditingManagerDetails = true;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text("Edit",style: AppTextStyle.bodytextwhite,),
+                ),
             ],
           ),
         ],
@@ -143,194 +257,79 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
     );
   }
 
-  Widget companyDetails(
-    BuildContext context, {
-    required String label,
-    required String sub,
-    required String numb,
-    required String site,
-    required ValueChanged<String> onSave,
-  }) {
-    Size size = MediaQuery.of(context).size;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: Container(
-        width: size.width > 900 ? (size.width - 225) *  0.4 : null,
-        height: 455,
-        decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(6)), color: white),
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 15.0, left: 10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      label,
-                      style: AppTextStyle.twenty_w500,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      sub,
-                      style: AppTextStyle.fourteenW400,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      numb,
-                      style: AppTextStyle.fourteenW400,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      site,
-                      style: AppTextStyle.fourteenW400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: ElevatedButton(
-                  onPressed: editCompanyData, // Edit company data
+  Widget companyDetailsWidget() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Company Details",
+            style: AppTextStyle.twenty_w500,
+          ),
+          const SizedBox(height: 10),
+          if (_isEditingCompanyDetails)
+            Column(
+              children: [
+                TextField(
+                  controller: _addressController,
+                  decoration: const InputDecoration(labelText: "Address"),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _websiteController,
+                  decoration: const InputDecoration(labelText: "Website"),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _contactController,
+                  decoration: const InputDecoration(labelText: "Contact"),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: _saveCompanyDetails,
+
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
-                    side: const BorderSide(color: Colors.teal),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text(
-                    "Edit",
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  child: const Text("Save",style: AppTextStyle.bodytextwhite,),
                 ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Companies details
-  Widget companyAndManager(
-    BuildContext context, {
-    required String sub,
-    required String email, // New email parameter
-    required ValueChanged<String> onSave, // Callback to save the updated data
-  }) {
-    Size size = MediaQuery.of(context).size;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 5.0),
-      child: Container(
-        width: size.width > 900 ? (size.width - 200) * .6 : null,
-        height: 250,
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(6)),
-          color: Colors.white,
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: EdgeInsets.only(top: 8.0, right: 8),
-                child: Text(
-                  "Last updated date",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.black54,
-                  ),
-                ),
-              ),
-            ),
-            Row(
+              ],
+            )
+          else
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 100,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                    borderRadius: const BorderRadius.all(Radius.circular(6)),
-                    color: Colors.transparent,
-                  ),
-                  child: Image(
-                    image: userDetails['user']['manager_profile_image'] == null ||
-                            userDetails['user']['manager_profile_image']
-                                .isEmpty
-                        ? const AssetImage(personPng)
-                        : NetworkImage(
-                            "${ApiServices.baseUrl}/${userDetails['user']['manager_profile_image']}")
-                                as ImageProvider,
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${userDetails['user']['name']}",
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                Text("Address: ${userDetails['user']['address']}", style: AppTextStyle.fourteenW400),
+                Text("Website: ${userDetails['user']['company_website']}", style: AppTextStyle.fourteenW400),
+                Text("Contact: ${userDetails['user']['contact']}", style: AppTextStyle.fourteenW400),
+                const SizedBox(height: 10),
+                Align(alignment: Alignment.bottomCenter,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _isEditingCompanyDetails = true; // Enable editing
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "${userDetails['user']['manager_name']}" != "null"
-                            ? sub
-                            : "Manager Name",
-                        style: const TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "${userDetails['user']['manager_email']}" != "null"
-                            ? email
-                            : "Manager mail ID",
-                        style: const TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: ElevatedButton(
-                          onPressed: addNewCompany, // Handle adding a new company
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
-                            side: const BorderSide(color: tealblue),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: Text(
-                            "${userDetails['user']['manager_email']}" == "null"
-                                ? "Add"
-                                : "Edit",
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
+                    child: const Text("Edit",style: AppTextStyle.bodytextwhite,),
                   ),
                 ),
               ],
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

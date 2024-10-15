@@ -72,10 +72,10 @@ class ApiServices {
         // 'password': "dev",
         // 'email': "comp@gmail.com",
         // 'password': "comp",
-        'email': "lumasolutions@gmail.com",
-        'password': "123",
-        // 'email': email,
-        // 'password': password,
+        // 'email': "lumasolutions@gmail.com",
+        // 'password': "123",
+        'email': email,
+        'password': password,
       }),
       headers: headers,
     );
@@ -118,7 +118,7 @@ class ApiServices {
 
     var response = await http.get(url, headers: headers);
 
-    // print('Raw response: ${response.body}');
+    print('company response: ${response.body}');
 
     if (response.statusCode == 200) {
       // Decode the JSON response
@@ -544,28 +544,29 @@ class ApiServices {
     }
   }
 
-  Future<http.StreamedResponse> sendManagerData({
+static Future<http.StreamedResponse> sendManagerData({
     required String managerName,
     required String email,
     Uint8List? selectedImage,
     String? imageFilename,
-    // String? imageFile, // Accepts the image file directly
   }) async {
     final url = Uri.parse('$baseUrl/company/manager');
 
     // Prepare form data
     var request = http.MultipartRequest('POST', url);
+    // Assuming headers are defined somewhere in your code
     request.headers.addAll(headers);
     request.fields['managerName'] = managerName;
     request.fields['managerMail'] = email;
 
-    // Check if imageFile is not null and add it to the request
-    if (selectedImage != null&&imageFilename!= null) {
+    // Check if selectedImage and imageFilename are not null and add them to the request
+    if (selectedImage != null && imageFilename != null) {
       request.files.add(
         http.MultipartFile.fromBytes(
           'image', // Key name for the server
           selectedImage,
-filename: imageFilename,        ),
+          filename: imageFilename,
+        ),
       );
     }
 
@@ -577,34 +578,30 @@ filename: imageFilename,        ),
       rethrow; // Rethrow any errors to handle them in the UI
     }
   }
-
 // Update AddressDetails Data API
-  static Future<Map<String, dynamic>> sendUpdatedCompanyData(
-    String address,
-    String number,
-    String site,
+  // static Future<Map<String, dynamic>> sendUpdatedCompanyData({
+    static Future<http.Response> sendUpdatedCompanyData({
+    required String address,
+    required String site,
+    required String number,
+  }) async {
+    // Construct the URL
+    final url = Uri.parse('$baseUrl/user'); // Adjust the endpoint as necessary
     
-  ) async {
-    var url = Uri.parse('$baseUrl/user/');
+    // Create the request body
+    final Map<String, String> body = {
+      'address': address,
+      'site': site,
+      'number': number,
+    };
 
-    var response = await http.patch(
+    // Send the request
+    final response = await http.patch(
       url,
-      headers: headers,
-      body: jsonEncode({
-        'address': address,
-        'company_website': site,
-        'contact': number,
-      }),
+      headers:headers,
+      body: jsonEncode(body),
     );
 
-    // Check for the response body
-    print('Response body: ${response.body}'); // Debugging line
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      // Add more details to your exception
-      throw Exception('Failed to update application: ${response.body}');
-    }
+    return response; // Ensure you return the response
   }
 }

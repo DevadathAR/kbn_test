@@ -225,8 +225,7 @@ class _JobDetailsState extends State<JobDetails> {
                                                             style: AppTextStyle
                                                                 .normalW500
                                                                 .copyWith(
-                                                              color: getTxtColor(
-                                                                  _currentStatus),
+                                                              color: white
                                                             ),
                                                           ),
                                                         ),
@@ -627,7 +626,7 @@ class _CompanyDetails1State extends State<CompanyDetails1> {
                     child: Text(
                       _currentStatus, // Display dynamic status
                       style: AppTextStyle.normalW500.copyWith(
-                        color: getTxtColor(_currentStatus),
+                        color: white,
                       ),
                     ),
                   ),
