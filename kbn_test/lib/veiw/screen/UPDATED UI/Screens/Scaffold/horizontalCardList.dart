@@ -6,6 +6,7 @@ import 'package:kbn_test/service/companymodelClass.dart';
 import 'package:kbn_test/service/singletonData.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
+import 'package:kbn_test/utilities/lists.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/logInPage.dart';
 
@@ -60,7 +61,7 @@ class _OverViewCardsState extends State<OverViewCards> {
       var data;
       if (isCompany) {
         // data = await ApiDataService().fetchCompanyData();
-                data = await ApiServices.companyData();
+        data = await ApiServices.companyData();
 
         setState(() {
           companyData = data;
@@ -69,7 +70,7 @@ class _OverViewCardsState extends State<OverViewCards> {
       } else {
         // Fetch admin data if the role is 'Admin'
         // data = await ApiDataService().fetchAdminData();
-                data = await ApiServices.adminData();
+        data = await ApiServices.adminData();
 
         setState(() {
           adminData = data;
@@ -92,11 +93,11 @@ class _OverViewCardsState extends State<OverViewCards> {
     final companyCommonData = companyData?.companyData.commonData;
     final adminCommonData = adminData?.adminData.commonData;
 
-    if (companyCommonData == null && isCompany) {
-      return const Center(child: Text("No company data available."));
-    } else if (adminCommonData == null && !isCompany) {
-      return const Center(child: Text("No admin data available."));
-    }
+    // if (companyCommonData == null && isCompany) {
+    //   return const Center(child: Text("No company data available."));
+    // } else if (adminCommonData == null && !isCompany) {
+    //   return const Center(child: Text("No admin data available."));
+    // }
 
     final int applicantGrowth =
         (companyCommonData?.applicantsTotal.thisMonth ?? 0) -
@@ -127,7 +128,7 @@ class _OverViewCardsState extends State<OverViewCards> {
               'subTitle': "Total growth on this month",
             },
           ]
-        : [];
+        : defaultCardData;
 
     // Example card data for admins (this is a placeholder, adjust based on actual data structure)
     final List<Map<String, String>> adminCardData = adminCommonData != null
@@ -154,7 +155,7 @@ class _OverViewCardsState extends State<OverViewCards> {
               'subTitle': "Total Growth on this month",
             },
           ]
-        : [];
+        : defaultAdminCardData;
 
     // Select the appropriate card data based on the user role
     final cardData = isCompany ? companyCardData : adminCardData;
@@ -186,8 +187,8 @@ class _OverViewCardsState extends State<OverViewCards> {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 5.0),
                         child: Cards(
-                          title: cardData[index]['title']!,
-                          subTitle: cardData[index]['subTitle']!,
+                          title: cardData[index]['title'] ?? "Title",
+                          subTitle: cardData[index]['subTitle'] ?? "SubTitle",
                         ),
                       );
                     },

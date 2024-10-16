@@ -76,23 +76,32 @@ class HorizontalTable extends StatelessWidget {
                   children: [
                     _buildHeaderCell(
                         headers[i]), // Place header in first column
-                    for (var data in dataList ?? [])
-                      _buildDataCell(
-                        isCompany
-                            ? _getJobFieldData(data as JobsPageDatum, i)
-                            : _getCompanyFieldData(data as ApprovedCompany, i),
-                      ),
+                    if (dataList != null && dataList.isNotEmpty) ...[
+                      for (var data in dataList)
+                        _buildDataCell(
+                          isCompany
+                              ? _getJobFieldData(data as JobsPageDatum, i)
+                              : _getCompanyFieldData(
+                                  data as ApprovedCompany, i),
+                        ),
+                    ] else ...[
+                      // Create 5 empty cells if dataList is empty
+                      for (var j = 0; j < 5; j++)
+                        const TableCell(
+                          child: Text(''), // Empty cell
+                        ),
+                    ],
                   ],
                 ),
             ],
           ),
           ShowAllBtn(onTap: () {
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (context) => isCompany
-            //             ? const CompanyJobpage()
-            //             : const CompanyApplicantScreen()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => isCompany
+                        ? const CompanyJobpage()
+                        : const CompanyApplicantScreen()));
           })
         ],
       ),
@@ -100,7 +109,8 @@ class HorizontalTable extends StatelessWidget {
   }
 
   Widget _buildHeaderCell(String text) {
-    return Padding(
+    return Container(
+      height: 50, // Fixed height for header cells
       padding: const EdgeInsets.all(4.0),
       child: Text(
         text,
@@ -110,7 +120,8 @@ class HorizontalTable extends StatelessWidget {
   }
 
   Widget _buildDataCell(String text) {
-    return Padding(
+    return Container(
+      height: 50, // Fixed height for data cells
       padding: const EdgeInsets.all(15.0),
       child: Text(
         text,

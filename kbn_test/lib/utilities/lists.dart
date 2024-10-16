@@ -169,3 +169,56 @@ List<Map<String, String>> companyTransactionData = [
     'status': 'status'
   },
 ];
+
+//---------------------------------------------------
+//Default Data
+
+List<Map<String, String>> defaultCardData = [
+  {
+    'title': "",
+    'subTitle': "Company position on this month",
+  },
+  {
+    'title': '',
+    'subTitle': "Applicants applied this month",
+  },
+  {
+    'title': '',
+    'subTitle': "Applicants have got jobs",
+  },
+  {
+    'title': '',
+    'subTitle': 'Applicants for Python Jobs',
+  },
+  {
+    'title': '',
+    'subTitle': "Total growth on this month",
+  },
+];
+
+List<Map<String, String>> defaultAdminCardData = [
+  {
+    'title': '',
+    'subTitle': "Best Company on This Month",
+  },
+  {
+    'title': '',
+    'subTitle': "Company added on this month",
+  },
+  {
+    'title': '',
+    'subTitle': "Companies has got Kbn Code",
+  },
+  {
+    'title': '',
+    'subTitle': "Most Applied Company",
+  },
+  {
+    'title': '',
+    'subTitle': "Total Growth on this month",
+  },
+];
+
+List<Map<String, String>> defaultStatisticTableData = [
+  {'Name': "name", "Percentage": "Percentage"},
+];

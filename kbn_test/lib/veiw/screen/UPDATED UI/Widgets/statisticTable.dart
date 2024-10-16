@@ -14,8 +14,11 @@ class Statisticpagetable extends StatefulWidget {
   final List<Recruitment>? recruitmentData;
   final List<Performance>? performanceData;
 
-  const Statisticpagetable(
-      {super.key, this.recruitmentData, this.performanceData});
+  const Statisticpagetable({
+    super.key,
+    this.recruitmentData,
+    this.performanceData,
+  });
 
   @override
   _StatisticpagetableState createState() => _StatisticpagetableState();
@@ -34,11 +37,12 @@ class _StatisticpagetableState extends State<Statisticpagetable> {
     if (isCompany) {
       for (var recruitment in widget.recruitmentData ?? []) {
         tableText +=
-            '${recruitment.jobTitle}\t-\t${recruitment.currentMonth}%\n';
+            '${recruitment.jobTitle}\t-\t${recruitment.currentMonth ?? 0}%\n';
       }
     } else {
       for (var performance in widget.performanceData ?? []) {
-        tableText += '${performance.name}\t-\t${performance.percentage}%\n';
+        tableText +=
+            '${performance.companyName}\t-\t${performance.performancePercentageThisMonth ?? 0}%\n';
       }
     }
     // Share the constructed tableText
@@ -47,6 +51,61 @@ class _StatisticpagetableState extends State<Statisticpagetable> {
 
   @override
   Widget build(BuildContext context) {
+    List<TableRow> tableRows = [];
+
+    if (isCompany) {
+      // Handle recruitment data
+      for (var i = 0; i < 6; i++) {
+        if (i < (widget.recruitmentData?.length ?? 0)) {
+          var recruitment = widget.recruitmentData![i];
+          tableRows.add(
+            TableRow(
+              children: [
+                _buildDataCell(recruitment.jobTitle ?? 'N/A'),
+                _buildDataCell('${recruitment.currentMonth ?? 0}%'),
+              ],
+            ),
+          );
+        } else {
+          // Add empty rows with 0 values
+          tableRows.add(
+            TableRow(
+              children: [
+                _buildDataCell('N/A'),
+                _buildDataCell('0%'),
+              ],
+            ),
+          );
+        }
+      }
+    } else {
+      // Handle performance data
+      for (var i = 0; i < 6; i++) {
+        if (i < (widget.performanceData?.length ?? 0)) {
+          var performance = widget.performanceData![i];
+          tableRows.add(
+            TableRow(
+              children: [
+                _buildDataCell(performance.companyName ?? 'N/A'),
+                _buildDataCell(
+                    '${performance.performancePercentageThisMonth ?? 0}%'),
+              ],
+            ),
+          );
+        } else {
+          // Add empty rows with 0 values
+          tableRows.add(
+            TableRow(
+              children: [
+                _buildDataCell('N/A'),
+                _buildDataCell('0%'),
+              ],
+            ),
+          );
+        }
+      }
+    }
+
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
       child: Padding(
@@ -102,32 +161,7 @@ class _StatisticpagetableState extends State<Statisticpagetable> {
                           0: FlexColumnWidth(),
                           1: FlexColumnWidth(),
                         },
-                        children: isCompany
-                            ? widget.recruitmentData
-                                    ?.map(
-                                      (recruitment) => TableRow(
-                                        children: [
-                                          _buildDataCell(recruitment.jobTitle),
-                                          _buildDataCell(
-                                              '${recruitment.currentMonth}%'),
-                                        ],
-                                      ),
-                                    )
-                                    .toList() ??
-                                []
-                            : widget.performanceData
-                                    ?.map(
-                                      (performance) => TableRow(
-                                        children: [
-                                          _buildDataCell(
-                                              performance.companyName),
-                                          _buildDataCell(
-                                              '${performance.performancePercentageThisMonth}%'),
-                                        ],
-                                      ),
-                                    )
-                                    .toList() ??
-                                [],
+                        children: tableRows,
                       ),
                     ),
                   ),

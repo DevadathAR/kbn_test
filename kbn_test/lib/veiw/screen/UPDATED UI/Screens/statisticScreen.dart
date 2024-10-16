@@ -62,22 +62,41 @@ class _CompanyStatisticScreenState extends State<CompanyStatisticScreen> {
     }
   }
 
+  Future<void> _refreshDataBasedOnRole(bool isCompany) async {
+    setState(() {
+      _isLoading = true; // Set loading state
+    });
+
+    if (isCompany) {
+      // Fetch company data
+      CompanyApiResponse companyData = await ApiServices.companyData();
+      _companyData = companyData;
+    } else {
+      // Fetch admin data
+      AdminApiResponse adminData = await ApiServices.adminData();
+      _adminData = adminData;
+    }
+
+    setState(() {
+      _isLoading = false; // Set loading state to false after fetching
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldBuilder(
+      onMonthSelection: () {
+        _refreshDataBasedOnRole(isCompany);
+      },
       pageName: "Statistics",
       currentPath: "Statistics",
       child: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _hasError
-              ? Center(child: Text('Error: $_errorMessage'))
-              : _companyData == null && _adminData == null
-                  ? const Center(child: Text("No data available"))
-                  : _buildContent(
-                      context,
-                      companyData: _companyData,
-                      adminData: _adminData,
-                    ),
+              : _buildContent(
+                  context,
+                  companyData: _companyData,
+                  adminData: _adminData,
+                ),
     );
   }
 
@@ -180,24 +199,24 @@ class _CompanyStatisticScreenState extends State<CompanyStatisticScreen> {
 
   Widget _buildRadialGaugeSection(BuildContext context) {
     final totalApplicantsThisMonth = isCompany
-        ? _companyData?.companyData.commonData.applicantsTotal.thisMonth
-        : _adminData?.adminData.statisticsPageData.currMonthTotalApplicants;
+        ? _companyData?.companyData.commonData.applicantsTotal.thisMonth??1
+        : _adminData?.adminData.statisticsPageData.currMonthTotalApplicants??1;
 
     final totalApplicantsPrevMonth = isCompany
-        ? _companyData?.companyData.commonData.applicantsTotal.prevMonth
-        : _adminData?.adminData.statisticsPageData.prevMonthTotalApplicants;
+        ? _companyData?.companyData.commonData.applicantsTotal.prevMonth??1
+        : _adminData?.adminData.statisticsPageData.prevMonthTotalApplicants??1;
 
     final selectedApplicantsThisMonth = isCompany
-        ? _companyData?.companyData.commonData.applicantsSelected.thisMonth
-        : _adminData?.adminData.statisticsPageData.currMonthSelectedApplicants;
+        ? _companyData?.companyData.commonData.applicantsSelected.thisMonth??0
+        : _adminData?.adminData.statisticsPageData.currMonthSelectedApplicants??0;
 
     final selectedApplicantsPrevMonth = isCompany
-        ? _companyData?.companyData.commonData.applicantsSelected.prevMonth
-        : _adminData?.adminData.statisticsPageData.prevMonthSelectedApplicants;
+        ? _companyData?.companyData.commonData.applicantsSelected.prevMonth??0
+        : _adminData?.adminData.statisticsPageData.prevMonthSelectedApplicants??0;
 
-    if (totalApplicantsThisMonth == null || totalApplicantsPrevMonth == null) {
-      return const Center(child: Text("No Pie Data available"));
-    }
+    // if (totalApplicantsThisMonth == null || totalApplicantsPrevMonth == null) {
+    //   return const Center(child: Text("No Pie Data available"));
+    // }
 
     return Expanded(
       flex: 1,

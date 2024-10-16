@@ -52,8 +52,8 @@ class ChartWidget extends StatelessWidget {
         SizedBox(
           height: 180,
           child: RecruitmentBarChart(
-            recruitmentData: companyData!.statisticsPageData.recruitment,
-            performanceData: adminData!.statisticsPageData.performance,
+            recruitmentData: companyData?.statisticsPageData.recruitment,
+            performanceData: adminData?.statisticsPageData.performance,
             length: 203,
             mobilelength: 163,
           ),
@@ -80,12 +80,12 @@ class ChartWidget extends StatelessWidget {
 
   // Large screen layout: Horizontal arrangement of charts
   Row largeScreenLayout() {
-    if (companyData == null && adminData == null) {
-      return const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [Text("No data available")],
-      );
-    }
+    // if (companyData == null && adminData == null) {
+    //   return const Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [Text("No data available")],
+    //   );
+    // }
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [

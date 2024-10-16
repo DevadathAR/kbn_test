@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/colors.dart';
@@ -58,7 +60,7 @@ class _LatestJobCardState extends State<LatestJobCard> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
+    // print('${ApiServices.baseUrl}${widget.companyImage}');
     double getHeight(double screenWidth) {
       if (screenWidth < 900) {
         return screenWidth * 0.1; // 12% of screen width for small screens
@@ -118,8 +120,13 @@ class _LatestJobCardState extends State<LatestJobCard> {
                   CircleAvatar(
                     // radius: getLogoRadius(size.width),
                     radius: 40,
-                    backgroundImage: NetworkImage(
-                        '${ApiServices.baseUrl}${widget.companyImage}'),
+                    foregroundImage: CachedNetworkImageProvider(
+                      '${ApiServices.baseUrl}${widget.companyImage}',
+                      // 'https://randomuser.me/api/portraits/men/75.jpg',
+                      headers: const { },
+                      errorListener: (p0) =>
+                          print('${ApiServices.baseUrl}${widget.companyImage}'),
+                    ),
                   ),
                   Column(
                     children: [
@@ -133,10 +140,6 @@ class _LatestJobCardState extends State<LatestJobCard> {
                       ),
                     ],
                   ),
-                  // const Image(
-                  //   image: AssetImage(likePng),
-                  //   color: black,
-                  // )
                 ],
               ),
             ),
@@ -182,8 +185,7 @@ class _LatestJobCardState extends State<LatestJobCard> {
                     child: Center(
                       child: Text(
                         widget.status,
-                        style: AppTextStyle.normalW500
-                            .copyWith(color: white),
+                        style: AppTextStyle.normalW500.copyWith(color: white),
                       ),
                     ),
                   ),
@@ -213,9 +215,8 @@ class _LatestJobCardState extends State<LatestJobCard> {
 }
 
 Widget Requirments(context, {required String txt}) {
-  Size size = MediaQuery.of(context).size;
-  double containerWidth;
-
+  // Size size = MediaQuery.of(context).size;
+  // double containerWidth;
   // if (size.width < 900) {
   //   containerWidth = size.width * 0.25;
   // } else if (size.width < 1200) {

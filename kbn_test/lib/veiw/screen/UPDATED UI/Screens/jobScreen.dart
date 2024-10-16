@@ -17,14 +17,36 @@ class CompanyJobpage extends StatefulWidget {
 }
 
 class _CompanyJobpageState extends State<CompanyJobpage> {
-  CompanyApiResponse? _companyData;
-  //
+  CompanyApiResponse? _companyData; // Holds the company data
+  bool _isLoading = true; // Controls the loading state
+  bool _hasError = false; // Controls the error state
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCompanyData();
+  }
+
+  void _fetchCompanyData() async {
+    try {
+      CompanyApiResponse data = await ApiServices.companyData();
+      setState(() {
+        _companyData = data;
+        _isLoading = false;
+      });
+    } catch (error) {
+      setState(() {
+        _hasError = true;
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    List<Map<String, String>> jobTableheaders = [
+    List<Map<String, String>> jobTableHeaders = [
       {'header': 'Designation', 'key': 'designation'},
       {'header': 'Experience', 'key': 'experience'},
       {'header': 'Location', 'key': 'location'},
@@ -36,92 +58,97 @@ class _CompanyJobpageState extends State<CompanyJobpage> {
     ];
 
     return ScaffoldBuilder(
+      onMonthSelection: () {
+        setState(() {
+          _isLoading = true;
+        });
+        _fetchCompanyData(); // Re-fetch company data
+      },
       currentPath: "Jobs",
       pageName: "Jobs",
       child: SizedBox(
-          // height: size.height * 0.6,
-          height: 550,
-          child: FutureBuilder(
-              future: ApiServices.companyData(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-                if (!snapshot.hasData || snapshot.data == null) {
-                  return const Center(child: Text("No Job Data available"));
-                }
-                // Data is successfully fetched
-                // Map fetched data to the format required for the table
-                CompanyApiResponse companyData = snapshot.data!;
-                List<Map<String, String>> jobTableData =
-                    companyData.companyData.jobsPageData.map((job) {
-                  return {
-                    'id': job.jobId.toString(),
-                    'designation': job.designation,
-                    'experience': job.experience,
-                    'location': job.location
-                        .toString()
-                        .split('.')
-                        .last, // Convert enum to string
-                    'vacancy': job.vacancy.toString(),
-                    'selected': job.selected.toString(),
-                    'jobType': job.jobType
-                        .toUpperCase(), // Convert job type to uppercase
-                    'salary': 'Rs. ${job.salary}',
-                    'status': job.status,
-                  };
-                }).toList();
+        height: 550,
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            // : _hasError
+            //     ? const Center(child: Text("Error loading job data"))
+            : _buildContent(size, jobTableHeaders),
+      ),
+    );
+  }
 
-                return ListView(
-                  children: [
-                    Wrap(
-                      spacing: 10,
-                      children: [
-                        Expanded(
-                          child: jobDataTable(
-                            context: context,
-                            headers: jobTableheaders,
-                            Data: jobTableData,
-                            onStatusChange:
-                                (int applicationId, String newStatus) async {
-                              // Update the status for the specific job
-                              setState(() {
-                                jobTableData = jobTableData.map((job) {
-                                  if (int.parse(job['id']!) == applicationId) {
-                                    job['status'] =
-                                        newStatus; // Update the status only for the clicked row
-                                  }
-                                  return job;
-                                }).toList();
-                              });
-                            },
-                          ),
-                        ),
-                        if (size.width < 1200)
-                          const SizedBox(
-                            height: 5,
-                          ),
-                        const jobDetailsForm()
-                      ],
-                    )
-                  ],
-                );
-              })),
+  Widget _buildContent(Size size, List<Map<String, String>> headers) {
+    // Map the company data to the jobTableData
+    List<Map<String, String>>? jobTableData =
+        _companyData?.companyData.jobsPageData.map((job) {
+      return {
+        'id': job.jobId.toString(),
+        'designation': job.designation,
+        'experience': job.experience,
+        'location': job.location.toString().split('.').last,
+        'vacancy': job.vacancy.toString(),
+        'selected': job.selected.toString(),
+        'jobType': job.jobType.toUpperCase(),
+        'salary': 'Rs. ${job.salary}',
+        'status': job.status,
+      };
+    }).toList();
+
+    return ListView(
+      children: [
+        Wrap(
+          spacing: 10,
+          children: [
+            Expanded(
+              child: jobDataTable(
+                context: context,
+                headers: headers,
+                data: jobTableData,
+                onStatusChange: (int applicationId, String newStatus) {
+                  setState(() {
+                    jobTableData = jobTableData?.map((job) {
+                      if (int.parse(job['id']!) == applicationId) {
+                        job['status'] =
+                            newStatus; // Update the status for the selected row
+                      }
+                      return job;
+                    }).toList();
+                  });
+                },
+              ),
+            ),
+            if (size.width < 1200) const SizedBox(height: 5),
+            // jobCreationForm
+            const jobDetailsForm(),
+          ],
+        )
+      ],
     );
   }
 }
 
 Widget jobDataTable({
-  context,
+  required BuildContext context,
   required List<Map<String, String>> headers,
-  required List<Map<String, String>> Data,
-  required Function(int applicationId, String newStatus)
-      onStatusChange, // Modify the callback to pass status
+  required List<Map<String, String>>? data,
+  required Function(int applicationId, String newStatus) onStatusChange,
 }) {
   Size size = MediaQuery.of(context).size;
+
+  // Check if data is null or empty, and if so, provide default empty rows
+  data ??= List.generate(
+    6, // Display 6 empty rows
+    (_) => {
+      'designation': 'Not Available',
+      'experience': 'Not Available',
+      'location': 'Not Available',
+      'vacancy': '0',
+      'selected': '0',
+      'jobType': 'Not Available',
+      'salary': '0',
+      'status': 'Not Available',
+    },
+  );
 
   return Container(
     width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
@@ -176,19 +203,18 @@ Widget jobDataTable({
               ),
               columnWidths: _generateColumnWidths(headers.length),
               children: [
-                ...Data.asMap().entries.map((entry) {
+                ...data.asMap().entries.map((entry) {
                   final index = entry.key;
                   final row = entry.value;
                   return TableRow(
                     children: headers.map((header) {
                       if (header['key'] == 'status') {
                         return CustomJobStatus(
-                          status: row['status'] ??
-                              '', // Pass the row-specific status
+                          status: row['status'] ?? 'Not Available',
                           applicationId: int.tryParse(row['id'] ?? '0') ?? 0,
                           onStatusChange: (updatedStatus) {
                             onStatusChange(int.tryParse(row['id'] ?? '0') ?? 0,
-                                updatedStatus); 
+                                updatedStatus);
                           },
                         );
                       } else {
@@ -198,7 +224,7 @@ Widget jobDataTable({
                             horizontal: 5.0,
                           ),
                           child: Text(
-                            row[header['key']] ?? '',
+                            row[header['key']] ?? 'Not Available',
                             textAlign: TextAlign.center,
                             style: AppTextStyle.normalText,
                           ),
@@ -215,6 +241,108 @@ Widget jobDataTable({
     ),
   );
 }
+
+// Widget jobDataTable({
+//   context,
+//   required List<Map<String, String>> headers,
+//   required List<Map<String, String>> Data,
+//   required Function(int applicationId, String newStatus)
+//       onStatusChange, // Modify the callback to pass status
+// }) {
+//   Size size = MediaQuery.of(context).size;
+
+//   return Container(
+//     width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
+//     height: 400,
+//     padding: const EdgeInsets.all(16.0),
+//     decoration: BoxDecoration(
+//       borderRadius: BorderRadius.circular(8),
+//       color: Colors.white,
+//     ),
+//     child: Column(
+//       children: [
+//         // Header row
+//         Table(
+//           border: tableHeaderDec(),
+//           defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+//           columnWidths: _generateColumnWidths(headers.length),
+//           children: [
+//             TableRow(
+//               children: headers.map((header) {
+//                 return Padding(
+//                   padding: const EdgeInsets.symmetric(
+//                     vertical: 18.5,
+//                     horizontal: 5.0,
+//                   ),
+//                   child: Text(
+//                     header['header']!,
+//                     textAlign: TextAlign.center,
+//                     style: const TextStyle(
+//                       fontWeight: FontWeight.bold,
+//                       fontSize: 10,
+//                     ),
+//                   ),
+//                 );
+//               }).toList(),
+//             ),
+//           ],
+//         ),
+//         // Data rows
+//         Expanded(
+//           child: SingleChildScrollView(
+//             child: Table(
+//               defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+//               border: TableBorder(
+//                 horizontalInside: BorderSide(
+//                   color: Colors.grey.withOpacity(0.5),
+//                   width: 0.5,
+//                 ),
+//                 verticalInside: BorderSide(
+//                   color: Colors.grey.withOpacity(0.5),
+//                   width: 0.5,
+//                 ),
+//               ),
+//               columnWidths: _generateColumnWidths(headers.length),
+//               children: [
+//                 ...Data.asMap().entries.map((entry) {
+//                   final index = entry.key;
+//                   final row = entry.value;
+//                   return TableRow(
+//                     children: headers.map((header) {
+//                       if (header['key'] == 'status') {
+//                         return CustomJobStatus(
+//                           status: row['status'] ??
+//                               '', // Pass the row-specific status
+//                           applicationId: int.tryParse(row['id'] ?? '0') ?? 0,
+//                           onStatusChange: (updatedStatus) {
+//                             onStatusChange(int.tryParse(row['id'] ?? '0') ?? 0,
+//                                 updatedStatus);
+//                           },
+//                         );
+//                       } else {
+//                         return Padding(
+//                           padding: const EdgeInsets.symmetric(
+//                             vertical: 23.5,
+//                             horizontal: 5.0,
+//                           ),
+//                           child: Text(
+//                             row[header['key']] ?? '',
+//                             textAlign: TextAlign.center,
+//                             style: AppTextStyle.normalText,
+//                           ),
+//                         );
+//                       }
+//                     }).toList(),
+//                   );
+//                 }),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ],
+//     ),
+//   );
+// }
 
 /// Helper function to generate column widths based on the number of headers
 Map<int, TableColumnWidth> _generateColumnWidths(int headerCount) {

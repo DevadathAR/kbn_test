@@ -199,7 +199,7 @@ Widget selectedApplicantsTable(context,
                                       companyId:
                                           int.tryParse(row['id'] ?? '0') ?? 0,
                                       onApproval: () {
-                                        onAdminAproval;
+                                        onAdminAproval();
                                       },
                                     );
                             }),

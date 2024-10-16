@@ -5,6 +5,7 @@ import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
+import 'package:kbn_test/veiw/widgets_common/goBack.dart';
 import 'package:kbn_test/veiw/widgets_common/home_appbar_box.dart';
 
 class user_T_n_C extends StatelessWidget {
@@ -15,7 +16,7 @@ class user_T_n_C extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Row(
+      body: Stack(
         children: [
           SingleChildScrollView(
             child: SizedBox(
@@ -55,6 +56,7 @@ class user_T_n_C extends StatelessWidget {
               ),
             ),
           ),
+          GoBack(context, homePage: UserHome())
         ],
       ),
     );

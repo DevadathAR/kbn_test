@@ -25,29 +25,20 @@ class _CompanyHomeState extends State<CompanyHome> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _fetchData();
   }
 
-  // Function to fetch data from the singleton service based on the role
   void _fetchData() async {
     try {
-      // ignore: prefer_typing_uninitialized_variables
-      var data;
-      // print(isCompany);
       if (isCompany) {
-        // data = await ApiDataService().fetchCompanyData();
-        data = await ApiServices.companyData();
-
+        CompanyApiResponse data = await ApiServices.companyData();
         setState(() {
           companyData = data;
           isLoading = false;
         });
       } else {
-        // Fetch admin data if the role is 'Admin'
-        // data = await ApiDataService().fetchAdminData();
-        data = await ApiServices.adminData();
+        AdminApiResponse data = await ApiServices.adminData();
         setState(() {
           adminData = data;
           isLoading = false;
@@ -63,93 +54,93 @@ class _CompanyHomeState extends State<CompanyHome> {
     }
   }
 
+  Future<void> _refreshDataBasedOnRole(bool isCompany) async {
+    setState(() {
+      isLoading = true; // Set loading state
+    });
+
+    if (isCompany) {
+      // Fetch company data
+      CompanyApiResponse companyData = await ApiServices.companyData();
+      companyData = companyData;
+    } else {
+      // Fetch admin data
+      AdminApiResponse adminData = await ApiServices.adminData();
+      adminData = adminData;
+    }
+
+    setState(() {
+      isLoading = false; // Set loading state to false after fetching
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (isCompany) {
-      if (companyData == null) {
-        return const Center(child: Text("No CompanyData*home available"));
-      }
-    } else {
-      if (adminData == null) {
-        return const Center(child: Text("No Admin Data *home available"));
-      }
-    }
 
     return ScaffoldBuilder(
+      onMonthSelection: () {
+        _refreshDataBasedOnRole(isCompany);
+      },
       pageName: "Overview",
       currentPath: "Overview",
       child: SizedBox(
-        // height: 410,
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 10.0,
-          runSpacing: 10.0,
-          children: [
-            // First column (Charts and Horizontal Table)
-            SizedBox(
-              width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
-              child: Column(
-                children: [
-                  GestureDetector(
-                    child: ChartWidget(
-                      companyData: isCompany
-                          ? companyData?.companyData
-                          : null, // Changed to null-aware
-                      adminData: !isCompany
-                          ? adminData?.adminData
-                          : null, // Changed to null-aware
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const CompanyStatisticScreen()));
-                    },
-                  ), // Pass data here
-                  const SizedBox(height: 10),
-                  HorizontalTable(
-                    jobsData: isCompany
-                        ? companyData?.companyData.jobsPageData
-                        : null,
-                    // if user is not company
-                    approvedCompData: !isCompany
-                        ? adminData
-                            ?.adminData.companiesPageData.approvedCompanies
-                        : null,
-                  ), // Pass data here
-                ],
-              ),
-            ),
-
-            // Second column (Vertical Table)
-            SizedBox(
-              width: size.width > 1200
-                  ? (size.width - 200) * 0.49
-                  : null, // Adjust the width as necessary
-              child: VerticalTable(
-                onAdminAproval: () {
-                  // ApiDataService().fetchCompanyData();
-                  ApiServices.companyData();
-                },
-                applicantsData: isCompany
-                    ? companyData?.companyData.applicantsPageData
-                    : null,
-                // if user is not company
-                toApproveData: !isCompany
-                    ? adminData
-                        ?.adminData.companiesPageData.toBeApprovedCompanies
-                    : null,
-              ),
-            ),
-          ],
-        ),
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : (isCompany
+                ? _buildContent(size, companyData, null)
+                : _buildContent(size, null, adminData)),
       ),
+    );
+  }
+
+  Widget _buildContent(
+      Size size, CompanyApiResponse? companyData, AdminApiResponse? adminData) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 10.0,
+      runSpacing: 10.0,
+      children: [
+        // First column (Charts and Horizontal Table)
+        SizedBox(
+          width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
+          child: Column(
+            children: [
+              GestureDetector(
+                child: ChartWidget(
+                  companyData: companyData?.companyData,
+                  adminData: adminData?.adminData,
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const CompanyStatisticScreen()));
+                },
+              ),
+              const SizedBox(height: 10),
+              HorizontalTable(
+                jobsData: companyData?.companyData.jobsPageData,
+                approvedCompData:
+                    adminData?.adminData.companiesPageData.approvedCompanies,
+              ),
+            ],
+          ),
+        ),
+        // Second column (Vertical Table)
+        SizedBox(
+          width: size.width > 1200 ? (size.width - 200) * 0.49 : null,
+          child: VerticalTable(
+            onAdminAproval: () {
+              ApiServices.adminData();
+            },
+            applicantsData: companyData?.companyData.applicantsPageData,
+            toApproveData:
+                adminData?.adminData.companiesPageData.toBeApprovedCompanies,
+          ),
+        ),
+      ],
     );
   }
 }

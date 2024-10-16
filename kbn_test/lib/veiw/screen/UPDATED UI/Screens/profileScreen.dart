@@ -6,8 +6,10 @@ import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/profileWidgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CompanyProfileScreen extends StatefulWidget {
   const CompanyProfileScreen({super.key});
@@ -21,7 +23,8 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
   bool _hasError = false;
   Map<String, dynamic> userDetails = {};
   bool _isEditingManagerDetails = false;
-  bool _isEditingCompanyDetails = false; // New variable for editing company details
+  bool _isEditingCompanyDetails =
+      false; // New variable for editing company details
 
   late TextEditingController _managerNameController;
   late TextEditingController _managerEmailController;
@@ -46,11 +49,16 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
       var details = await ApiServices.fetchUserDetails();
       setState(() {
         userDetails = details;
-        _managerNameController = TextEditingController(text: details['user']['manager_name']);
-        _managerEmailController = TextEditingController(text: details['user']['manager_email']);
-        _addressController = TextEditingController(text: details['user']['address']);
-        _websiteController = TextEditingController(text: details['user']['company_website']);
-        _contactController = TextEditingController(text: details['user']['contact']);
+        _managerNameController =
+            TextEditingController(text: details['user']['manager_name']);
+        _managerEmailController =
+            TextEditingController(text: details['user']['manager_email']);
+        _addressController =
+            TextEditingController(text: details['user']['address']);
+        _websiteController =
+            TextEditingController(text: details['user']['company_website']);
+        _contactController =
+            TextEditingController(text: details['user']['contact']);
         _isLoading = false;
       });
     } catch (error) {
@@ -62,6 +70,15 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
     }
   }
 
+  void _launchURL(String sitelink) async {
+    final Uri uri = Uri.parse(sitelink);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $sitelink';
+    }
+  }
+
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Error: $message')),
@@ -69,13 +86,18 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
   }
 
   Future<void> _selectImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      setState(() async {
-        _selectedImage = await image.readAsBytes();
-        _imageFilename = image.name;
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
+      setState(() {
+        _selectedImage = bytes;
+        _imageFilename = pickedFile.name; // Store the filename
+      });
+    } else {
+      setState(() {
+        _selectedImage = null;
+        _imageFilename = null; // Clear the filename
       });
     }
   }
@@ -104,27 +126,26 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
   }
 
   Future<void> _saveCompanyDetails() async {
-  try {
-    var response = await ApiServices.sendUpdatedCompanyData( 
-      address: _addressController.text,
-      site: _websiteController.text,
-      number: _contactController.text,
-    );
+    try {
+      var response = await ApiServices.sendUpdatedCompanyData(
+        address: _addressController.text,
+        site: _websiteController.text,
+        number: _contactController.text,
+      );
 
-    if (response.statusCode == 200) {
-      _fetchUserDetails();
-      setState(() {
-        _isEditingCompanyDetails = false;
-      });
-      _showErrorSnackBar('Company details updated successfully!');
-    } else {
-      throw Exception('Failed to update company details');
+      if (response.statusCode == 200) {
+        _fetchUserDetails();
+        setState(() {
+          _isEditingCompanyDetails = false;
+        });
+        _showErrorSnackBar('Company details updated successfully!');
+      } else {
+        throw Exception('Failed to update company details');
+      }
+    } catch (error) {
+      _showErrorSnackBar('Error updating company details: $error');
     }
-  } catch (error) {
-    _showErrorSnackBar('Error updating company details: $error');
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -153,6 +174,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
     }
 
     return ScaffoldBuilder(
+      onMonthSelection: () {},
       currentPath: "Profile",
       pageName: "Profile",
       child: Padding(
@@ -163,7 +185,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
             const SizedBox(height: 10),
             profile_details(context),
             const SizedBox(height: 20),
-            companyManagerWidget(),
+            if (isCompany) companyManagerWidget(),
             const SizedBox(height: 20),
             companyDetailsWidget(),
           ],
@@ -183,20 +205,50 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
         children: [
           Row(
             children: [
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  borderRadius: const BorderRadius.all(Radius.circular(6)),
+              //edit manger image
+
+              if (_isEditingManagerDetails)
+                GestureDetector(
+                  onTap: () {
+                    _selectImage();
+                  },
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: const BorderRadius.all(Radius.circular(6)),
+                    ),
+                    child: _selectedImage != null
+                        ? Image.memory(_selectedImage!)
+                        : (userDetails['user']['manager_profile_image'] ==
+                                    null ||
+                                userDetails['user']['manager_profile_image']
+                                    .isEmpty
+                            ? const Image(image: AssetImage(personPng))
+                            : Image.network(
+                                "${ApiServices.baseUrl}/${userDetails['user']['manager_profile_image']}")),
+                  ),
+                )
+              else
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    borderRadius: const BorderRadius.all(Radius.circular(6)),
+                  ),
+                  child: _selectedImage != null
+                      ? Image.memory(_selectedImage!)
+                      : (userDetails['user']['manager_profile_image'] == null ||
+                              userDetails['user']['manager_profile_image']
+                                  .isEmpty
+                          ? const Image(image: AssetImage(personPng))
+                          : Image.network(
+                              fit: BoxFit.cover,
+                              "${ApiServices.baseUrl}/${userDetails['user']['manager_profile_image']}")),
                 ),
-                child: _selectedImage != null
-                    ? Image.memory(_selectedImage!)
-                    : (userDetails['user']['manager_profile_image'] == null ||
-                            userDetails['user']['manager_profile_image'].isEmpty
-                        ? const Image(image: AssetImage(personPng))
-                        : Image.network("${ApiServices.baseUrl}/${userDetails['user']['manager_profile_image']}")),
-              ),
+
               const SizedBox(width: 20),
               Expanded(
                 child: Column(
@@ -204,22 +256,22 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                   children: [
                     TextField(
                       controller: _managerNameController,
-                      decoration: const InputDecoration(labelText: 'Manager Name'),
+                      decoration: const InputDecoration(
+                          labelText: 'Manager Name',
+                          border: UnderlineInputBorder(
+                              borderSide: BorderSide.none)),
                       readOnly: !_isEditingManagerDetails,
                     ),
                     const SizedBox(height: 10),
                     TextField(
                       controller: _managerEmailController,
-                      decoration: const InputDecoration(labelText: 'Manager Email'),
+                      decoration: const InputDecoration(
+                          labelText: 'Manager Email',
+                          border: UnderlineInputBorder(
+                              borderSide: BorderSide.none)),
                       readOnly: !_isEditingManagerDetails,
                     ),
                     const SizedBox(height: 10),
-                    if (_isEditingManagerDetails)
-                      TextButton.icon(
-                        onPressed: _selectImage,
-                        icon: const Icon(Icons.image),
-                        label: const Text("Select Image"),
-                      ),
                   ],
                 ),
               ),
@@ -233,7 +285,10 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child:  Text("Save",style: AppTextStyle.bodytextwhite,),
+                  child: const Text(
+                    "Save",
+                    style: AppTextStyle.bodytextwhite,
+                  ),
                 ),
               if (!_isEditingManagerDetails)
                 ElevatedButton(
@@ -248,7 +303,10 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text("Edit",style: AppTextStyle.bodytextwhite,),
+                  child: const Text(
+                    "Edit",
+                    style: AppTextStyle.bodytextwhite,
+                  ),
                 ),
             ],
           ),
@@ -258,6 +316,8 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
   }
 
   Widget companyDetailsWidget() {
+    String sitelink = "https://kbn-official.com/";
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -292,14 +352,16 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: _saveCompanyDetails,
-
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text("Save",style: AppTextStyle.bodytextwhite,),
+                  child: const Text(
+                    "Save",
+                    style: AppTextStyle.bodytextwhite,
+                  ),
                 ),
               ],
             )
@@ -307,26 +369,64 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Address: ${userDetails['user']['address']}", style: AppTextStyle.fourteenW400),
-                Text("Website: ${userDetails['user']['company_website']}", style: AppTextStyle.fourteenW400),
-                Text("Contact: ${userDetails['user']['contact']}", style: AppTextStyle.fourteenW400),
-                const SizedBox(height: 10),
-                Align(alignment: Alignment.bottomCenter,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _isEditingCompanyDetails = true; // Enable editing
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Text(
+                      isCompany
+                          ? " ${userDetails['user']['address']}" !=
+                                  null
+                              ? "Address: ${userDetails['user']['address']}"
+                              : "ADD ADDRESS"
+                          : '''Smruthy Towers
+183/C, HMT Junction,
+Kalamassery, Kochi''',
+                      style: AppTextStyle.fourteenW400),
+                ),
+                GestureDetector(
+                  onTap: () => _launchURL(sitelink), // Navigate to the website
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Text(
+                      isCompany
+                          ? "Website: ${userDetails['user']['company_website']}" !=
+                                  "null"
+                              ? "Website: ${userDetails['user']['company_website']}"
+                              : "ADD COMPANY WEBSITE"
+                          : sitelink,
+                      style: AppTextStyle.fourteenW400,
                     ),
-                    child: const Text("Edit",style: AppTextStyle.bodytextwhite,),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Text(
+                      isCompany
+                          ? "Contact: ${userDetails['user']['contact']}"
+                          : "+91 8848876965",
+                      style: AppTextStyle.fourteenW400),
+                ),
+                const SizedBox(height: 10),
+                if (isCompany)
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _isEditingCompanyDetails = true; // Enable editing
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text(
+                        "Edit",
+                        style: AppTextStyle.bodytextwhite,
+                      ),
+                    ),
+                  ),
               ],
             ),
         ],

@@ -61,24 +61,24 @@ class SyncfusionPieChart extends StatelessWidget {
     // final totalApplicantsThisMonth = da;
 
     final totalApplicantsThisMonth = isCompany
-        ? companyData?.commonData.applicantsTotal.thisMonth
-        : adminData?.statisticsPageData.currMonthTotalApplicants;
+        ? companyData?.commonData.applicantsTotal.thisMonth ?? 1
+        : adminData?.statisticsPageData.currMonthTotalApplicants ?? 1;
 
     final totalApplicantsPrevMonth = isCompany
-        ? companyData?.commonData.applicantsTotal.prevMonth
-        : adminData?.statisticsPageData.prevMonthTotalApplicants;
+        ? companyData?.commonData.applicantsTotal.prevMonth ?? 1
+        : adminData?.statisticsPageData.prevMonthTotalApplicants ?? 1;
 
     final selectedApplicantsThisMonth = isCompany
-        ? companyData?.commonData.applicantsSelected.thisMonth
-        : adminData?.statisticsPageData.currMonthSelectedApplicants;
+        ? companyData?.commonData.applicantsSelected.thisMonth ?? 0
+        : adminData?.statisticsPageData.currMonthSelectedApplicants ?? 0;
 
     final selectedApplicantsPrevMonth = isCompany
-        ? companyData?.commonData.applicantsSelected.prevMonth
-        : adminData?.statisticsPageData.prevMonthSelectedApplicants;
+        ? companyData?.commonData.applicantsSelected.prevMonth ?? 0
+        : adminData?.statisticsPageData.prevMonthSelectedApplicants ?? 0;
 
-        if (totalApplicantsThisMonth == null || totalApplicantsPrevMonth == null) {
-      return const Center(child: Text("No Pie Data available"));
-    }
+    //     if (totalApplicantsThisMonth == null || totalApplicantsPrevMonth == null) {
+    //   return const Center(child: Text("No Pie Data available"));
+    // }
 
     return SfRadialGauge(
       // backgroundColor: textGrey,

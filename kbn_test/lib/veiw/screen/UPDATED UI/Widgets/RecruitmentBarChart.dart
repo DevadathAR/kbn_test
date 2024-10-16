@@ -34,19 +34,21 @@ class RecruitmentBarChart extends StatelessWidget {
             BarChartData(
               alignment: BarChartAlignment.spaceAround,
               maxY: 100, // Max percentage height of bars
-              barGroups: (recruitmentData != null)
+              barGroups: (recruitmentData != null && recruitmentData!.isNotEmpty)
                   ? recruitmentData!.asMap().entries.map((entry) {
                       int index = entry.key; // Get the index of the recruitment item
                       Recruitment recruitment = entry.value; // Get the recruitment data
                       return makeGroupData(
-                          index, recruitment.currentMonth, recruitment.prevMonth);
+                          index, recruitment.currentMonth ?? 0, recruitment.prevMonth ?? 0);
                     }).toList()
-                  : performanceData!.asMap().entries.map((entry) {
-                      int index = entry.key; // Get the index of the performance item
-                      Performance performance = entry.value; // Get the performance data
-                      return makeGroupDataFromPerformance(
-                          index, performance.performancePercentageThisMonth, performance.performancePercentagePrevMonth);
-                    }).toList(),
+                  : (performanceData != null && performanceData!.isNotEmpty)
+                      ? performanceData!.asMap().entries.map((entry) {
+                          int index = entry.key; // Get the index of the performance item
+                          Performance performance = entry.value; // Get the performance data
+                          return makeGroupDataFromPerformance(
+                              index, performance.performancePercentageThisMonth ?? '0', performance.performancePercentagePrevMonth ?? '0');
+                        }).toList()
+                      : [],
               titlesData: FlTitlesData(
                 show: true,
                 topTitles: const AxisTitles(
@@ -65,13 +67,15 @@ class RecruitmentBarChart extends StatelessWidget {
                     getTitlesWidget: (double value, TitleMeta meta) {
                       const style = TextStyle(fontSize: 10);
                       int index = value.toInt();
-                      String title = recruitmentData != null
+                      String title = recruitmentData != null && recruitmentData!.isNotEmpty
                           ? index < recruitmentData!.length
                               ? recruitmentData![index].jobTitle
-                              : ''
-                          : index < performanceData!.length
-                              ? performanceData![index].companyName
-                              : '';
+                              : 'JobTitle'
+                          : performanceData != null && performanceData!.isNotEmpty
+                              ? index < performanceData!.length
+                                  ? performanceData![index].companyName
+                                  : 'CompanyName'
+                              : ''; // Default empty title
                       return SideTitleWidget(
                         axisSide: meta.axisSide,
                         space: 1.0,
@@ -130,13 +134,13 @@ class RecruitmentBarChart extends StatelessWidget {
       x: x,
       barRods: [
         BarChartRodData(
-          toY: y1.toDouble(),
+          toY: (y1 != null) ? y1.toDouble() : 0.0, // Use default value if null
           width: 25,
           gradient: gradientColor,
           borderRadius: BorderRadius.circular(4),
         ),
         BarChartRodData(
-          toY: y2.toDouble(),
+          toY: (y2 != null) ? y2.toDouble() : 0.0, // Use default value if null
           width: 15,
           color: tealblue,
           borderRadius: BorderRadius.circular(4),
@@ -152,13 +156,13 @@ class RecruitmentBarChart extends StatelessWidget {
       x: x,
       barRods: [
         BarChartRodData(
-          toY: double.tryParse(y1) ?? 0.0,
+          toY: double.tryParse(y1) ?? 0.0, // Default to 0.0 if parsing fails
           width: 25,
           gradient: gradientColor,
           borderRadius: BorderRadius.circular(4),
         ),
         BarChartRodData(
-          toY: double.tryParse(y2) ?? 0.0,
+          toY: double.tryParse(y2) ?? 0.0, // Default to 0.0 if parsing fails
           width: 15,
           color: tealblue,
           borderRadius: BorderRadius.circular(4),

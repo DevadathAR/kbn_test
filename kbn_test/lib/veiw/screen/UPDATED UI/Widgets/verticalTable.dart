@@ -46,16 +46,18 @@ class VerticalTable extends StatelessWidget {
                 applicant.designation,
                 applicant.applicantId
               ];
-            }).toList() ??
-            []
+            }).toList() ?? []
         : toApproveData?.map((company) {
               return [
                 company.companyName,
                 company.website,
                 company.companyId,
               ];
-            }).toList() ??
-            [];
+            }).toList() ?? [];
+
+    // Determine the number of rows to display
+    final int maxRows = 5; // Set the maximum number of rows to display
+    final int dataCount = rowData.length;
 
     return Container(
       height: 500,
@@ -68,10 +70,10 @@ class VerticalTable extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-             Align(
+            Align(
               alignment: Alignment.center,
               child: Text(
-                !isCompany?"To Approve":"Selected Applicants",
+                !isCompany ? "To Approve" : "Selected Applicants",
                 style: AppTextStyle.twelve_w500,
               ),
             ),
@@ -101,32 +103,42 @@ class VerticalTable extends StatelessWidget {
                     _buildHeaderCell(''), // Empty header for the third column
                   ],
                 ),
-                // Add the data rows dynamically
-                for (var row in rowData.take(5))
+                // Add the data rows or empty rows if less than 5
+                for (var i = 0; i < maxRows; i++)
                   TableRow(
                     children: [
-                      _buildDataCell(row[0].toString()), // Name/Company Name
-                      _buildDataCell(
-                          row[1].toString()), // Designation/Website Link
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: BoxButton(
-                          title: "View Details",
-                          onTap: () {
-                            isCompany
-                                ? showApplicantProfile(
-                                  designation: row[1],
-                                  applicantId: row[2],
-                                    context: context,
-                                  )
-                                : showCompanyProfileDialog(
-                                    onApproval: onAdminAproval,
-                                    context: context,
-                                    companyId: row[2],
-                                  );
-                          },
-                        ),
-                      ), // Button for 'View Details'
+                      if (i < dataCount)
+                        _buildDataCell(rowData[i][0].toString()) // Name/Company Name
+                      else
+                        _buildDataCell(''), // Empty cell
+
+                      if (i < dataCount)
+                        _buildDataCell(rowData[i][1].toString()) // Designation/Website Link
+                      else
+                        _buildDataCell(''), // Empty cell
+
+                      if (i < dataCount)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: BoxButton(
+                            title: "View Details",
+                            onTap: () {
+                              isCompany
+                                  ? showApplicantProfile(
+                                      designation: rowData[i][1],
+                                      applicantId: rowData[i][2],
+                                      context: context,
+                                    )
+                                  : showCompanyProfileDialog(
+                                      onApproval: onAdminAproval,
+                                      context: context,
+                                      companyId: rowData[i][2],
+                                    );
+                            },
+                          ),
+                        ) // Button for 'View Details'
+                      else
+                        const SizedBox(), // Empty cell for button
                     ],
                   ),
               ],

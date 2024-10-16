@@ -4,6 +4,7 @@ import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/companyHome.dart';
 import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
+import 'package:month_year_picker/month_year_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -15,9 +16,13 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
       title: "KBN_Test",
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        MonthYearPickerLocalizations.delegate, // Add this line
+        // Add other localization delegates if necessary
+      ],
       home:
           //  CompanyStatisticScreen(),
           // TermsNconditions(),

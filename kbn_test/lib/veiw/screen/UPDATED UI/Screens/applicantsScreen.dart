@@ -7,6 +7,7 @@ import 'package:kbn_test/utilities/lists.dart';
 import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/commonTable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../service/adminMode.dart';
 
@@ -23,12 +24,16 @@ class _CompanyApplicantScreenState extends State<CompanyApplicantScreen> {
   bool _isLoading = true;
   bool _hasError = false;
   String _errorMessage = '';
+  DateTime selectedMonth = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    _fetchData(); // Fetch data when the widget is initialized
+
+    _fetchData();
+    (); // Fetch data when the widget is initialized
   }
+
 
   Future<void> _fetchData() async {
     try {
@@ -62,29 +67,23 @@ class _CompanyApplicantScreenState extends State<CompanyApplicantScreen> {
     }
   }
 
-  Future<void> _refreshData() async {
+  Future<void> _refreshDataBasedOnRole(bool isCompany) async {
     setState(() {
       _isLoading = true; // Set loading state
     });
-    // await ApiDataService().fetchDataBasedOnRole(); // Re-fetch data
-    CompanyApiResponse data;
-    data = await ApiServices.companyData();
-    _companyData = data;
-    setState(() {
-      _isLoading = false;
-    });
-  }
 
-  Future<void> _refresAdminData() async {
+    if (isCompany) {
+      // Fetch company data
+      CompanyApiResponse companyData = await ApiServices.companyData();
+      _companyData = companyData;
+    } else {
+      // Fetch admin data
+      AdminApiResponse adminData = await ApiServices.adminData();
+      _adminData = adminData;
+    }
+
     setState(() {
-      _isLoading = true; // Set loading state
-    });
-    // await ApiDataService().fetchDataBasedOnRole(); // Re-fetch data
-    AdminApiResponse data;
-    data = await ApiServices.adminData();
-    _adminData = data;
-    setState(() {
-      _isLoading = false;
+      _isLoading = false; // Set loading state to false after fetching
     });
   }
 
@@ -99,17 +98,7 @@ class _CompanyApplicantScreenState extends State<CompanyApplicantScreen> {
 
     String path = "Applicants";
 
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (isCompany && _companyData == null) {
-      return const Center(child: Text("No company data available"));
-    }
-
-    if (!isCompany && _adminData == null) {
-      return const Center(child: Text("No admin data available"));
-    }
+  
 
     // Map fetched data to the format required for the table
     List<Map<String, String>> pendingApplications = _companyData
@@ -173,37 +162,58 @@ class _CompanyApplicantScreenState extends State<CompanyApplicantScreen> {
         [];
 
     return ScaffoldBuilder(
+      onMonthSelection: () {
+        _refreshDataBasedOnRole(isCompany);
+      },
       currentPath: path,
       pageName: path,
-      child: SizedBox(
-        width: double.infinity,
-        child: Wrap(
-          spacing: 5,
-          runSpacing: 5,
-          children: [
-            applicantsTable(
-              status: pendingApplications.isNotEmpty
-                  ? pendingApplications[0]['status'].toString()
-                  : '',
-              context: context,
-              headers: headers,
-              Data: isCompany ? pendingApplications : approvedCompanies,
-              statusOptions: ["SELECT", "REJECT"],
-              onStatusChange: (int applicationId) async {
-                await _refreshData(); // This will refresh your data after status change
-              },
-            ),
-            const SizedBox(width: 5),
-            selectedApplicantsTable(
-              onAdminAproval: () async {
-                await _refresAdminData();
-              },
-              context,
-              data: isCompany ? selectedApplicants : companiesToApprove,
-              headerTitle: isCompany ? "Selected Applicants" : "To Approve",
-            ),
-          ],
-        ),
+      child: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+                  : _buildContent(
+                      pendingApplications,
+                      context,
+                      headers,
+                      approvedCompanies,
+                      selectedApplicants,
+                      companiesToApprove),
+    );
+  }
+
+  SizedBox _buildContent(
+      List<Map<String, String>> pendingApplications,
+      BuildContext context,
+      List<Map<String, String>> headers,
+      List<Map<String, String>> approvedCompanies,
+      List<Map<String, String>> selectedApplicants,
+      List<Map<String, String>> companiesToApprove) {
+    return SizedBox(
+      width: double.infinity,
+      child: Wrap(
+        spacing: 5,
+        runSpacing: 5,
+        children: [
+          applicantsTable(
+            status: pendingApplications.isNotEmpty
+                ? pendingApplications[0]['status'].toString()
+                : '',
+            context: context,
+            headers: headers,
+            Data: isCompany ? pendingApplications : approvedCompanies,
+            statusOptions: ["SELECT", "REJECT"],
+            onStatusChange: (int applicationId) async {
+              _refreshDataBasedOnRole; // This will refresh your data after status change
+            },
+          ),
+          const SizedBox(width: 5),
+          selectedApplicantsTable(
+            onAdminAproval: () async {
+              _refreshDataBasedOnRole;
+            },
+            context,
+            data: isCompany ? selectedApplicants : companiesToApprove,
+            headerTitle: isCompany ? "Selected Applicants" : "To Approve",
+          ),
+        ],
       ),
     );
   }

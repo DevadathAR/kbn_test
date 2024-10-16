@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:kbn_test/service/adminMode.dart';
 import 'package:kbn_test/service/companymodelClass.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Map<String, dynamic> userDetails = {};
 Map<String, dynamic> jobDetailsResponse = {};
@@ -14,9 +15,9 @@ class ApiServices {
     'Content-Type': 'application/json',
     "ngrok-skip-browser-warning": "69420"
   };
-  static const String baseUrl = 'http://192.168.29.37:8000';
-  // static const String baseUrl =
-  //     'https://acab-2405-201-f017-980d-fd96-e1c9-8e85-ce21.ngrok-free.app';
+  // static const String baseUrl = 'http://192.168.29.37:8000';
+  static const String baseUrl =
+      'https://acab-2405-201-f017-980d-fd96-e1c9-8e85-ce21.ngrok-free.app';
 
   Future<http.StreamedResponse> signUp({
     required String fullName,
@@ -107,22 +108,54 @@ class ApiServices {
 
   // Company/Admin Section
 //.........................................
-  static Future<CompanyApiResponse> companyData() async {
-    var url = Uri.parse('$baseUrl/company/data?month=10&year=2024');
+  // static Future<CompanyApiResponse> companyData() async {
+  //   var url = Uri.parse('$baseUrl/company/data?month=10&year=2024');
 
-    var response = await http.get(url, headers: headers);
+  //   var response = await http.get(url, headers: headers);
 
-    // print('Raw response: ${response.body}');
+  //   // print('Raw response: ${response.body}');
 
-    if (response.statusCode == 200) {
-      // Decode the JSON response
-      var jsonMap = jsonDecode(response.body);
-      // Return an ApiResponse object
-      return CompanyApiResponse.fromJson(jsonMap);
-    } else {
-      throw Exception('Failed to fetch user details');
-    }
+  //   if (response.statusCode == 200) {
+  //     // Decode the JSON response
+  //     var jsonMap = jsonDecode(response.body);
+  //     // Return an ApiResponse object
+  //     return CompanyApiResponse.fromJson(jsonMap);
+  //   } else {
+  //     throw Exception('Failed to fetch user details');
+  //   }
+  // }
+
+//   static Future<CompanyApiResponse> companyData({required DateTime selectedDate}) async {
+//   int month = selectedDate.month;
+//   int year = selectedDate.year;
+
+//   var url = Uri.parse('$baseUrl/company/data?month=$month&year=$year');
+
+//   var response = await http.get(url, headers: headers);
+
+//   if (response.statusCode == 200) {
+//     var jsonMap = jsonDecode(response.body);
+//     return CompanyApiResponse.fromJson(jsonMap);
+//   } else {
+//     throw Exception('Failed to fetch user details');
+//   }
+// }
+static Future<CompanyApiResponse> companyData() async {
+  var prefs = await SharedPreferences.getInstance();
+  int month = prefs.getInt('selectedMonth') ?? DateTime.now().month;
+  int year = prefs.getInt('selectedYear') ?? DateTime.now().year;
+
+  var url = Uri.parse('$baseUrl/company/data?month=$month&year=$year');
+
+  var response = await http.get(url, headers: headers);
+
+  if (response.statusCode == 200) {
+    var jsonMap = jsonDecode(response.body);
+    return CompanyApiResponse.fromJson(jsonMap);
+  } else {
+    throw Exception('Failed to fetch user details');
   }
+}
 
   static Future<AdminApiResponse> adminData() async {
     var url = Uri.parse('$baseUrl/admin/data?month=9&year=2024');
