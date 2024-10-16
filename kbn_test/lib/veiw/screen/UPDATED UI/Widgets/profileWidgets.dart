@@ -1,9 +1,15 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kbn_test/service/apiServices.dart';
+import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/logInPage.dart';
+import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 
-Widget companyShortView(BuildContext context, {label, sub, email}) {
+Widget profile_details(BuildContext context, {label, sub, email}) {
   Size size = MediaQuery.of(context).size;
 
   return Container(
@@ -33,12 +39,15 @@ Widget companyShortView(BuildContext context, {label, sub, email}) {
         // Image box and other details
         Row(
           children: [
-            Container(
+            SizedBox(
               width: 100,
               child: CircleAvatar(
-                backgroundImage: NetworkImage(
-                  "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
-                ),
+                backgroundImage: isCompany
+                    ? NetworkImage(
+                        "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}")
+                    : const AssetImage(
+                        kbnLogo,
+                      ) as ImageProvider,
                 radius: 50,
               ),
             ),
@@ -57,13 +66,14 @@ Widget companyShortView(BuildContext context, {label, sub, email}) {
                       ),
                     ),
                   ),
-                  Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: Text("${userDetails['user']['kbn_code']}",
-                            style: AppTextStyle.normalText),
-                      )),
+                  if (isCompany)
+                    Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5.0),
+                          child: Text("${userDetails['user']['kbn_code']}"!="null"?"${userDetails['user']['kbn_code']}":"Not Assigned",
+                              style: AppTextStyle.normalText),
+                        )),
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: Padding(
@@ -81,4 +91,3 @@ Widget companyShortView(BuildContext context, {label, sub, email}) {
     ),
   );
 }
-

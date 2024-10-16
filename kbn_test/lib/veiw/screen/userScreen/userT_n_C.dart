@@ -18,50 +18,45 @@ class user_T_n_C extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Row(
-            children: [
-              SingleChildScrollView(
-                child: SizedBox(
-                  height: size.height,
-                  width: size.width * 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Center(child: Image(image: AssetImage(kbnLogo))),
-                      HomeAppBarBox(
-                        context,
-                        home: const UserHome(),
-                        profileImage:
-                            "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
-          
-                        // logOutTo: const UserHome(),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 100, bottom: 30, left: 150),
-                        child: Text(
-                          tachead,
-                          style: AppTextStyle.twentyFour_W400,
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 150),
-                        child: SizedBox(
-                            child: Text(
-                          T_n_C_user,
-                          style: AppTextStyle.fourteenW400,
-                        )),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          GoBack(context, homePage: const UserHome())
+          SingleChildScrollView(
+            child: SizedBox(
+              height: size.height,
+              width: size.width * 1,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Center(child: Image(image: AssetImage(kbnLogo))),
+                  HomeAppBarBox(
+                    context,
+                    home: const UserHome(),
+                    profileImage:
+                        "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
 
+                    // logOutTo: const UserHome(),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 100, bottom: 30, left: 150),
+                    child: Text(
+                      tachead,
+                      style: AppTextStyle.twentyFour_W400,
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 150),
+                    child: SizedBox(
+                        child: Text(
+                      T_n_C_user,
+                      style: AppTextStyle.fourteenW400,
+                    )),
+                  )
+                ],
+              ),
+            ),
+          ),
+          GoBack(context, homePage: UserHome())
         ],
       ),
     );

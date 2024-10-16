@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
-import 'package:kbn_test/service/companyModelClass.dart';
+import 'package:kbn_test/service/adminMode.dart';
+import 'package:kbn_test/service/companymodelClass.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Map<String, dynamic> userDetails = {};
 Map<String, dynamic> jobDetailsResponse = {};
@@ -15,9 +15,9 @@ class ApiServices {
     'Content-Type': 'application/json',
     "ngrok-skip-browser-warning": "69420"
   };
+  // static const String baseUrl = 'http://192.168.29.37:8000';
   static const String baseUrl =
-      "https://acab-2405-201-f017-980d-fd96-e1c9-8e85-ce21.ngrok-free.app";
-      // 'http://192.168.29.37:8000';
+      'https://acab-2405-201-f017-980d-fd96-e1c9-8e85-ce21.ngrok-free.app';
 
   Future<http.StreamedResponse> signUp({
     required String fullName,
@@ -68,11 +68,9 @@ class ApiServices {
     var response = await http.post(
       url,
       body: jsonEncode({
-        // 'email': "dev",
-        // 'password': "dev",
-        // 'email': "comp@gmail.com",
-        // 'password': "comp",
-        // 'email': "lumasolutions@gmail.com",
+        // 'email': "festa",
+        // 'password': "123",
+        // 'email': "applicant8@gmail.com",
         // 'password': "123",
         'email': email,
         'password': password,
@@ -87,8 +85,6 @@ class ApiServices {
       var token = data['token']; // Save the token for future requests
       headers['Authorization'] = 'Bearer $token';
 
-      log(jsonEncode(data));
-
       return data;
     } else {
       throw Exception('Login failed: ${response.body}');
@@ -101,7 +97,7 @@ class ApiServices {
 
     var response = await http.get(url, headers: headers);
 
-    print('userDetails${response.body}');
+    // print('userDetails${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -110,33 +106,80 @@ class ApiServices {
     }
   }
 
-  // Company Section
+  // Company/Admin Section
+//.........................................
+  // static Future<CompanyApiResponse> companyData() async {
+  //   var url = Uri.parse('$baseUrl/company/data?month=10&year=2024');
 
-  // View  Applicant Details API
-  static Future<Apiresponse> companyData() async {
-    var url = Uri.parse('$baseUrl/company/data?month=10&year=2024');
+  //   var response = await http.get(url, headers: headers);
+
+  //   // print('Raw response: ${response.body}');
+
+  //   if (response.statusCode == 200) {
+  //     // Decode the JSON response
+  //     var jsonMap = jsonDecode(response.body);
+  //     // Return an ApiResponse object
+  //     return CompanyApiResponse.fromJson(jsonMap);
+  //   } else {
+  //     throw Exception('Failed to fetch user details');
+  //   }
+  // }
+
+//   static Future<CompanyApiResponse> companyData({required DateTime selectedDate}) async {
+//   int month = selectedDate.month;
+//   int year = selectedDate.year;
+
+//   var url = Uri.parse('$baseUrl/company/data?month=$month&year=$year');
+
+//   var response = await http.get(url, headers: headers);
+
+//   if (response.statusCode == 200) {
+//     var jsonMap = jsonDecode(response.body);
+//     return CompanyApiResponse.fromJson(jsonMap);
+//   } else {
+//     throw Exception('Failed to fetch user details');
+//   }
+// }
+static Future<CompanyApiResponse> companyData() async {
+  var prefs = await SharedPreferences.getInstance();
+  int month = prefs.getInt('selectedMonth') ?? DateTime.now().month;
+  int year = prefs.getInt('selectedYear') ?? DateTime.now().year;
+
+  var url = Uri.parse('$baseUrl/company/data?month=$month&year=$year');
+
+  var response = await http.get(url, headers: headers);
+
+  if (response.statusCode == 200) {
+    var jsonMap = jsonDecode(response.body);
+    return CompanyApiResponse.fromJson(jsonMap);
+  } else {
+    throw Exception('Failed to fetch user details');
+  }
+}
+
+  static Future<AdminApiResponse> adminData() async {
+    var url = Uri.parse('$baseUrl/admin/data?month=9&year=2024');
 
     var response = await http.get(url, headers: headers);
 
-    print('company response: ${response.body}');
+    // print('Raw response: ${response.body}');
 
     if (response.statusCode == 200) {
       // Decode the JSON response
       var jsonMap = jsonDecode(response.body);
-      // log(jsonEncode(jsonMap));
       // Return an ApiResponse object
-      return Apiresponse.fromJson(jsonMap);
+      return AdminApiResponse.fromJson(jsonMap);
     } else {
       throw Exception('Failed to fetch user details');
     }
   }
-
-  // Fetch submitted Applicants Data API
-  static Future<Map<String, dynamic>> fetchSubmittedApplctns() async {
-    var url = Uri.parse('$baseUrl/application/c/?status=submitted');
+   // View  Applicant Details API
+  static Future<Map<String, dynamic>> fetchApplicantDetails(int userId) async {
+    var url = Uri.parse('$baseUrl/user/$userId');
 
     var response = await http.get(url, headers: headers);
-    // print('ApplicantData${response.body}');
+
+    // print('viewedApplicant${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -144,36 +187,33 @@ class ApiServices {
       throw Exception('Failed to fetch user details');
     }
   }
+//.........................................................................
+// PATCH REQUESTS
+// Update Job Status API
+  static Future<Map<String, dynamic>> updateJobStatus(
+    String status,
+    int applicationId,
+  ) async {
+    var url = Uri.parse('$baseUrl/Job/$applicationId');
 
-  // Fetch selected Applicants Data API
-  static Future<Map<String, dynamic>> fetchSelectedApplctns() async {
-    var url = Uri.parse('$baseUrl/application/c/?status=selected');
-
-    var response = await http.get(url, headers: headers);
-    // print('Selected${response.body}');
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to fetch user details');
-    }
-  }
-
-  // View  Applicant Details API
-  static Future<Map<String, dynamic>> fetchRecruitmentDetails(jobId) async {
-    var url = Uri.parse('$baseUrl/job/vaccancy$jobId');
-
-    var response = await http.get(url, headers: headers);
+    var response = await http.patch(
+      url,
+      headers: headers,
+      body: jsonEncode({
+        // Correct key-value format
+        'jobStatus': status
+      }),
+    );
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to fetch user details');
+      throw Exception('Failed to update application');
     }
   }
 
   // Update Application Data API
-  static Future<Map<String, dynamic>> updateApplication(
+  static Future<Map<String, dynamic>> updateApplicationStatus(
     String status,
     int applicationId,
   ) async {
@@ -196,72 +236,36 @@ class ApiServices {
   }
 
   // Update AddressDetails Data API
-  // static Future<Map<String, dynamic>> updateAddressDetails(
-  //   String address,
-  //   String contact,
-  //   // String businessType,
-  //   String website,
-  // ) async {
-  //   var url = Uri.parse('$baseUrl/user/');
+  static Future<Map<String, dynamic>> updateAddressDetails(
+    String address,
+    String contact,
+    String businessType,
+    String website,
+  ) async {
+    var url = Uri.parse('$baseUrl/user/');
 
-  //   var response = await http.patch(
-  //     url,
-  //     headers: headers,
-  //     body: jsonEncode({
-  //       // Correct key-value format
-  //       'address': address,
-  //       'contact': contact,
-  //       // 'business_type': businessType,
-  //       'company_website': website
-  //     }),
-  //   );
-  //   // print('Address Updated${response.body}');
-
-  //   if (response.statusCode == 200) {
-  //     return jsonDecode(response.body);
-  //   } else {
-  //     throw Exception('Failed to update application');
-  //   }
-  // }
-
-  // // Updating Vaccancy
-  // static Future<Map<String, dynamic>> updateVaccancy(
-  //   String status,
-  //   int applicationId,
-  // ) async {
-  //   var url = Uri.parse('$baseUrl/job/vaccancy$jobId);
-
-  //   var response = await http.patch(
-  //     url,
-  //     headers: headers,
-  //     body: jsonEncode({
-  //       // Correct key-value format
-  //       'newStatus': status
-  //     }),
-  //   );
-
-  //   if (response.statusCode == 200) {
-  //     return jsonDecode(response.body);
-  //   } else {
-  //     throw Exception('Failed to update application');
-  //   }
-  // }
-
-  // View  Applicant Details API
-  static Future<Map<String, dynamic>> fetchApplicantDetails(
-      int applicantId) async {
-    var url = Uri.parse('$baseUrl/user/$applicantId');
-
-    var response = await http.get(url, headers: headers);
-
-    // print('viewedApplicant${response.body}');
+    var response = await http.patch(
+      url,
+      headers: headers,
+      body: jsonEncode({
+        // Correct key-value format
+        'address': address,
+        'contact': contact,
+        'business_type': businessType,
+        'company_website': website
+      }),
+    );
+    // print('Address Updated${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to fetch user details');
+      throw Exception('Failed to update application');
     }
   }
+
+//..........................
+//POST REQUESTS 
 
   static Future<http.Response> createJob(Map<String, dynamic> jobData) async {
     var url = Uri.parse('$baseUrl/job/addJob');
@@ -291,49 +295,6 @@ class ApiServices {
       throw Exception('Error occurred while creating job: $e');
     }
   }
-
-  /// Admin Section...........................................
-
-// Fetch selected Applicants Data API
-  static Future<Map<String, dynamic>> fetchPendingCompanie() async {
-    var url = Uri.parse('$baseUrl/admin/c/pending');
-
-    var response = await http.get(url, headers: headers);
-    // print('Pending${response.body}');
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to fetch pending details');
-    }
-  }
-
-  // Fetch selected Applicants Data API
-  static Future<Map<String, dynamic>> fetchAprovedCompanies() async {
-    var url = Uri.parse('$baseUrl/admin/c/approved');
-
-    var response = await http.get(url, headers: headers);
-    // print('Approved${response.body}');
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to fetch Approved CompanyList');
-    }
-  }
-
-  // static Future<Map<String, dynamic>> fetchCompanyDetails(int companyId) async {
-  //   var url = Uri.parse('$baseUrl/admin/c/$companyId');
-
-  //   var response = await http.get(url, headers: headers);
-  //   // print('CompanyDetails...........${response.body}');
-
-  //   if (response.statusCode == 200) {
-  //     return jsonDecode(response.body);
-  //   } else {
-  //     throw Exception('Failed to fetch company details');
-  //   }
-  // }
 
   // Updating Approval
   static Future<Map<String, dynamic>> approveCompany(
@@ -376,6 +337,67 @@ class ApiServices {
     }
   }
 
+  
+static Future<http.StreamedResponse> sendManagerData({
+    required String managerName,
+    required String email,
+    Uint8List? selectedImage,
+    String? imageFilename,
+  }) async {
+    final url = Uri.parse('$baseUrl/company/manager');
+
+    // Prepare form data
+    var request = http.MultipartRequest('POST', url);
+    // Assuming headers are defined somewhere in your code
+    request.headers.addAll(headers);
+    request.fields['managerName'] = managerName;
+    request.fields['managerMail'] = email;
+
+    // Check if selectedImage and imageFilename are not null and add them to the request
+    if (selectedImage != null && imageFilename != null) {
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image', // Key name for the server
+          selectedImage,
+          filename: imageFilename,
+        ),
+      );
+    }
+
+    try {
+      // Send the request and return the response
+      var response = await request.send();
+      return response;
+    } catch (error) {
+      rethrow; // Rethrow any errors to handle them in the UI
+    }
+  }
+// Update AddressDetails Data API
+  // static Future<Map<String, dynamic>> sendUpdatedCompanyData({
+    static Future<http.Response> sendUpdatedCompanyData({
+    required String address,
+    required String site,
+    required String number,
+  }) async {
+    // Construct the URL
+    final url = Uri.parse('$baseUrl/user'); // Adjust the endpoint as necessary
+    
+    // Create the request body
+    final Map<String, String> body = {
+      'address': address,
+      'site': site,
+      'number': number,
+    };
+
+    // Send the request
+    final response = await http.patch(
+      url,
+      headers:headers,
+      body: jsonEncode(body),
+    );
+
+    return response; // Ensure you return the response
+  }
   //..............................................................
 
   //user Section
@@ -475,7 +497,7 @@ class ApiServices {
       throw Exception('Failed to apply for job: ${response.body}');
     }
   }
-/*
+
   static Future<List<dynamic>> fetchJobTitles() async {
     var url = Uri.parse('$baseUrl/job/filter');
 
@@ -488,7 +510,7 @@ class ApiServices {
     } else {
       throw Exception('Failed to fetch job titles');
     }
-  } */
+  }
 
   // Fetch Filtered Jobs
   static Future<Map<String, dynamic>> fetchFilteredJobs({
@@ -542,66 +564,5 @@ class ApiServices {
     } else {
       throw Exception("Failed to fetch filtered jobs");
     }
-  }
-
-static Future<http.StreamedResponse> sendManagerData({
-    required String managerName,
-    required String email,
-    Uint8List? selectedImage,
-    String? imageFilename,
-  }) async {
-    final url = Uri.parse('$baseUrl/company/manager');
-
-    // Prepare form data
-    var request = http.MultipartRequest('POST', url);
-    // Assuming headers are defined somewhere in your code
-    request.headers.addAll(headers);
-    request.fields['managerName'] = managerName;
-    request.fields['managerMail'] = email;
-
-    // Check if selectedImage and imageFilename are not null and add them to the request
-    if (selectedImage != null && imageFilename != null) {
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'image', // Key name for the server
-          selectedImage,
-          filename: imageFilename,
-        ),
-      );
-    }
-
-    try {
-      // Send the request and return the response
-      var response = await request.send();
-      return response;
-    } catch (error) {
-      rethrow; // Rethrow any errors to handle them in the UI
-    }
-  }
-// Update AddressDetails Data API
-  // static Future<Map<String, dynamic>> sendUpdatedCompanyData({
-    static Future<http.Response> sendUpdatedCompanyData({
-    required String address,
-    required String site,
-    required String number,
-  }) async {
-    // Construct the URL
-    final url = Uri.parse('$baseUrl/user'); // Adjust the endpoint as necessary
-    
-    // Create the request body
-    final Map<String, String> body = {
-      'address': address,
-      'site': site,
-      'number': number,
-    };
-
-    // Send the request
-    final response = await http.patch(
-      url,
-      headers:headers,
-      body: jsonEncode(body),
-    );
-
-    return response; // Ensure you return the response
   }
 }

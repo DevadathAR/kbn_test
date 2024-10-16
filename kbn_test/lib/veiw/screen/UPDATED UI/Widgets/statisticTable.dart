@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:kbn_test/service/companyModelClass.dart';
+import 'package:kbn_test/service/adminMode.dart';
+import 'package:kbn_test/service/companymodelClass.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
+import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
@@ -9,9 +11,14 @@ import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/colorDeclaration.dart';
 
 class Statisticpagetable extends StatefulWidget {
-  final List<Recruitment> data; // Accept data dynamically
+  final List<Recruitment>? recruitmentData;
+  final List<Performance>? performanceData;
 
-  const Statisticpagetable({super.key, required this.data});
+  const Statisticpagetable({
+    super.key,
+    this.recruitmentData,
+    this.performanceData,
+  });
 
   @override
   _StatisticpagetableState createState() => _StatisticpagetableState();
@@ -23,32 +30,82 @@ class _StatisticpagetableState extends State<Statisticpagetable> {
   // Define the headers and row data
   final List<String> headers = ['Name', 'Percentage'];
 
-  // Sample data for the table rows
-  final List<List<String>> rowData = [
-    ['Tile A', '25%'],
-    ['Tile B', '40%'],
-    ['Tile C', '15%'],
-    ['Tile D', '10%'],
-    ['Tile E', '50%'],
-    // Add more rows as needed...
-  ];
-
   Future<void> shareTableText() async {
-  // Start with the headers
-  String tableText = '${headers.join('\t-')}\n';
-  
-  // Iterate over the widget.data and construct table rows from recruitment data
-  for (var recruitment in widget.data) {
-    tableText += '${recruitment.jobTitle}\t-\t${recruitment.currentMonth}%\n';
-  }
-  
-  // Share the constructed tableText
-  await Share.share(tableText);
-}
+    // Start with the headers
+    String tableText = '${headers.join('\t-')}\n';
 
+    if (isCompany) {
+      for (var recruitment in widget.recruitmentData ?? []) {
+        tableText +=
+            '${recruitment.jobTitle}\t-\t${recruitment.currentMonth ?? 0}%\n';
+      }
+    } else {
+      for (var performance in widget.performanceData ?? []) {
+        tableText +=
+            '${performance.companyName}\t-\t${performance.performancePercentageThisMonth ?? 0}%\n';
+      }
+    }
+    // Share the constructed tableText
+    await Share.share(tableText);
+  }
 
   @override
   Widget build(BuildContext context) {
+    List<TableRow> tableRows = [];
+
+    if (isCompany) {
+      // Handle recruitment data
+      for (var i = 0; i < 6; i++) {
+        if (i < (widget.recruitmentData?.length ?? 0)) {
+          var recruitment = widget.recruitmentData![i];
+          tableRows.add(
+            TableRow(
+              children: [
+                _buildDataCell(recruitment.jobTitle ?? 'N/A'),
+                _buildDataCell('${recruitment.currentMonth ?? 0}%'),
+              ],
+            ),
+          );
+        } else {
+          // Add empty rows with 0 values
+          tableRows.add(
+            TableRow(
+              children: [
+                _buildDataCell('N/A'),
+                _buildDataCell('0%'),
+              ],
+            ),
+          );
+        }
+      }
+    } else {
+      // Handle performance data
+      for (var i = 0; i < 6; i++) {
+        if (i < (widget.performanceData?.length ?? 0)) {
+          var performance = widget.performanceData![i];
+          tableRows.add(
+            TableRow(
+              children: [
+                _buildDataCell(performance.companyName ?? 'N/A'),
+                _buildDataCell(
+                    '${performance.performancePercentageThisMonth ?? 0}%'),
+              ],
+            ),
+          );
+        } else {
+          // Add empty rows with 0 values
+          tableRows.add(
+            TableRow(
+              children: [
+                _buildDataCell('N/A'),
+                _buildDataCell('0%'),
+              ],
+            ),
+          );
+        }
+      }
+    }
+
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
       child: Padding(
@@ -104,17 +161,7 @@ class _StatisticpagetableState extends State<Statisticpagetable> {
                           0: FlexColumnWidth(),
                           1: FlexColumnWidth(),
                         },
-                        children: widget.data
-                            .map(
-                              (recruitment) => TableRow(
-                                children: [
-                                  _buildDataCell(recruitment.jobTitle),
-                                  _buildDataCell(
-                                      '${recruitment.currentMonth}%'),
-                                ],
-                              ),
-                            )
-                            .toList(),
+                        children: tableRows,
                       ),
                     ),
                   ),

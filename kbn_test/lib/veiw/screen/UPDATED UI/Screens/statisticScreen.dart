@@ -1,249 +1,279 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kbn_test/service/adminMode.dart';
+import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/service/singletonData.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/RecruitmentBarChart.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/colorDeclaration.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/statisticTable.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
-import '../../../../service/companyModelClass.dart';
+import '../../../../service/companymodelClass.dart';
 
-class CompanyStatisticScreen extends StatelessWidget {
-  const CompanyStatisticScreen({
-    super.key,
-  });
+class CompanyStatisticScreen extends StatefulWidget {
+  const CompanyStatisticScreen({super.key});
+
+  @override
+  State<CompanyStatisticScreen> createState() => _CompanyStatisticScreenState();
+}
+
+class _CompanyStatisticScreenState extends State<CompanyStatisticScreen> {
+  CompanyApiResponse? _companyData;
+  AdminApiResponse? _adminData;
+  bool _isLoading = true;
+  bool _hasError = false;
+  final String _errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    try {
+      // ignore: prefer_typing_uninitialized_variables
+      var data;
+      if (isCompany) {
+        data = await ApiServices.companyData();
+        // data = await ApiDataService().fetchCompanyData();
+        setState(() {
+          _companyData = data;
+          _isLoading = false;
+        });
+      } else {
+        data = await ApiServices.adminData();
+        setState(() {
+          _adminData = data;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _hasError = true;
+        // _errorMessage = e.toString();
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching data: $e')),
+      );
+    }
+  }
+
+  Future<void> _refreshDataBasedOnRole(bool isCompany) async {
+    setState(() {
+      _isLoading = true; // Set loading state
+    });
+
+    if (isCompany) {
+      // Fetch company data
+      CompanyApiResponse companyData = await ApiServices.companyData();
+      _companyData = companyData;
+    } else {
+      // Fetch admin data
+      AdminApiResponse adminData = await ApiServices.adminData();
+      _adminData = adminData;
+    }
+
+    setState(() {
+      _isLoading = false; // Set loading state to false after fetching
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return ScaffoldBuilder(
-        pageName: "Statistics",
-        currentPath: "Statistics",
-        child: FutureBuilder(
-          future: ApiDataService().fetchCompanyData(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            }
-            if (!snapshot.hasData || snapshot.data == null) {
-              return const Center(child: Text("No data available"));
-            }
-            // Data is successfully fetched
-            Apiresponse companyData = snapshot.data!;
-
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                // If screen width is greater than 1200, use Row layout
-                if (constraints.maxWidth > 1200) {
-                  return _buildRowLayout(
-                      context, constraints.maxWidth, companyData);
-                } else {
-                  // If screen width is less than or equal to 1200, use ListView (stacked) layout
-                  return _buildListViewLayout(context, companyData);
-                }
-              },
-            );
-          },
-        ));
+      onMonthSelection: () {
+        _refreshDataBasedOnRole(isCompany);
+      },
+      pageName: "Statistics",
+      currentPath: "Statistics",
+      child: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+              : _buildContent(
+                  context,
+                  companyData: _companyData,
+                  adminData: _adminData,
+                ),
+    );
   }
 
-  // Build the two-column layout (for screen width > 1200)
-  Widget _buildRowLayout(context, double screenWidth, Apiresponse data) {
-    // containing total child
-    return SizedBox(
-      // height: 401,
-      // 3 sections
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
+  // Unified content layout, responsive without LayoutBuilder
+  Widget _buildContent(
+    BuildContext context, {
+    companyData,
+    adminData,
+  }) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    return screenWidth > 1200
+        ? _buildRowLayout(context, screenWidth)
+        : _buildColumnLayout(context);
+  }
+
+  Widget _buildRowLayout(BuildContext context, double screenWidth) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildChartAndTableSection(context, screenWidth),
+        const SizedBox(width: 5),
+        _buildRadialGaugeSection(context),
+      ],
+    );
+  }
+
+  Widget _buildColumnLayout(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
         children: [
-          Expanded(
-            flex: 1,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: white,
-              ),
-              // chart and table
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  SizedBox(
-                    // color: yellow,
-                    height: 500,
-                    width: screenWidth *
-                        .3, // Dynamic width for RecruitmentBarChart
-                    child: Column(
-                      children: [
-                        const Align(
-                          alignment: Alignment.topLeft,
-                          child: Padding(
-                            padding: EdgeInsets.all(5),
-                            child: Text(
-                              "Recruitment",
-                              style: AppTextStyle.normalText,
-                            ),
-                          ),
-                        ),
-                        RecruitmentBarChart(
-                          data: data.companyData.statisticsPageData.recruitment,
-                          mobilelength: 400,
-                          length: 400,
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    // color: bluee,
-                    height: 500,
-                    width: screenWidth * 0.15,
-                    child: Statisticpagetable(
-                      data: data.companyData.statisticsPageData.recruitment,
-                    ),
-                  ),
-                ],
-              ),
+          _buildChartAndTableSection(
+              context, MediaQuery.of(context).size.width),
+          const SizedBox(height: 10),
+          _buildRadialGaugeSection(context),
+        ],
+      ),
+    );
+  }
+
+  // Simplified chart and table section
+  Widget _buildChartAndTableSection(
+    BuildContext context,
+    double screenWidth,
+  ) {
+    return Expanded(
+      flex: 1,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: white,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildRecruitmentChart(screenWidth * 0.3),
+            _buildStatisticTable(screenWidth * 0.12),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecruitmentChart(double width) {
+    return SizedBox(
+      height: 500,
+      width: width,
+      child: Column(
+        children: [
+          const Align(
+            alignment: Alignment.topLeft,
+            child: Padding(
+              padding: EdgeInsets.all(5),
+              child: Text("Recruitment", style: AppTextStyle.normalText),
             ),
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            flex: 1,
-            child: SizedBox(
-              height: 500,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: radialContainer(
-                      context,
-                      isGradient: true,
-                      title: "Current month",
-                      totalApplied: data
-                          .companyData.commonData.applicantsTotal.thisMonth
-                          .toDouble(),
-                      gotJobs: data
-                          .companyData.commonData.applicantsSelected.thisMonth
-                          .toDouble(),
-                      color: green,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: radialContainer(
-                      context,
-                      isGradient: false,
-                      title: "Previous month",
-                      totalApplied: data
-                          .companyData.commonData.applicantsTotal.prevMonth
-                          .toDouble(),
-                      gotJobs: data
-                          .companyData.commonData.applicantsSelected.prevMonth
-                          .toDouble(),
-                      color: tealblue,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          RecruitmentBarChart(
+            recruitmentData:
+                _companyData?.companyData.statisticsPageData.recruitment,
+            performanceData:
+                _adminData?.adminData.statisticsPageData.performance,
+            mobilelength: 400,
+            length: 400,
           ),
         ],
       ),
     );
   }
 
-  // Build the stacked (vertical) layout for smaller screens (<= 1200)
-  Widget _buildListViewLayout(context, Apiresponse data) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 8),
-        child: Column(
+  Widget _buildStatisticTable(double width) {
+    return SizedBox(
+      height: 500,
+      width: width,
+      child: Statisticpagetable(
+        recruitmentData:
+            _companyData?.companyData.statisticsPageData.recruitment,
+        performanceData: _adminData?.adminData.statisticsPageData.performance,
+      ),
+    );
+  }
+
+  Widget _buildRadialGaugeSection(BuildContext context) {
+    final totalApplicantsThisMonth = isCompany
+        ? _companyData?.companyData.commonData.applicantsTotal.thisMonth??1
+        : _adminData?.adminData.statisticsPageData.currMonthTotalApplicants??1;
+
+    final totalApplicantsPrevMonth = isCompany
+        ? _companyData?.companyData.commonData.applicantsTotal.prevMonth??1
+        : _adminData?.adminData.statisticsPageData.prevMonthTotalApplicants??1;
+
+    final selectedApplicantsThisMonth = isCompany
+        ? _companyData?.companyData.commonData.applicantsSelected.thisMonth??0
+        : _adminData?.adminData.statisticsPageData.currMonthSelectedApplicants??0;
+
+    final selectedApplicantsPrevMonth = isCompany
+        ? _companyData?.companyData.commonData.applicantsSelected.prevMonth??0
+        : _adminData?.adminData.statisticsPageData.prevMonthSelectedApplicants??0;
+
+    // if (totalApplicantsThisMonth == null || totalApplicantsPrevMonth == null) {
+    //   return const Center(child: Text("No Pie Data available"));
+    // }
+
+    return Expanded(
+      flex: 1,
+      child: SizedBox(
+        height: 500,
+        child: Row(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: white,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    height: 450,
-                    width: double.infinity, // Take full width in stacked view
-                    child: RecruitmentBarChart(
-                      data: data.companyData.statisticsPageData.recruitment,
-                      mobilelength: 400,
-                      length: 350,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 450,
-                    width: double.infinity, // Take full width in stacked view
-                    child: Statisticpagetable(
-                      data: data.companyData.statisticsPageData.recruitment,
-                    ),
-                  ),
-                ],
-              ),
+            _buildRadialContainer(
+              context,
+              "Current month",
+              totalApplicantsThisMonth.toDouble(),
+              selectedApplicantsThisMonth!.toDouble(),
+              green,
+              true,
             ),
-            const SizedBox(height: 10),
-            SizedBox(
-              height: 500,
-              width: double.infinity, // Take full width
-              child: Column(
-                children: [
-                  Expanded(
-                    child: radialContainer(
-                      context,
-                      isGradient: true,
-                      title: "Current month",
-                      totalApplied: data
-                          .companyData.commonData.applicantsTotal.thisMonth
-                          .toDouble(),
-                      gotJobs: data
-                          .companyData.commonData.applicantsSelected.thisMonth
-                          .toDouble(),
-                      color: green,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Expanded(
-                    child: radialContainer(
-                      context,
-                      isGradient: false,
-                      title: "Previous month",
-                      totalApplied: data
-                          .companyData.commonData.applicantsTotal.prevMonth
-                          .toDouble(),
-                      gotJobs: data
-                          .companyData.commonData.applicantsSelected.thisMonth
-                          .toDouble(),
-                      color: tealblue,
-                    ),
-                  ),
-                ],
-              ),
+            const SizedBox(width: 10),
+            _buildRadialContainer(
+              context,
+              "Previous month",
+              totalApplicantsPrevMonth.toDouble(),
+              selectedApplicantsPrevMonth!.toDouble(),
+              tealblue,
+              false,
             ),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildRadialContainer(
+    BuildContext context,
+    String title,
+    double totalApplied,
+    double gotJobs,
+    Color color,
+    bool isGradient,
+  ) {
+    return Expanded(
+      child: radialContainer(
+        context,
+        title: title,
+        totalApplied: totalApplied,
+        gotJobs: gotJobs,
+        color: color,
+        isGradient: isGradient,
+      ),
+    );
+  }
 }
 
-Widget radialContainer(
-  context, {
-  required String title,
-  required Color color,
-  required double totalApplied,
-  required double gotJobs,
-  required bool isGradient,
-}) {
-  Size size = MediaQuery.of(context).size;
-
+Widget radialContainer(BuildContext context,
+    {required String title,
+    required double totalApplied,
+    required double gotJobs,
+    required Color color,
+    required bool isGradient}) {
   return Container(
     padding: const EdgeInsets.all(8),
     decoration: BoxDecoration(
@@ -257,87 +287,37 @@ Widget radialContainer(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text("Total Applicants"),
-            colorDeclaration(title: title),
+            Text(title),
           ],
         ),
         const SizedBox(height: 5),
         Expanded(
-          child: size.width > 1200
-              ? Column(
-                  children: [
-                    Expanded(
-                      child: IndividualRadialGauge(
-                        isgradient: isGradient,
-                        maxValue: totalApplied,
-                        value: totalApplied,
-                        color: color,
-                        description: "applicants applied\nthis month",
-                        count: totalApplied.toInt(),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Expanded(
-                      child: IndividualRadialGauge(
-                        isgradient: false,
-                        maxValue: totalApplied,
-                        value: gotJobs,
-                        color: color,
-                        count: gotJobs.toInt(),
-                        description: "applicants has \ngot jobs",
-                      ),
-                    ),
-                  ],
-                )
-              : Row(
-                  children: [
-                    Expanded(
-                      child: IndividualRadialGauge(
-                        isgradient: isGradient,
-                        maxValue: totalApplied,
-                        value: totalApplied,
-                        color: color,
-                        description: "applicants applied\nthis month",
-                        count: totalApplied.toInt(),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Expanded(
-                      child: IndividualRadialGauge(
-                        isgradient: false,
-                        maxValue: totalApplied,
-                        value: gotJobs,
-                        color: color,
-                        count: gotJobs.toInt(),
-                        description: "applicants has \ngot jobs",
-                      ),
-                    ),
-                  ],
-                ),
+          child: Column(
+            children: [
+              _buildIndividualGauge(context, totalApplied, totalApplied, color,
+                  "applicants applied\nthis month", isGradient),
+              const SizedBox(height: 20),
+              _buildIndividualGauge(context, totalApplied, gotJobs, color,
+                  "applicants has \ngot jobs", false),
+            ],
+          ),
         ),
       ],
     ),
   );
 }
 
-class IndividualRadialGauge extends StatelessWidget {
-  final bool isgradient;
-  final double maxValue;
-  final double value;
-  final Color color;
-  final int count;
-  final String description;
-  const IndividualRadialGauge(
-      {super.key,
-      required this.maxValue,
-      required this.value,
-      required this.color,
-      required this.count,
-      required this.description,
-      required this.isgradient});
-
-  @override
-  Widget build(BuildContext context) {
-    return SfRadialGauge(
+Widget _buildIndividualGauge(
+  BuildContext context,
+  double maxValue,
+  double value,
+  Color color,
+  // int count,
+  String description,
+  bool isGradient,
+) {
+  return Expanded(
+    child: SfRadialGauge(
       axes: [
         RadialAxis(
           minimum: 0,
@@ -347,8 +327,8 @@ class IndividualRadialGauge extends StatelessWidget {
             RangePointer(
               value: value,
               cornerStyle: CornerStyle.bothCurve,
-              gradient: isgradient ? sweepGradient : null,
-              color: isgradient ? null : color,
+              gradient: isGradient ? sweepGradient : null,
+              color: isGradient ? null : color,
               width: 25,
             ),
           ],
@@ -363,35 +343,20 @@ class IndividualRadialGauge extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "$count",
+                    "${value.toInt()}",
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                      color: black,
-                    ),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        color: black),
                   ),
-                  const SizedBox(height: 2),
-                  Wrap(
-                    children: [
-                      Text(
-                        description,
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: black,
-                          height: 1.0,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
+                  Text(description,
+                      style: const TextStyle(fontSize: 10, color: black)),
                 ],
               ),
-              angle: 90,
-              positionFactor: 0.0,
             ),
           ],
         ),
       ],
-    );
-  }
+    ),
+  );
 }

@@ -3,6 +3,7 @@ import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/companyHome.dart';
 import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
+import 'package:month_year_picker/month_year_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -17,6 +18,10 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: "KBN_Test",
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        MonthYearPickerLocalizations.delegate, // Add this line
+        // Add other localization delegates if necessary
+      ],
       home:
           //  CompanyStatisticScreen(),
           // TermsNconditions(),
@@ -61,12 +66,18 @@ class MainApp extends StatelessWidget {
     if (token == null) {
       return null; // Not logged in
     } else {
+      // print(role);
+      if (role != 'Admin') {
+        isCompany = true;
+      } else {
+        isCompany = false;
+      }
       ApiServices.headers['Authorization'] = "Bearer $token";
 
       var userDetailsResponse = await ApiServices.fetchUserDetails();
       userDetails = userDetailsResponse;
 
-      print(userDetailsResponse);
+      // print(userDetailsResponse);
 
       return role;
     }

@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:kbn_test/service/apiServices.dart';
+import 'package:kbn_test/service/singletonData.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/forgotPass.dart';
 import 'package:kbn_test/veiw/auth/signUp.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/applicantsScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/companyHome.dart';
 import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets_common/loginTextFeild.dart';
 import 'package:kbn_test/veiw/widgets_common/bg_widg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Map<String, dynamic> submittedApplicantsData = {};
-Map<String, dynamic> selectedApplicantsData = {};
-// int userId = 0;
+bool isCompany = false;
 
 class CompanyLoginPage extends StatefulWidget {
   const CompanyLoginPage({super.key});
@@ -38,19 +36,25 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
   }
 
   Future<void> companyLogin() async {
-    if (_isChecked) {
+    // if (_isChecked) {
       String email = _emailConatroller.text;
       String password = _passwordController.text;
 
-      try {
+      // try {
         var responseData = await ApiServices.userLogin(email, password);
 
         if (responseData.containsKey('token') &&
             responseData.containsKey('role')) {
           var token = responseData['token'];
           var role = responseData['role'];
-          // ApiServices.headers['Authorization'] = "Bearer $token";
-          // getting User Details
+
+          if (role != 'Admin') {
+            isCompany = true;
+          } else {
+            isCompany = false;
+          }
+          // ApiDataService().isCompany = role == 'Company';
+
           var userDetailsResponse = await ApiServices.fetchUserDetails();
           userDetails = userDetailsResponse;
 
@@ -87,16 +91,16 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
             const SnackBar(content: Text('Invalid username or password.')),
           );
         }
-      } catch (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $error')),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please check the box to proceed.')),
-      );
-    }
+      // } catch (error) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(content: Text('Error: $error')),
+      //   );
+      // }
+    // } else {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('Please check the box to proceed.')),
+    //   );
+    // }
   }
 
   @override
@@ -207,8 +211,8 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
                       border: Border.all(color: black),
                       borderRadius: const BorderRadius.all(Radius.circular(4)),
                       color: _isChecked ? black : Colors.grey,
-                      gradient: LinearGradient(
-                        colors: _isChecked ? loginbutton : InnactiveLoginbutton,
+                      gradient: const LinearGradient(
+                        colors: loginbutton ,
                       ),
                     ),
                     child: const Center(

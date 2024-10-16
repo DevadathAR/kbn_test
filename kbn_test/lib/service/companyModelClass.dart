@@ -4,20 +4,20 @@
 
 import 'dart:convert';
 
-Apiresponse welcomeFromJson(String str) => Apiresponse.fromJson(json.decode(str));
+CompanyApiResponse welcomeFromJson(String str) => CompanyApiResponse.fromJson(json.decode(str));
 
-String welcomeToJson(Apiresponse data) => json.encode(data.toJson());
+String welcomeToJson(CompanyApiResponse data) => json.encode(data.toJson());
 
-class Apiresponse {
+class CompanyApiResponse {
     String message;
     CompanyData companyData;
 
-    Apiresponse({
+    CompanyApiResponse({
         required this.message,
         required this.companyData,
     });
 
-    factory Apiresponse.fromJson(Map<String, dynamic> json) => Apiresponse(
+    factory CompanyApiResponse.fromJson(Map<String, dynamic> json) => CompanyApiResponse(
         message: json["message"],
         companyData: CompanyData.fromJson(json["companyData"]),
     );

@@ -225,8 +225,8 @@ class _JobDetailsState extends State<JobDetails> {
                                                             style: AppTextStyle
                                                                 .normalW500
                                                                 .copyWith(
-                                                              color: white
-                                                            ),
+                                                                    color:
+                                                                        white),
                                                           ),
                                                         ),
                                                       )
@@ -324,20 +324,18 @@ class _JobDetailsState extends State<JobDetails> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Skills:",
-                      style: AppTextStyle.normalText,
+                      "• Skills:",
+                      style: AppTextStyle.twelve_w500,
                     ),
                   ),
-                  ...reqlist['skills'].map((skill) => Row(
+                  ...reqlist['skills'].first.split(',').map((skill) => Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            '• ',
-                            style: TextStyle(fontSize: 20),
-                          ),
                           Expanded(
                             child: Text(
-                              skill.toString(),
+                              "-"+"\t" * 3 +
+                                  skill
+                                      .trim(), // Use `trim` to remove any leading/trailing spaces
                               style: AppTextStyle.normalText,
                             ),
                           ),
@@ -347,20 +345,16 @@ class _JobDetailsState extends State<JobDetails> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Experience:",
-                      style: AppTextStyle.normalText,
+                      "• Experience:",
+                      style: AppTextStyle.twelve_w500,
                     ),
                   ),
-                  ...reqlist['experience'].map((exp) => Row(
+                  ...reqlist['experience'].first.split(',').map((exp) => Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            '• ',
-                            style: TextStyle(fontSize: 20),
-                          ),
                           Expanded(
                             child: Text(
-                              exp.toString(),
+                              "-"+"\t" * 3 + exp.trim(),
                               style: AppTextStyle.normalText,
                             ),
                           ),
@@ -370,25 +364,24 @@ class _JobDetailsState extends State<JobDetails> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Educational Background:",
-                      style: AppTextStyle.normalText,
+                      "• Educational Background:",
+                      style: AppTextStyle.twelve_w500,
                     ),
                   ),
-                  ...reqlist['educational_background'].map((edu) => Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '• ',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          Expanded(
-                            child: Text(
-                              edu.toString(),
-                              style: AppTextStyle.normalText,
-                            ),
-                          ),
-                        ],
-                      )),
+                  ...reqlist['educational_background']
+                      .first
+                      .split(",")
+                      .map((edu) => Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "-"+"\t" * 3 + edu.trim(),
+                                  style: AppTextStyle.normalText,
+                                ),
+                              ),
+                            ],
+                          )),
                 ],
               ),
             ],
@@ -439,24 +432,22 @@ class _JobDetailsState extends State<JobDetails> {
                       const Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Key Responsibilities",
+                          "Key Responsibilities:",
                           style: AppTextStyle.thirteenW500,
                         ),
                       ),
                       const SizedBox(height: 10),
-                      for (var item in widget.keyResponsibilities)
+                      for (var item in widget.keyResponsibilities.first
+                          .split(',')) // Split the string by commas
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                '• ',
-                                style: TextStyle(fontSize: 20),
-                              ),
                               Expanded(
                                 child: Text(
-                                  item.trim(),
+                                  "-"+"\t" * 3 +
+                                      item.trim(), // Trim to remove any leading/trailing spaces
                                   style: AppTextStyle.normalText,
                                 ),
                               ),

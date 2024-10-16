@@ -1,17 +1,21 @@
- import 'package:flutter/material.dart';
-import 'package:kbn_test/service/companyModelClass.dart';
+import 'package:flutter/material.dart';
+import 'package:kbn_test/service/adminMode.dart';
+import 'package:kbn_test/service/companymodelClass.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
+import 'package:kbn_test/veiw/auth/logInPage.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/RecruitmentBarChart.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/colorDeclaration.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Widgets/latestPie.dart';
 
 class ChartWidget extends StatelessWidget {
-  final CompanyData companyData; // Accept statistics data
+  final CompanyData? companyData;
+  final AdminData? adminData;
 
   const ChartWidget({
     super.key,
-    required this.companyData,
+    this.companyData,
+    this.adminData,
   });
 
   @override
@@ -37,14 +41,19 @@ class ChartWidget extends StatelessWidget {
 
   // Small screen layout: Vertical arrangement of charts
   Column smallScreenLayout() {
+    if (companyData == null && adminData == null) {
+      return const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [Text("No data available")],
+      );
+    }
     return Column(
       children: [
         SizedBox(
           height: 180,
           child: RecruitmentBarChart(
-            data:
-                companyData.statisticsPageData.recruitment, // Pass dynamic data
-
+            recruitmentData: companyData?.statisticsPageData.recruitment,
+            performanceData: adminData?.statisticsPageData.performance,
             length: 203,
             mobilelength: 163,
           ),
@@ -53,7 +62,8 @@ class ChartWidget extends StatelessWidget {
         SizedBox(
           height: 180,
           child: SyncfusionPieChart(
-            commonData: companyData.commonData, // Pass dynamic data
+            companyData: companyData,
+            adminData: adminData,
           ),
         ),
         const SizedBox(height: 10),
@@ -70,6 +80,12 @@ class ChartWidget extends StatelessWidget {
 
   // Large screen layout: Horizontal arrangement of charts
   Row largeScreenLayout() {
+    // if (companyData == null && adminData == null) {
+    //   return const Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [Text("No data available")],
+    //   );
+    // }
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -78,8 +94,8 @@ class ChartWidget extends StatelessWidget {
           child: SizedBox(
             height: 220,
             child: RecruitmentBarChart(
-              data: companyData
-                  .statisticsPageData.recruitment, // Pass dynamic data
+              recruitmentData: companyData?.statisticsPageData.recruitment,
+              performanceData: adminData?.statisticsPageData.performance,
               length: 220,
               mobilelength: 163,
             ),
@@ -94,7 +110,8 @@ class ChartWidget extends StatelessWidget {
               SizedBox(
                 height: 200,
                 child: SyncfusionPieChart(
-                  commonData: companyData.commonData, // Pass dynamic data
+                  companyData: companyData,
+                  adminData: adminData,
                 ),
               ),
               Column(

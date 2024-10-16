@@ -101,3 +101,12 @@ Contact Information: If you have any questions about these terms and conditions,
 //.................................................................
 
 
+const kbnAddress =  '''Smruthy Towers
+183/C, HMT Junction,
+Kalamassery, Kochi''';
+const kbnNum = "+91 8848876965";
+const kbnSite ="https://kbn-official.com/";
+const managerName = 'Manager Name';
+const managerMail = 'Manager Email';
+const addAddress ="Address: Add Address";
+const addWebsite = "Website: Add Company Website";

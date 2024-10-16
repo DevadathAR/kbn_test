@@ -5,9 +5,7 @@ import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/applicantsScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/companyHome.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/jobScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/messageScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/profileScreen.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/settingsScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/statisticScreen.dart';
 import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/termsNconditions.dart';
 
