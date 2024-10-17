@@ -109,4 +109,5 @@ const kbnSite ="https://kbn-official.com/";
 const managerName = 'Manager Name';
 const managerMail = 'Manager Email';
 const addAddress ="Address: Add Address";
+const addAbout ="About: Add About";
 const addWebsite = "Website: Add Company Website";

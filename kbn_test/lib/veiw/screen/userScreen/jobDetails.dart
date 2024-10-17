@@ -27,6 +27,7 @@ class JobDetails extends StatefulWidget {
   final String datePosted;
   final String companyImage;
   final String status;
+  final String about;
   final Map<String, dynamic> jobReq;
 
   const JobDetails(
@@ -47,6 +48,7 @@ class JobDetails extends StatefulWidget {
       required this.datePosted,
       required this.companyImage,
       required this.status,
+      required this.about,
       required this.jobReq});
 
   @override
@@ -245,7 +247,7 @@ class _JobDetailsState extends State<JobDetails> {
                                                   const EdgeInsets.all(15.0),
                                               child: CompanyDetails1(
                                                 jobId: widget.jobId,
-                                                aboutCompany: widget.jobSummary,
+                                                aboutCompany: widget.about,
                                                 userId: widget.companyId,
                                                 jobTitle: widget.jobTitle,
                                                 firmname: widget.firmname,

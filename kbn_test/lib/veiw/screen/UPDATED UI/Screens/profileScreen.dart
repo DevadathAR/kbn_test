@@ -31,6 +31,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
   late TextEditingController _addressController; // Controller for address
   late TextEditingController _websiteController; // Controller for website
   late TextEditingController _contactController; // Controller for contact
+  late TextEditingController _aboutController; // Controller for about
   Uint8List? _selectedImage;
   String? _imageFilename;
 
@@ -59,6 +60,8 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
             TextEditingController(text: details['user']['company_website']);
         _contactController =
             TextEditingController(text: details['user']['contact']);
+        _aboutController =
+            TextEditingController(text: details['user']['about_company']);
         _isLoading = false;
       });
     } catch (error) {
@@ -130,7 +133,8 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
       var response = await ApiServices.sendUpdatedCompanyData(
         address: _addressController.text,
         site: _websiteController.text,
-        number: _contactController.text,
+        number: int.parse(_contactController.text) ,
+        about: _aboutController.text,
       );
 
       if (response.statusCode == 200) {
@@ -335,6 +339,11 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
           if (_isEditingCompanyDetails)
             Column(
               children: [
+                TextField(maxLines: 5,
+                  controller: _aboutController,
+                  decoration: const InputDecoration(labelText: "About"),
+                ),
+                const SizedBox(height: 10),
                 TextField(
                   controller: _addressController,
                   decoration: const InputDecoration(labelText: "Address"),
@@ -373,9 +382,21 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text(
                     isCompany
+                        ? (userDetails['user']['about_company'] != null &&
+                                userDetails['user']['about_company'].isNotEmpty
+                            ? "About\n${userDetails['user']['about_company']}"
+                            : addAbout)
+                        :"About KBN",
+                    style: AppTextStyle.fourteenW400,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Text(
+                    isCompany
                         ? (userDetails['user']['address'] != null &&
                                 userDetails['user']['address'].isNotEmpty
-                            ? "Address: ${userDetails['user']['address']}"
+                            ? "Address\n${userDetails['user']['address']}"
                             : addAddress)
                         :kbnAddress,
                     style: AppTextStyle.fourteenW400,
@@ -390,7 +411,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                           ? (userDetails['user']['company_website'] != null &&
                                   userDetails['user']['company_website']
                                       .isNotEmpty
-                              ? "Website: ${userDetails['user']['company_website']}"
+                              ? "Website\n${userDetails['user']['company_website']}"
                               : addWebsite)
                           : kbnSite,
                       style: AppTextStyle.fourteenW400,
@@ -401,7 +422,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text(
                       isCompany
-                          ? "Contact: ${userDetails['user']['contact']}"
+                          ? "Contact\n${userDetails['user']['contact']}"
                           : kbnNum,
                       style: AppTextStyle.fourteenW400),
                 ),

@@ -97,7 +97,7 @@ class ApiServices {
 
     var response = await http.get(url, headers: headers);
 
-    // print('userDetails${response.body}');
+    print('userDetails${response.body}');
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -377,7 +377,8 @@ static Future<http.StreamedResponse> sendManagerData({
     static Future<http.Response> sendUpdatedCompanyData({
     required String address,
     required String site,
-    required String number,
+    required int number,
+    required String about
   }) async {
     // Construct the URL
     final url = Uri.parse('$baseUrl/user'); // Adjust the endpoint as necessary
@@ -385,8 +386,9 @@ static Future<http.StreamedResponse> sendManagerData({
     // Create the request body
     final Map<String, String> body = {
       'address': address,
-      'site': site,
-      'number': number,
+      'company_website': site,
+      'contact': number.toString(),
+      'about_company': about,
     };
 
     // Send the request
@@ -473,6 +475,8 @@ static Future<http.StreamedResponse> sendManagerData({
       body: jsonEncode({'companyId': jobId}),
     );
 
+    print(jsonEncode(response.body));
+
     if (response.statusCode == 200) {
       print("Job details posted successfully.");
     } else {
@@ -498,19 +502,19 @@ static Future<http.StreamedResponse> sendManagerData({
     }
   }
 
-  static Future<List<dynamic>> fetchJobTitles() async {
-    var url = Uri.parse('$baseUrl/job/filter');
+  // static Future<List<dynamic>> fetchJobTitles() async {
+  //   var url = Uri.parse('$baseUrl/job/filter');
 
-    var response = await http.get(url, headers: headers);
+  //   var response = await http.get(url, headers: headers);
 
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      // log(jsonEncode(data));
-      return data['data'] as List;
-    } else {
-      throw Exception('Failed to fetch job titles');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     var data = jsonDecode(response.body);
+  //     // log(jsonEncode(data));
+  //     return data['data'] as List;
+  //   } else {
+  //     throw Exception('Failed to fetch job titles');
+  //   }
+  // }
 
   // Fetch Filtered Jobs
   static Future<Map<String, dynamic>> fetchFilteredJobs({

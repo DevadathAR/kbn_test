@@ -50,18 +50,24 @@ class SignUpUserSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+        Size size = MediaQuery.of(context).size;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
       child: Container(
+              width: size.width<600 ? size.width * 0.2 : 140,
+
         decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(4)),
             color: colors),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text(
-              appuser,
-              style: txtcolor,
+            padding: const EdgeInsets.symmetric(horizontal:2),
+            child: FittedBox(fit: BoxFit.scaleDown,
+              child: Text(
+                appuser,
+                style: txtcolor,
+              ),
             ),
           ),
         ),

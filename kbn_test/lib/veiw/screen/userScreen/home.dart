@@ -220,6 +220,8 @@ class _UserHomeState extends State<UserHome> {
                                                 job['company_profile_image'],
                                             status: job['application_status']
                                                 .toString(),
+                                            about: job['aboutCompany']
+                                                .toString(),
                                           );
                                         },
                                       ),
@@ -241,6 +243,8 @@ class _UserHomeState extends State<UserHome> {
                                   datePosted: job['created_at'].toString(),
                                   status:
                                       job['application_status'].toString(),
+                                  about:
+                                      job['aboutCompany'].toString(),
                                 ),
                               );
                             }).toList(),

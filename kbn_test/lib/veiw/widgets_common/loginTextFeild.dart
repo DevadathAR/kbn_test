@@ -34,48 +34,52 @@ class _LoginTextFormState extends State<LoginTextForm> {
     return Column(
       children: [
         Container(
+
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.5), // Color of the shadow
-                spreadRadius: 5, // How much the shadow should spread
-                blurRadius: 5, // How soft the shadow should be
+                color: Colors.grey.withOpacity(0.1), // Color of the shadow
+                spreadRadius: 1, // How much the shadow should spread
+                blurRadius: 2, // How soft the shadow should be
                 offset: const Offset(0, 3), // Horizontal and vertical offset
               ),
             ],
           ),
-          height: size.height * 0.06,
-          child: TextFormField(
-            maxLines: widget.numb,
-            controller: widget.controller,
-            decoration: InputDecoration(
-              label: Text(widget.label),
-              hintText: widget.hintlabel,
-              border: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(4),
+          height: 50,
+          child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: TextFormField(
+              maxLines: widget.numb,
+              controller: widget.controller,
+              decoration: InputDecoration(
+                label: Text(widget.label),
+                hintText: widget.hintlabel,
+                border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(4),
+                  ),
+                  borderSide: BorderSide.none,
                 ),
-                borderSide: BorderSide.none,
+                filled: true,
+                fillColor: logintextbox,
+                suffixIcon: widget.obscure
+                    ? GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                        child: Icon(
+                          _obscureText ? Icons.visibility_off : Icons.visibility,
+                          color: Colors.grey,
+                        ),
+                      )
+                    : null,
               ),
-              filled: true,
-              fillColor: logintextbox,
-              suffixIcon: widget.obscure
-                  ? GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _obscureText = !_obscureText;
-                        });
-                      },
-                      child: Icon(
-                        _obscureText ? Icons.visibility_off : Icons.visibility,
-                        color: Colors.grey,
-                      ),
-                    )
-                  : null,
+              obscureText: widget.obscure
+                  ? _obscureText
+                  : false, // Obscure text based on state
             ),
-            obscureText: widget.obscure
-                ? _obscureText
-                : false, // Obscure text based on state
           ),
         ),
         SizedBox(height: widget.hight),

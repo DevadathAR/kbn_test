@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
@@ -9,8 +7,6 @@ import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/logInPage.dart';
-import 'package:kbn_test/veiw/screen/companyScreen/cmpny_home.dart';
-import 'package:kbn_test/veiw/screen/userScreen/home.dart';
 import 'package:kbn_test/veiw/widgets_common/bg_widg.dart';
 import 'package:kbn_test/veiw/widgets_common/loginTextFeild.dart';
 import 'package:kbn_test/veiw/screen/userScreen/userWidgets/userSelection.dart';
@@ -34,8 +30,7 @@ class _SignupPageState extends State<SignupPage> {
   bool _ischeck = false;
   Uint8List? _selectedImage;
   String? _imageFilename;
-  final ApiServices _apiService =
-      ApiServices(); // Instantiate the ApiService
+  final ApiServices _apiService = ApiServices(); // Instantiate the ApiService
 
   void _signin() {
     if (_ischeck) {
@@ -153,14 +148,16 @@ class _SignupPageState extends State<SignupPage> {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth < 600) {
-            return _buildMobileLayout(constraints);
-          } else {
-            return _buildDesktopLayout(constraints);
-          }
-        },
+      body: SingleChildScrollView(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth < 600) {
+              return _buildMobileLayout(constraints);
+            } else {
+              return _buildDesktopLayout(constraints);
+            }
+          },
+        ),
       ),
     );
   }
@@ -171,35 +168,37 @@ class _SignupPageState extends State<SignupPage> {
 
     return SafeArea(
       child: SingleChildScrollView(
-        child: Container(
-          // width: size.width * 1 - 50,
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 5),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10),
-              const Text(
-                signup,
-                style: AppTextStyle.twenty_w500,
-              ),
-              _buildRoleSelection(constraints, isMobile: true),
-              const SizedBox(height: 10),
-              _buildAccountDetails(isMobile: true),
-              const SizedBox(height: 10),
-              _buildSignInButton(),
-              const SizedBox(height: 10),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  bgWidget(
-                    img: mobileBg,
-                  ), // Background widget
-
-                  _buildImagePicker(isMobile: true),
-                ],
-              ),
-            ],
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: size.width < 130 ? 5 : 35.0, vertical: 5),
+          child: Container(
+            // width: size.width * 1 - 50,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10),
+                const Text(
+                  signup,
+                  style: AppTextStyle.twenty_w500,
+                ),
+                _buildRoleSelection(constraints, isMobile: true),
+                const SizedBox(height: 10),
+                _buildAccountDetails(isMobile: true),
+                const SizedBox(height: 10),
+                _buildSignInButton(),
+                const SizedBox(height: 10),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    bgWidget(
+                      img: mobileBg,
+                    ), // Background widget
+                    _buildImagePicker(isMobile: true),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -208,36 +207,39 @@ class _SignupPageState extends State<SignupPage> {
 
   // Method for Desktop Layout
   Widget _buildDesktopLayout(BoxConstraints constraints) {
-    return Stack(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        bgWidget(
-          img: bg,
-        ), // Background widget
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            SizedBox(
-              width: constraints.maxWidth * 0.5,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 40),
-                  const Text(
-                    signup,
-                    style: AppTextStyle.thirty_w500,
-                  ),
-                  _buildRoleSelection(constraints, isMobile: false),
-                  const SizedBox(height: 15),
-                  _buildAccountDetails(isMobile: false),
-                  const SizedBox(height: 50),
-                  _buildSignInButton(),
-                ],
+        SizedBox(
+          width: constraints.maxWidth * 0.5,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 40),
+              const Text(
+                signup,
+                style: AppTextStyle.thirty_w500,
               ),
-            ),
-            _buildImagePicker(isMobile: false),
-          ],
+              _buildRoleSelection(constraints, isMobile: false),
+              const SizedBox(height: 15),
+              _buildAccountDetails(isMobile: false),
+              const SizedBox(height: 50),
+              _buildSignInButton(),
+            ],
+          ),
         ),
+        Expanded  (
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              bgWidget(
+                img: bg,
+              ),
+              _buildImagePicker(isMobile: false),
+            ],
+          ),
+        )
       ],
     );
   }
@@ -245,15 +247,51 @@ class _SignupPageState extends State<SignupPage> {
   // Method to build the role selection widget
   Widget _buildRoleSelection(BoxConstraints constraints,
       {required bool isMobile}) {
+    Size size = MediaQuery.of(context).size;
+
     return Container(
       height: 50,
-      width: isMobile ? constraints.maxWidth * 0.4 : 200,
+      width: size.width < 600
+          ? size.width < 300
+              ? size.width * 0.9
+              : size.width * 0.6
+          : 400,
       decoration: const BoxDecoration(
         boxShadow: [BoxShadow(color: Colors.black)],
         borderRadius: BorderRadius.all(Radius.circular(4)),
         color: logintextbox,
       ),
-      child: Row(
+      child:
+          // if needed covert into colum for below 200 pixel
+          //   size.width<200?
+          //   Column(
+          //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //     children: [
+          //       SignUpUserSelectionWidget(
+          //         appuser: "Applicant",
+          //         isSelected: _isApplicantSelected,
+          //         onTap: () {
+          //           setState(() {
+          //             _isApplicantSelected = true;
+          //             roleController.text = "Applicant";
+          //           });
+          //         },
+          //       ),
+          //       SignUpUserSelectionWidget(
+          //         appuser: "Company",
+          //         isSelected: !_isApplicantSelected,
+          //         onTap: () {
+          //           setState(() {
+          //             _isApplicantSelected = false;
+          //             roleController.text = "Company";
+          //           });
+          //         },
+          //       ),
+          //     ],
+          //   )
+          // :
+
+          Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           SignUpUserSelectionWidget(
@@ -283,6 +321,8 @@ class _SignupPageState extends State<SignupPage> {
 
   // Method to build account details form
   Widget _buildAccountDetails({required bool isMobile}) {
+    Size size = MediaQuery.of(context).size;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -294,6 +334,7 @@ class _SignupPageState extends State<SignupPage> {
           controller: fullNameController,
           obscure: false,
           hight: 10,
+          // width: size.width<1500?1500-(size.width):null
         ),
         LoginTextForm(
           label: "Email",
@@ -321,34 +362,57 @@ class _SignupPageState extends State<SignupPage> {
         ),
         const Text(tac, style: AppTextStyle.fourteenW400),
         const SizedBox(height: 5),
-        Row(
-          children: [
-            Checkbox(
-              activeColor: Colors.white,
-              checkColor: Colors.black,
-              value: _ischeck,
-              onChanged: (bool? value) {
-                setState(() {
-                  _ischeck = value ?? false;
-                });
-              },
-            ),
-            const Text(terms, style: AppTextStyle.fourteenW400),
-          ],
-        ),
+        if (size.width > 210)
+          Row(
+            children: [
+              Checkbox(
+                activeColor: Colors.white,
+                checkColor: Colors.black,
+                value: _ischeck,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _ischeck = value ?? false;
+                  });
+                },
+              ),
+              SizedBox(
+                  width: size.width < 341 ? size.width * 1 - 128 : null,
+                  child: const FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(terms, style: AppTextStyle.fourteenW400)))
+            ],
+          )
+        else
+          Column(
+            children: [
+              Checkbox(
+                activeColor: Colors.white,
+                checkColor: Colors.black,
+                value: _ischeck,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _ischeck = value ?? false;
+                  });
+                },
+              ),
+              const Text(terms, style: AppTextStyle.smallText),
+            ],
+          )
       ],
     );
   }
 
   // Method to build Sign-In button
   Widget _buildSignInButton() {
+    Size size = MediaQuery.of(context).size;
+
     return Align(
       alignment: Alignment.bottomRight,
       child: GestureDetector(
         onTap: _ischeck ? _signin : null,
         child: Container(
           height: 33,
-          width: 119,
+          width: size.width < 341 ? null : 119,
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(4)),
             color: Colors.white,
@@ -370,6 +434,8 @@ class _SignupPageState extends State<SignupPage> {
 
   // Method to build image picker
   Widget _buildImagePicker({required bool isMobile}) {
+    Size size = MediaQuery.of(context).size;
+
     return Align(
       alignment: isMobile ? Alignment.center : Alignment.centerRight,
       child: GestureDetector(
@@ -386,7 +452,16 @@ class _SignupPageState extends State<SignupPage> {
               ? CircleAvatar(
                   backgroundImage: MemoryImage(_selectedImage!),
                 )
-              : Image.asset(upimagPng),
+              : Image.asset(
+                  upimagPng,
+                  scale: size.width < 600
+                      ? size.width < 350
+                          ? size.width < 200
+                              ? 15
+                              : 8
+                          : 5
+                      : 1,
+                ),
         ),
       ),
     );
