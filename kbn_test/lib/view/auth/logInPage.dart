@@ -5,12 +5,13 @@ import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+
 import 'package:kbn_test/view/auth/forgotPass.dart';
 import 'package:kbn_test/view/auth/signUp.dart';
 import 'package:kbn_test/view/screen/UPDATED%20UI/Screens/companyHome.dart';
 import 'package:kbn_test/view/screen/userScreen/home.dart';
-import 'package:kbn_test/view/widgets_common/loginTextFeild.dart';
 import 'package:kbn_test/view/widgets_common/bg_widg.dart';
+import 'package:kbn_test/view/widgets_common/loginTextFeild.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool isCompany = false;
@@ -36,71 +37,70 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
   }
 
   Future<void> companyLogin() async {
-    if (_isChecked) {
-      String email = _emailConatroller.text;
-      String password = _passwordController.text;
+    // if (_isChecked) {
+    String email = _emailConatroller.text;
+    String password = _passwordController.text;
 
-      // try {
-        var responseData = await ApiServices.userLogin(email, password);
+    // try {
+    var responseData = await ApiServices.userLogin(email, password);
 
-        if (responseData.containsKey('token') &&
-            responseData.containsKey('role')) {
-          var token = responseData['token'];
-          var role = responseData['role'];
+    if (responseData.containsKey('token') && responseData.containsKey('role')) {
+      var token = responseData['token'];
+      var role = responseData['role'];
 
-          if (role != 'Admin') {
-            isCompany = true;
-          } else {
-            isCompany = false;
-          }
-          // ApiDataService().isCompany = role == 'Company';
+      if (role != 'Admin') {
+        isCompany = true;
+      } else {
+        isCompany = false;
+      }
+      // ApiDataService().isCompany = role == 'Company';
 
-          var userDetailsResponse = await ApiServices.fetchUserDetails();
-          userDetails = userDetailsResponse;
+      var userDetailsResponse = await ApiServices.fetchUserDetails();
+      userDetails = userDetailsResponse;
 
-          // Store login state in shared preferences
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('token', token);
-          await prefs.setString('role', role); // Save the role
+      // Store login state in shared preferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+      await prefs.setString('role', role); // Save the role
 
-          if (role == 'Company') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const CompanyHome(),
-              ),
-            );
-          } else if (role == 'Admin') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const CompanyHome(),
-              ),
-            );
-          } else {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const UserHome(),
-              ),
-            );
-          }
-          // Navigate to home page
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Invalid username or password.')),
-          );
-        }
-      // } catch (error) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(content: Text('Error: $error')),
-      //   );
-      // }
+      if (role == 'Company') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CompanyHome(),
+          ),
+        );
+      } else if (role == 'Admin') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CompanyHome(),
+          ),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const UserHome(),
+          ),
+        );
+      }
+      // Navigate to home page
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please check the box to proceed.')),
+        const SnackBar(content: Text('Invalid username or password.')),
       );
     }
+    // } catch (error) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text('Error: $error')),
+    //   );
+    // }
+    // } else {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('Please check the box to proceed.')),
+    //   );
+    // }
   }
 
   @override
@@ -137,107 +137,113 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
           child: Container(
             width: screenWidth * 0.4,
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                const Image(image: AssetImage(kbnLogo)),
-                const SizedBox(height: 10),
-                const Text(firmName, style: AppTextStyle.twntyFive_W600),
-                const SizedBox(height: 40),
-                const Text("Welcome Back", style: AppTextStyle.thirty_w500),
-                const SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                        height: 0.5, width: size.width * 0.05, color: black),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      child: Text(useMail, style: AppTextStyle.bodytext_12),
-                    ),
-                    Container(
-                        height: 0.5, width: size.width * 0.05, color: black),
-                  ],
-                ),
-                const SizedBox(height: 30),
-                LoginTextForm(
-                  controller: _emailConatroller,
-                  label: "username",
-                  hintlabel: "user_name",
-                  obscure: false,
-                ),
-                LoginTextForm(
-                  controller: _passwordController,
-                  label: "password",
-                  hintlabel: "* * * * *",
-                  obscure: true,
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return const FrogetPswd();
-                        },
-                      ));
-                    },
-                    child: const Text(forget, style: AppTextStyle.bodytext_12),
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Row(
-                  children: [
-                    Checkbox(
-                      activeColor: white,
-                      checkColor: black,
-                      value: _isChecked,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _isChecked = value ?? false;
-                        });
-                      },
-                    ),
-                    const Text("Remember me", style: AppTextStyle.bodytext_12),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                GestureDetector(
-                  onTap: companyLogin,
-                  child: Container(
-                    height: 50,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: black),
-                      borderRadius: const BorderRadius.all(Radius.circular(4)),
-                      color: _isChecked ? black : Colors.grey,
-                      gradient: LinearGradient(
-                        colors: _isChecked ? loginbutton : InnactiveLoginbutton,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  const Image(image: AssetImage(kbnLogo)),
+                  const SizedBox(height: 10),
+                  const Text(firmName, style: AppTextStyle.twntyFive_W600),
+                  const SizedBox(height: 40),
+                  const Text("Welcome Back", style: AppTextStyle.thirty_w500),
+                  const SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                          height: 0.5, width: size.width * 0.05, color: black),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        child: Text(useMail, style: AppTextStyle.bodytext_12),
                       ),
-                    ),
-                    child: const Center(
-                      child: Text("LOGIN", style: AppTextStyle.logintext),
-                    ),
+                      Container(
+                          height: 0.5, width: size.width * 0.05, color: black),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 40),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(noacc, style: AppTextStyle.bodytext_12),
-                    TextButton(
+                  const SizedBox(height: 30),
+                  LoginTextForm(
+                    controller: _emailConatroller,
+                    label: "Mail ID",
+                    hintlabel: "nick@gmail.com",
+                    obscure: false,
+                  ),
+                  LoginTextForm(
+                    controller: _passwordController,
+                    label: "Password",
+                    hintlabel: "* * * * *",
+                    obscure: true,
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) {
-                            return const SignupPage();
+                            return const FrogetPswd();
                           },
                         ));
                       },
-                      child: const Text("SignUp"),
+                      child:
+                          const Text(forget, style: AppTextStyle.bodytext_12),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Checkbox(
+                        activeColor: white,
+                        checkColor: black,
+                        value: _isChecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isChecked = value ?? false;
+                          });
+                        },
+                      ),
+                      const Text("Remember me",
+                          style: AppTextStyle.bodytext_12),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: companyLogin,
+                    child: Container(
+                      height: 50,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: black),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(4)),
+                        color: _isChecked ? black : Colors.grey,
+                        gradient: const LinearGradient(
+                          colors: loginbutton,
+                        ),
+                      ),
+                      child: const Center(
+                        child: Text("LOGIN", style: AppTextStyle.logintext),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    children: [
+                      const Text(noacc, style: AppTextStyle.bodytext_12),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignupPage()),
+                          );
+                        },
+                        child: const Text(" SignUp",
+                            style: TextStyle(color: bluee)),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -249,120 +255,161 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
     Size size = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 20),
-            const Image(image: AssetImage(kbnLogo)),
-            const SizedBox(height: 10),
-            const Text(firmName, style: AppTextStyle.eighteen_W600),
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                peoplebgWIdget(img: mobCompanyBg),
-                const Positioned(
-                    bottom: 5,
-                    child: Text("Welcome Back",
-                        style: AppTextStyle.twntyFive_W600)),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(height: 0.5, width: 102, color: black),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: Text(useMail, style: AppTextStyle.bodytext_12),
-                ),
-                Container(height: 0.5, width: 102, color: black),
-              ],
-            ),
-            const SizedBox(height: 10),
-            LoginTextForm(
-              controller: _emailConatroller,
-              label: "username",
-              hintlabel: "user_name",
-              obscure: false,
-              hight: 20,
-            ),
-            LoginTextForm(
-              controller: _passwordController,
-              label: "password",
-              hintlabel: "* * * * *",
-              obscure: true,
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return const FrogetPswd();
-                    },
-                  ));
-                },
-                child: const Text(forget, style: AppTextStyle.bodytext_12),
-              ),
-            ),
-            Row(
-              children: [
-                Checkbox(
-                  activeColor: white,
-                  checkColor: black,
-                  value: _isChecked,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _isChecked = value ?? false;
-                    });
-                  },
-                ),
-                const Text("Remember me", style: AppTextStyle.bodytext_12),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            GestureDetector(
-              onTap: companyLogin,
-              child: Container(
-                height: 50,
-                width: size.width * 1 - 100,
-                decoration: BoxDecoration(
-                  border: Border.all(color: black),
-                  borderRadius: const BorderRadius.all(Radius.circular(4)),
-                  color: _isChecked ? black : Colors.grey,
-                  gradient: LinearGradient(
-                    colors: _isChecked ? loginbutton : InnactiveLoginbutton,
+      child: size.width > 70
+          ? Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 20),
+                  const Image(image: AssetImage(kbnLogo)),
+                  const SizedBox(height: 10),
+                  const Text(firmName, style: AppTextStyle.eighteen_W600),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      peoplebgWIdget(img: mobCompanyBg),
+                      Positioned(
+                          bottom: 5,
+                          child: SizedBox(
+                            width:
+                                size.width < 240 ? size.width * 1 - 30 : null,
+                            child: const FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text("Welcome Back",
+                                  style: AppTextStyle.twntyFive_W600),
+                            ),
+                          )),
+                    ],
                   ),
-                ),
-                child: const Center(
-                  child: Text("LOGIN", style: AppTextStyle.logintext),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(noacc, style: AppTextStyle.bodytext_12),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) {
-                        return const SignupPage();
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (size.width > 240)
+                        Container(
+                            height: 0.5, width: size.width * .2, color: black),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: SizedBox(
+                            width:
+                                size.width < 240 ? size.width * 1 - 30 : null,
+                            child: const FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(useMail,
+                                    style: AppTextStyle.bodytext_12))),
+                      ),
+                      if (size.width > 240)
+                        Container(
+                            height: 0.5, width: size.width * .2, color: black),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  LoginTextForm(
+                    controller: _emailConatroller,
+                    label: "Mail ID",
+                    hintlabel: "nick@gamil.com",
+                    obscure: false,
+                    hight: 20,
+                  ),
+                  LoginTextForm(
+                    controller: _passwordController,
+                    label: "Password",
+                    hintlabel: "* * * * *",
+                    obscure: true,
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return const FrogetPswd();
+                          },
+                        ));
                       },
-                    ));
-                  },
-                  child: const Text("SignUp"),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+                      child:
+                          const Text(forget, style: AppTextStyle.bodytext_12),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        activeColor: white,
+                        checkColor: black,
+                        value: _isChecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isChecked = value ?? false;
+                          });
+                        },
+                      ),
+                      SizedBox(
+                          width: size.width < 240 ? size.width * 1 - 68 : null,
+                          child: const FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text("Remember me",
+                                  style: AppTextStyle.bodytext_12))),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  GestureDetector(
+                    onTap: companyLogin,
+                    child: Container(
+                      height: 50,
+                      width: size.width < 120
+                          ? size.width * 1
+                          : size.width * 1 - 100,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: black),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(4)),
+                        color: _isChecked ? black : Colors.grey,
+                        gradient: const LinearGradient(
+                          colors: loginbutton,
+                        ),
+                      ),
+                      child: const Center(
+                        child: Text("LOGIN", style: AppTextStyle.logintext),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    children: [
+                      const Text(noacc, style: AppTextStyle.bodytext_12),
+
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignupPage()),
+                          );
+                        },
+                        child: const Text(" SignUp",
+                            style: TextStyle(color: bluee)),
+                      ),
+
+                      // TextButton(
+                      //   onPressed: () {
+                      //     Navigator.push(context, MaterialPageRoute(
+                      //       builder: (context) {
+                      //         return const SignupPage();
+                      //       },
+                      //     ));
+                      //   },
+                      //   child: const Text("SignUp"),
+                      // ),
+                    ],
+                  ),
+                ],
+              ),
+            )
+          : null,
     );
   }
 }

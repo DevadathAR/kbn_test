@@ -27,6 +27,7 @@ class JobDetails extends StatefulWidget {
   final String datePosted;
   final String companyImage;
   final String status;
+  final String about;
   final Map<String, dynamic> jobReq;
 
   const JobDetails(
@@ -47,6 +48,7 @@ class JobDetails extends StatefulWidget {
       required this.datePosted,
       required this.companyImage,
       required this.status,
+      required this.about,
       required this.jobReq});
 
   @override
@@ -174,7 +176,7 @@ class _JobDetailsState extends State<JobDetails> {
                                                 child: CompanyDetails1(
                                                   jobId: widget.jobId,
                                                   aboutCompany:
-                                                      widget.jobSummary,
+                                                      widget.about,
                                                   userId: widget.companyId,
                                                   jobTitle: widget.jobTitle,
                                                   firmname: widget.firmname,
@@ -245,7 +247,7 @@ class _JobDetailsState extends State<JobDetails> {
                                                   const EdgeInsets.all(15.0),
                                               child: CompanyDetails1(
                                                 jobId: widget.jobId,
-                                                aboutCompany: widget.jobSummary,
+                                                aboutCompany: widget.about,
                                                 userId: widget.companyId,
                                                 jobTitle: widget.jobTitle,
                                                 firmname: widget.firmname,
@@ -333,7 +335,8 @@ class _JobDetailsState extends State<JobDetails> {
                         children: [
                           Expanded(
                             child: Text(
-                              "-"+"\t" * 3 +
+                              "-" +
+                                  "\t" * 3 +
                                   skill
                                       .trim(), // Use `trim` to remove any leading/trailing spaces
                               style: AppTextStyle.normalText,
@@ -354,7 +357,7 @@ class _JobDetailsState extends State<JobDetails> {
                         children: [
                           Expanded(
                             child: Text(
-                              "-"+"\t" * 3 + exp.trim(),
+                              "-" + "\t" * 3 + exp.trim(),
                               style: AppTextStyle.normalText,
                             ),
                           ),
@@ -376,7 +379,7 @@ class _JobDetailsState extends State<JobDetails> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  "-"+"\t" * 3 + edu.trim(),
+                                  "-" + "\t" * 3 + edu.trim(),
                                   style: AppTextStyle.normalText,
                                 ),
                               ),
@@ -446,7 +449,8 @@ class _JobDetailsState extends State<JobDetails> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  "-"+"\t" * 3 +
+                                  "-" +
+                                      "\t" * 3 +
                                       item.trim(), // Trim to remove any leading/trailing spaces
                                   style: AppTextStyle.normalText,
                                 ),

@@ -17,6 +17,7 @@ class LatestJobCard extends StatefulWidget {
   final String companyImage;
   final String datePosted;
   final String status;
+  final String about;
 
   const LatestJobCard({
     super.key,
@@ -29,6 +30,7 @@ class LatestJobCard extends StatefulWidget {
     required this.companyImage,
     required this.datePosted,
     required this.status,
+    required this.about,
   });
 
   @override
@@ -147,7 +149,7 @@ class _LatestJobCardState extends State<LatestJobCard> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Text(
-                widget.jobSummary,
+                widget.about,
                 style: AppTextStyle.normalText,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,

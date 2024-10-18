@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
+import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/view/auth/logInPage.dart';
 import 'package:kbn_test/view/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
@@ -31,6 +32,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
   late TextEditingController _addressController; // Controller for address
   late TextEditingController _websiteController; // Controller for website
   late TextEditingController _contactController; // Controller for contact
+  late TextEditingController _aboutController; // Controller for contact
   Uint8List? _selectedImage;
   String? _imageFilename;
 
@@ -59,6 +61,8 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
             TextEditingController(text: details['user']['company_website']);
         _contactController =
             TextEditingController(text: details['user']['contact']);
+        _aboutController =
+            TextEditingController(text: details['user']['about_company']);
         _isLoading = false;
       });
     } catch (error) {
@@ -125,12 +129,14 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
     }
   }
 
+ 
   Future<void> _saveCompanyDetails() async {
     try {
       var response = await ApiServices.sendUpdatedCompanyData(
         address: _addressController.text,
         site: _websiteController.text,
-        number: _contactController.text,
+        number: int.parse(_contactController.text) ,
+        about: _aboutController.text,
       );
 
       if (response.statusCode == 200) {
@@ -257,7 +263,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                     TextField(
                       controller: _managerNameController,
                       decoration: const InputDecoration(
-                          labelText: 'Manager Name',
+                          labelText: managerName,
                           border: UnderlineInputBorder(
                               borderSide: BorderSide.none)),
                       readOnly: !_isEditingManagerDetails,
@@ -266,7 +272,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                     TextField(
                       controller: _managerEmailController,
                       decoration: const InputDecoration(
-                          labelText: 'Manager Email',
+                          labelText: managerMail,
                           border: UnderlineInputBorder(
                               borderSide: BorderSide.none)),
                       readOnly: !_isEditingManagerDetails,
@@ -336,6 +342,11 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
             Column(
               children: [
                 TextField(
+                  controller: _aboutController,
+                  decoration: const InputDecoration(labelText: "About"),
+                ),
+                const SizedBox(height: 10),
+                TextField(
                   controller: _addressController,
                   decoration: const InputDecoration(labelText: "Address"),
                 ),
@@ -372,14 +383,25 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text(
+                    isCompany
+                        ? (userDetails['user']['about_company'] != null &&
+                                userDetails['user']['about_company'].isNotEmpty
+                            ? "About\n${userDetails['user']['about_company']}"
+                            : addAbout)
+                        :"About KBN",
+                    style: AppTextStyle.fourteenW400,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Text(
                       isCompany
+                          // ignore: unnecessary_null_comparison
                           ? " ${userDetails['user']['address']}" !=
                                   null
                               ? "Address: ${userDetails['user']['address']}"
                               : "ADD ADDRESS"
-                          : '''Smruthy Towers
-183/C, HMT Junction,
-Kalamassery, Kochi''',
+                          : addAddress,
                       style: AppTextStyle.fourteenW400),
                 ),
                 GestureDetector(
@@ -391,7 +413,7 @@ Kalamassery, Kochi''',
                           ? "Website: ${userDetails['user']['company_website']}" !=
                                   "null"
                               ? "Website: ${userDetails['user']['company_website']}"
-                              : "ADD COMPANY WEBSITE"
+                              : addWebsite
                           : sitelink,
                       style: AppTextStyle.fourteenW400,
                     ),
@@ -402,7 +424,7 @@ Kalamassery, Kochi''',
                   child: Text(
                       isCompany
                           ? "Contact: ${userDetails['user']['contact']}"
-                          : "+91 8848876965",
+                          : kbnNum,
                       style: AppTextStyle.fourteenW400),
                 ),
                 const SizedBox(height: 10),
