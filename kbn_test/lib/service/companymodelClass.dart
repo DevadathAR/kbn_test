@@ -1,313 +1,353 @@
-// To parse this JSON data, do
-//
-//     final welcome = welcomeFromJson(jsonString);
-
-import 'dart:convert';
-
-CompanyApiResponse welcomeFromJson(String str) => CompanyApiResponse.fromJson(json.decode(str));
-
-String welcomeToJson(CompanyApiResponse data) => json.encode(data.toJson());
-
 class CompanyApiResponse {
-    String message;
-    CompanyData companyData;
+  String? message;
+  CompanyData? companyData;
 
-    CompanyApiResponse({
-        required this.message,
-        required this.companyData,
-    });
+  CompanyApiResponse({this.message, this.companyData});
 
-    factory CompanyApiResponse.fromJson(Map<String, dynamic> json) => CompanyApiResponse(
-        message: json["message"],
-        companyData: CompanyData.fromJson(json["companyData"]),
-    );
+  CompanyApiResponse.fromJson(Map<String, dynamic> json) {
+    message = json['message'];
+    companyData = json['companyData'] != null
+        ? CompanyData.fromJson(json['companyData'])
+        : null;
+  }
 
-    Map<String, dynamic> toJson() => {
-        "message": message,
-        "companyData": companyData.toJson(),
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['message'] = message;
+    if (companyData != null) {
+      data['companyData'] = companyData!.toJson();
+    }
+    return data;
+  }
 }
 
 class CompanyData {
-    CommonData commonData;
-    StatisticsPageData statisticsPageData;
-    ApplicantsPageData applicantsPageData;
-    List<JobsPageDatum> jobsPageData;
+  CommonData? commonData;
+  StatisticsPageData? statisticsPageData;
+  ApplicantsPageData? applicantsPageData;
+  List<JobsPageData>? jobsPageData;
 
-    CompanyData({
-        required this.commonData,
-        required this.statisticsPageData,
-        required this.applicantsPageData,
-        required this.jobsPageData,
-    });
+  CompanyData(
+      {this.commonData,
+      this.statisticsPageData,
+      this.applicantsPageData,
+      this.jobsPageData});
 
-    factory CompanyData.fromJson(Map<String, dynamic> json) => CompanyData(
-        commonData: CommonData.fromJson(json["commonData"]),
-        statisticsPageData: StatisticsPageData.fromJson(json["statisticsPageData"]),
-        applicantsPageData: ApplicantsPageData.fromJson(json["applicantsPageData"]),
-        jobsPageData: List<JobsPageDatum>.from(json["jobsPageData"].map((x) => JobsPageDatum.fromJson(x))),
-    );
+  CompanyData.fromJson(Map<String, dynamic> json) {
+    commonData = json['commonData'] != null
+        ? CommonData.fromJson(json['commonData'])
+        : null;
+    statisticsPageData = json['statisticsPageData'] != null
+        ? StatisticsPageData.fromJson(json['statisticsPageData'])
+        : null;
+    applicantsPageData = json['applicantsPageData'] != null
+        ? ApplicantsPageData.fromJson(json['applicantsPageData'])
+        : null;
+    if (json['jobsPageData'] != null) {
+      jobsPageData = <JobsPageData>[];
+      json['jobsPageData'].forEach((v) {
+        jobsPageData!.add(JobsPageData.fromJson(v));
+      });
+    }
+  }
 
-    Map<String, dynamic> toJson() => {
-        "commonData": commonData.toJson(),
-        "statisticsPageData": statisticsPageData.toJson(),
-        "applicantsPageData": applicantsPageData.toJson(),
-        "jobsPageData": List<dynamic>.from(jobsPageData.map((x) => x.toJson())),
-    };
-}
-
-class ApplicantsPageData {
-    List<Pending> pending;
-    List<Selected> selected;
-
-    ApplicantsPageData({
-        required this.pending,
-        required this.selected,
-    });
-
-    factory ApplicantsPageData.fromJson(Map<String, dynamic> json) => ApplicantsPageData(
-        pending: List<Pending>.from(json["pending"].map((x) => Pending.fromJson(x))),
-        selected: List<Selected>.from(json["selected"].map((x) => Selected.fromJson(x))),
-    );
-
-    Map<String, dynamic> toJson() => {
-        "pending": List<dynamic>.from(pending.map((x) => x.toJson())),
-        "selected": List<dynamic>.from(selected.map((x) => x.toJson())),
-    };
-}
-
-class Pending {
-    int applicationId;
-    DateTime date;
-    String applicantName;
-    String location;
-    String designation;
-    String resumeLink;
-    String email;
-    String status;
-
-    Pending({
-        required this.applicationId,
-        required this.date,
-        required this.applicantName,
-        required this.location,
-        required this.designation,
-        required this.resumeLink,
-        required this.email,
-        required this.status,
-    });
-
-    factory Pending.fromJson(Map<String, dynamic> json) => Pending(
-        applicationId: json["applicationId"],
-        date: DateTime.parse(json["date"]),
-        applicantName: json["applicantName"],
-        location: json["location"],
-        designation: json["designation"],
-        resumeLink: json["resumeLink"],
-        email: json["email"],
-        status: json["status"],
-    );
-
-    Map<String, dynamic> toJson() => {
-        "applicationId": applicationId,
-        "date": "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
-        "applicantName": applicantName,
-        "location": location,
-        "designation": designation,
-        "resumeLink": resumeLink,
-        "email": email,
-        "status": status,
-    };
-}
-
-class Selected {
-    int applicantId;
-    String name;
-    String designation;
-
-    Selected({
-        required this.applicantId,
-        required this.name,
-        required this.designation,
-    });
-
-    factory Selected.fromJson(Map<String, dynamic> json) => Selected(
-        applicantId: json["applicantId"],
-        name: json["name"],
-        designation: json["designation"],
-    );
-
-    Map<String, dynamic> toJson() => {
-        "applicantId": applicantId,
-        "name": name,
-        "designation": designation,
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (commonData != null) {
+      data['commonData'] = commonData!.toJson();
+    }
+    if (statisticsPageData != null) {
+      data['statisticsPageData'] = statisticsPageData!.toJson();
+    }
+    if (applicantsPageData != null) {
+      data['applicantsPageData'] = applicantsPageData!.toJson();
+    }
+    if (jobsPageData != null) {
+      data['jobsPageData'] = jobsPageData!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
 }
 
 class CommonData {
-    int companyPosition;
-    Applicants applicantsTotal;
-    Applicants applicantsSelected;
-    MostAppliedJob mostAppliedJob;
+  int? companyPosition;
+  ApplicantsTotal? applicantsTotal;
+  ApplicantsTotal? applicantsSelected;
+  MostAppliedJob? mostAppliedJob;
 
-    CommonData({
-        required this.companyPosition,
-        required this.applicantsTotal,
-        required this.applicantsSelected,
-        required this.mostAppliedJob,
-    });
+  CommonData(
+      {this.companyPosition,
+      this.applicantsTotal,
+      this.applicantsSelected,
+      this.mostAppliedJob});
 
-    factory CommonData.fromJson(Map<String, dynamic> json) => CommonData(
-        companyPosition: json["companyPosition"],
-        applicantsTotal: Applicants.fromJson(json["applicantsTotal"]),
-        applicantsSelected: Applicants.fromJson(json["applicantsSelected"]),
-        mostAppliedJob: MostAppliedJob.fromJson(json["mostAppliedJob"]),
-    );
+  CommonData.fromJson(Map<String, dynamic> json) {
+    companyPosition = json['companyPosition'];
+    applicantsTotal = json['applicantsTotal'] != null
+        ? ApplicantsTotal.fromJson(json['applicantsTotal'])
+        : null;
+    applicantsSelected = json['applicantsSelected'] != null
+        ? ApplicantsTotal.fromJson(json['applicantsSelected'])
+        : null;
+    mostAppliedJob = json['mostAppliedJob'] != null
+        ? MostAppliedJob.fromJson(json['mostAppliedJob'])
+        : null;
+  }
 
-    Map<String, dynamic> toJson() => {
-        "companyPosition": companyPosition,
-        "applicantsTotal": applicantsTotal.toJson(),
-        "applicantsSelected": applicantsSelected.toJson(),
-        "mostAppliedJob": mostAppliedJob.toJson(),
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['companyPosition'] = companyPosition;
+    if (applicantsTotal != null) {
+      data['applicantsTotal'] = applicantsTotal!.toJson();
+    }
+    if (applicantsSelected != null) {
+      data['applicantsSelected'] = applicantsSelected!.toJson();
+    }
+    if (mostAppliedJob != null) {
+      data['mostAppliedJob'] = mostAppliedJob!.toJson();
+    }
+    return data;
+  }
 }
 
-class Applicants {
-    int prevMonth;
-    int thisMonth;
-    int growth;
+class ApplicantsTotal {
+  int? prevMonth;
+  int? thisMonth;
+  int? growth;
 
-    Applicants({
-        required this.prevMonth,
-        required this.thisMonth,
-        required this.growth,
-    });
+  ApplicantsTotal({this.prevMonth, this.thisMonth, this.growth});
 
-    factory Applicants.fromJson(Map<String, dynamic> json) => Applicants(
-        prevMonth: json["prevMonth"],
-        thisMonth: json["thisMonth"],
-        growth: json["growth"],
-    );
+  ApplicantsTotal.fromJson(Map<String, dynamic> json) {
+    prevMonth = json['prevMonth'];
+    thisMonth = json['thisMonth'];
+    growth = json['growth'];
+  }
 
-    Map<String, dynamic> toJson() => {
-        "prevMonth": prevMonth,
-        "thisMonth": thisMonth,
-        "growth": growth,
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['prevMonth'] = prevMonth;
+    data['thisMonth'] = thisMonth;
+    data['growth'] = growth;
+    return data;
+  }
 }
 
 class MostAppliedJob {
-    String title;
-    int applicantsCount;
-    String growth;
+  String? title;
+  int? applicantsCount;
+  String? growth;
 
-    MostAppliedJob({
-        required this.title,
-        required this.applicantsCount,
-        required this.growth,
-    });
+  MostAppliedJob({this.title, this.applicantsCount, this.growth});
 
-    factory MostAppliedJob.fromJson(Map<String, dynamic> json) => MostAppliedJob(
-        title: json["title"],
-        applicantsCount: json["applicantsCount"],
-        growth: json["growth"],
-    );
+  MostAppliedJob.fromJson(Map<String, dynamic> json) {
+    title = json['title'];
+    applicantsCount = json['applicantsCount'];
+    growth = json['growth'];
+  }
 
-    Map<String, dynamic> toJson() => {
-        "title": title,
-        "applicantsCount": applicantsCount,
-        "growth": growth,
-    };
-}
-
-class JobsPageDatum {
-    int jobId;
-    String designation;
-    String experience;
-    String location;
-    int vacancy;
-    int selected;
-    String jobMode;
-    String jobType;
-    int salary;
-    String status;
-
-    JobsPageDatum({
-        required this.jobId,
-        required this.designation,
-        required this.experience,
-        required this.location,
-        required this.vacancy,
-        required this.selected,
-        required this.jobMode,
-        required this.jobType,
-        required this.salary,
-        required this.status,
-    });
-
-    factory JobsPageDatum.fromJson(Map<String, dynamic> json) => JobsPageDatum(
-        jobId: json["jobId"],
-        designation: json["designation"],
-        experience: json["experience"],
-        location: json["location"],
-        vacancy: json["vacancy"],
-        selected: json["selected"],
-        jobMode: json["job_mode"],
-        jobType: json["job_type"],
-        salary: json["salary"],
-        status: json["status"],
-    );
-
-    Map<String, dynamic> toJson() => {
-        "jobId": jobId,
-        "designation": designation,
-        "experience": experience,
-        "location": location,
-        "vacancy": vacancy,
-        "selected": selected,
-        "job_mode": jobMode,
-        "job_type": jobType,
-        "salary": salary,
-        "status": status,
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['title'] = title;
+    data['applicantsCount'] = applicantsCount;
+    data['growth'] = growth;
+    return data;
+  }
 }
 
 class StatisticsPageData {
-    List<Recruitment> recruitment;
+  List<Recruitment>? recruitment;
 
-    StatisticsPageData({
-        required this.recruitment,
-    });
+  StatisticsPageData({this.recruitment});
 
-    factory StatisticsPageData.fromJson(Map<String, dynamic> json) => StatisticsPageData(
-        recruitment: List<Recruitment>.from(json["recruitment"].map((x) => Recruitment.fromJson(x))),
-    );
+  StatisticsPageData.fromJson(Map<String, dynamic> json) {
+    if (json['recruitment'] != null) {
+      recruitment = <Recruitment>[];
+      json['recruitment'].forEach((v) {
+        recruitment!.add(Recruitment.fromJson(v));
+      });
+    }
+  }
 
-    Map<String, dynamic> toJson() => {
-        "recruitment": List<dynamic>.from(recruitment.map((x) => x.toJson())),
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (recruitment != null) {
+      data['recruitment'] = recruitment!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
 }
 
 class Recruitment {
-    String jobTitle;
-    int prevMonth;
-    int currentMonth;
+  String? jobTitle;
+  int? prevMonth;
+  int? currentMonth;
 
-    Recruitment({
-        required this.jobTitle,
-        required this.prevMonth,
-        required this.currentMonth,
-    });
+  Recruitment({this.jobTitle, this.prevMonth, this.currentMonth});
 
-    factory Recruitment.fromJson(Map<String, dynamic> json) => Recruitment(
-        jobTitle: json["jobTitle"],
-        prevMonth: json["prevMonth"],
-        currentMonth: json["currentMonth"],
-    );
+  Recruitment.fromJson(Map<String, dynamic> json) {
+    jobTitle = json['jobTitle'];
+    prevMonth = json['prevMonth'];
+    currentMonth = json['currentMonth'];
+  }
 
-    Map<String, dynamic> toJson() => {
-        "jobTitle": jobTitle,
-        "prevMonth": prevMonth,
-        "currentMonth": currentMonth,
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['jobTitle'] = jobTitle;
+    data['prevMonth'] = prevMonth;
+    data['currentMonth'] = currentMonth;
+    return data;
+  }
+}
+
+class ApplicantsPageData {
+  List<Pending>? pending;
+  List<Selected>? selected;
+
+  ApplicantsPageData({this.pending, this.selected});
+
+  ApplicantsPageData.fromJson(Map<String, dynamic> json) {
+    if (json['pending'] != null) {
+      pending = <Pending>[];
+      json['pending'].forEach((v) {
+        pending!.add(Pending.fromJson(v));
+      });
+    }
+    if (json['selected'] != null) {
+      selected = <Selected>[];
+      json['selected'].forEach((v) {
+        selected!.add(Selected.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (pending != null) {
+      data['pending'] = pending!.map((v) => v.toJson()).toList();
+    }
+    if (selected != null) {
+      data['selected'] = selected!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Pending {
+  int? applicationId;
+  String? date;
+  String? applicantName;
+  String? location;
+  String? designation;
+  String? resumeLink;
+  String? email;
+  String? status;
+
+  Pending(
+      {this.applicationId,
+      this.date,
+      this.applicantName,
+      this.location,
+      this.designation,
+      this.resumeLink,
+      this.email,
+      this.status});
+
+  Pending.fromJson(Map<String, dynamic> json) {
+    applicationId = json['applicationId'];
+    date = json['date'];
+    applicantName = json['applicantName'];
+    location = json['location'];
+    designation = json['designation'];
+    resumeLink = json['resumeLink'];
+    email = json['email'];
+    status = json['status'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['applicationId'] = applicationId;
+    data['date'] = date;
+    data['applicantName'] = applicantName;
+    data['location'] = location;
+    data['designation'] = designation;
+    data['resumeLink'] = resumeLink;
+    data['email'] = email;
+    data['status'] = status;
+    return data;
+  }
+}
+
+class Selected {
+  int? applicantId;
+  String? name;
+  String? designation;
+
+  Selected({this.applicantId, this.name, this.designation});
+
+  Selected.fromJson(Map<String, dynamic> json) {
+    applicantId = json['applicantId'];
+    name = json['name'];
+    designation = json['designation'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['applicantId'] = applicantId;
+    data['name'] = name;
+    data['designation'] = designation;
+    return data;
+  }
+}
+
+class JobsPageData {
+  int? jobId;
+  String? designation;
+  String? experience;
+  String? location;
+  int? vacancy;
+  int? selected;
+  String? jobMode;
+  String? jobType;
+  int? salary;
+  String? status;
+
+  JobsPageData(
+      {this.jobId,
+      this.designation,
+      this.experience,
+      this.location,
+      this.vacancy,
+      this.selected,
+      this.jobMode,
+      this.jobType,
+      this.salary,
+      this.status});
+
+  JobsPageData.fromJson(Map<String, dynamic> json) {
+    jobId = json['jobId'];
+    designation = json['designation'];
+    experience = json['experience'];
+    location = json['location'];
+    vacancy = json['vacancy'];
+    selected = json['selected'];
+    jobMode = json['job_mode'];
+    jobType = json['job_type'];
+    salary = json['salary'];
+    status = json['status'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['jobId'] = jobId;
+    data['designation'] = designation;
+    data['experience'] = experience;
+    data['location'] = location;
+    data['vacancy'] = vacancy;
+    data['selected'] = selected;
+    data['job_mode'] = jobMode;
+    data['job_type'] = jobType;
+    data['salary'] = salary;
+    data['status'] = status;
+    return data;
+  }
 }

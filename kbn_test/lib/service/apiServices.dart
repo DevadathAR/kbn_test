@@ -140,22 +140,29 @@ class ApiServices {
 //     throw Exception('Failed to fetch user details');
 //   }
 // }
-static Future<CompanyApiResponse> companyData() async {
-  var prefs = await SharedPreferences.getInstance();
-  int month = prefs.getInt('selectedMonth') ?? DateTime.now().month;
-  int year = prefs.getInt('selectedYear') ?? DateTime.now().year;
+  static Future<CompanyApiResponse?> companyData() async {
+    var prefs = await SharedPreferences.getInstance();
+    int month = prefs.getInt('selectedMonth') ?? DateTime.now().month;
+    int year = prefs.getInt('selectedYear') ?? DateTime.now().year;
 
-  var url = Uri.parse('$baseUrl/company/data?month=$month&year=$year');
+    var url = Uri.parse('$baseUrl/company/data?month=$month&year=$year');
 
-  var response = await http.get(url, headers: headers);
+    var response = await http.get(url, headers: headers);
 
-  if (response.statusCode == 200) {
-    var jsonMap = jsonDecode(response.body);
-    return CompanyApiResponse.fromJson(jsonMap);
-  } else {
-    throw Exception('Failed to fetch user details');
+    if (response.statusCode == 200) {
+      var jsonMap = jsonDecode(response.body);
+      log("url ${response.statusCode}");
+      log("company ${response.body}");
+      // try {
+      return CompanyApiResponse.fromJson(jsonMap);
+      // } catch (e) {
+      //   print(e);
+      //   return null;
+      // }
+    } else {
+      throw Exception('Failed to fetch user details');
+    }
   }
-}
 
   static Future<AdminApiResponse> adminData() async {
     var url = Uri.parse('$baseUrl/admin/data?month=9&year=2024');
@@ -173,7 +180,8 @@ static Future<CompanyApiResponse> companyData() async {
       throw Exception('Failed to fetch user details');
     }
   }
-   // View  Applicant Details API
+
+  // View  Applicant Details API
   static Future<Map<String, dynamic>> fetchApplicantDetails(int userId) async {
     var url = Uri.parse('$baseUrl/user/$userId');
 
@@ -187,6 +195,7 @@ static Future<CompanyApiResponse> companyData() async {
       throw Exception('Failed to fetch user details');
     }
   }
+
 //.........................................................................
 // PATCH REQUESTS
 // Update Job Status API
@@ -265,7 +274,7 @@ static Future<CompanyApiResponse> companyData() async {
   }
 
 //..........................
-//POST REQUESTS 
+//POST REQUESTS
 
   static Future<http.Response> createJob(Map<String, dynamic> jobData) async {
     var url = Uri.parse('$baseUrl/job/addJob');
@@ -337,8 +346,7 @@ static Future<CompanyApiResponse> companyData() async {
     }
   }
 
-  
-static Future<http.StreamedResponse> sendManagerData({
+  static Future<http.StreamedResponse> sendManagerData({
     required String managerName,
     required String email,
     Uint8List? selectedImage,
@@ -372,16 +380,17 @@ static Future<http.StreamedResponse> sendManagerData({
       rethrow; // Rethrow any errors to handle them in the UI
     }
   }
+
 // Update AddressDetails Data API
   // static Future<Map<String, dynamic>> sendUpdatedCompanyData({
-    static Future<http.Response> sendUpdatedCompanyData({
+  static Future<http.Response> sendUpdatedCompanyData({
     required String address,
     required String site,
     required String number,
   }) async {
     // Construct the URL
     final url = Uri.parse('$baseUrl/user'); // Adjust the endpoint as necessary
-    
+
     // Create the request body
     final Map<String, String> body = {
       'address': address,
@@ -392,7 +401,7 @@ static Future<http.StreamedResponse> sendManagerData({
     // Send the request
     final response = await http.patch(
       url,
-      headers:headers,
+      headers: headers,
       body: jsonEncode(body),
     );
 

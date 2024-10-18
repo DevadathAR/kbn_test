@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:kbn_test/service/apiServices.dart';
-import 'package:kbn_test/veiw/screen/UPDATED%20UI/Screens/companyHome.dart';
-import 'package:kbn_test/veiw/auth/logInPage.dart';
-import 'package:kbn_test/veiw/screen/userScreen/home.dart';
+import 'package:kbn_test/view/screen/UPDATED%20UI/Screens/companyHome.dart';
+import 'package:kbn_test/view/auth/logInPage.dart';
+import 'package:kbn_test/view/screen/userScreen/home.dart';
 import 'package:month_year_picker/month_year_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
