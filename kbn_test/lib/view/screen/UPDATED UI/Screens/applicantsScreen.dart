@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/service/companymodelClass.dart';
-import 'package:kbn_test/service/singletonData.dart';
 import 'package:kbn_test/utilities/lists.dart';
 import 'package:kbn_test/view/auth/logInPage.dart';
 import 'package:kbn_test/view/screen/UPDATED%20UI/Screens/Scaffold/scaffoldBuilder.dart';
 import 'package:kbn_test/view/screen/UPDATED%20UI/Widgets/commonTable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../service/adminMode.dart';
 
@@ -95,7 +93,7 @@ class _CompanyApplicantScreenState extends State<CompanyApplicantScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    // Size size = MediaQuery.of(context).size;
 
     // Define headers and data for the applicant table based on user type
     final List<Map<String, String>> headers = isCompany
@@ -118,10 +116,7 @@ class _CompanyApplicantScreenState extends State<CompanyApplicantScreen> {
                 'date': formatDate(DateTime.parse(
                     applicantion.date!)), // Convert DateTime to String
                 'name': applicantion.applicantName,
-                'location': applicantion.location
-                    .toString()
-                    .split('.')
-                    .last, // Convert enum to string
+                'location': applicantion.location.toString().split('.').last,
                 'designation': applicantion.designation,
                 'resume': applicantion.resumeLink
                     .toString()
@@ -147,8 +142,8 @@ class _CompanyApplicantScreenState extends State<CompanyApplicantScreen> {
         }).toList() ??
         [];
 
-    List<Map<String, String>> companiesToApprove = _adminData
-            ?.adminData.companiesPageData.toBeApprovedCompanies
+    List<Map<String, String?>> companiesToApprove = _adminData
+            ?.adminData?.companiesPageData?.toBeApprovedCompanies!
             .map((companies) {
           return {
             'name': companies.companyName,
@@ -157,24 +152,24 @@ class _CompanyApplicantScreenState extends State<CompanyApplicantScreen> {
           };
         }).toList() ??
         [];
-    List<Map<String, String>> approvedCompanies = _adminData
-            ?.adminData.companiesPageData.approvedCompanies
+    List<Map<String, String?>> approvedCompanies = _adminData
+            ?.adminData?.companiesPageData?.approvedCompanies!
             .map((company) {
           return {
-            'date': formatDate(company.date), // DateTime to String
-            'name': company.companyName, // Already a String
-            'vaccancy': company.totalVacancy, // Already a String
-            'selected': company.selected.toString(), // Convert int to String
-            'kbn': company.kbnCode?.toString() ??
-                'N/A', // Convert dynamic to String, with fallback
-            'adminStatus': company.adminStatus, // Already a String
+            'date': formatDate(DateTime.parse(company.date!)),
+            'name': company.companyName,
+            'vaccancy': company.totalVacancy,
+            'selected': company.selected.toString(),
+            'kbn': company.kbnCode?.toString() ?? 'N/A',
+            'adminStatus': company.adminStatus,
           };
         }).toList() ??
         [];
 
     return ScaffoldBuilder(
       onMonthSelection: () {
-        _refreshDataBasedOnRole(isCompany);
+        // _refreshDataBasedOnRole(isCompany);
+        _fetchData();
       },
       currentPath: path,
       pageName: path,
@@ -189,9 +184,9 @@ class _CompanyApplicantScreenState extends State<CompanyApplicantScreen> {
       List<Map<String, String?>> pendingApplications,
       BuildContext context,
       List<Map<String, String>> headers,
-      List<Map<String, String>> approvedCompanies,
+      List<Map<String, String?>> approvedCompanies,
       List<Map<String, String?>> selectedApplicants,
-      List<Map<String, String>> companiesToApprove) {
+      List<Map<String, String?>> companiesToApprove) {
     return SizedBox(
       width: double.infinity,
       child: Wrap(

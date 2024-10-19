@@ -37,11 +37,13 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
   }
 
   Future<void> companyLogin() async {
+
+    
     // if (_isChecked) {
     String email = _emailConatroller.text;
     String password = _passwordController.text;
 
-    // try {
+    try {
     var responseData = await ApiServices.userLogin(email, password);
 
     if (responseData.containsKey('token') && responseData.containsKey('role')) {
@@ -91,11 +93,11 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
         const SnackBar(content: Text('Invalid username or password.')),
       );
     }
-    // } catch (error) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Error: $error')),
-    //   );
-    // }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
+    }
     // } else {
     //   ScaffoldMessenger.of(context).showSnackBar(
     //     const SnackBar(content: Text('Please check the box to proceed.')),
@@ -393,17 +395,6 @@ class _CompanyLoginPageState extends State<CompanyLoginPage> {
                         child: const Text(" SignUp",
                             style: TextStyle(color: bluee)),
                       ),
-
-                      // TextButton(
-                      //   onPressed: () {
-                      //     Navigator.push(context, MaterialPageRoute(
-                      //       builder: (context) {
-                      //         return const SignupPage();
-                      //       },
-                      //     ));
-                      //   },
-                      //   child: const Text("SignUp"),
-                      // ),
                     ],
                   ),
                 ],

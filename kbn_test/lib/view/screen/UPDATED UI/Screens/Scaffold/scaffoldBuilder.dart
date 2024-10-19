@@ -31,8 +31,8 @@ class ScaffoldBuilder extends StatefulWidget {
 }
 
 class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
-  CompanyApiResponse? _companyData;
-  AdminApiResponse? _adminData;
+  // CompanyApiResponse? _companyData;
+  // AdminApiResponse? _adminData;
   bool isLoading = true;
 
   @override
@@ -40,25 +40,7 @@ class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
     super.initState();
   }
 
-  // Future<void> _refreshDataBasedOnRole(bool isCompany) async {
-  //   setState(() {
-  //     isLoading = true; // Set loading state
-  //   });
-
-  //   if (isCompany) {
-  //     // Fetch company data
-  //     CompanyApiResponse companyData = await ApiServices.companyData();
-  //     _companyData = companyData;
-  //   } else {
-  //     // Fetch admin data
-  //     AdminApiResponse adminData = await ApiServices.adminData();
-  //     _adminData = adminData;
-  //   }
-
-  //   setState(() {
-  //     isLoading = false; // Set loading state to false after fetching
-  //   });
-  // }
+  
 
   @override
   Widget build(BuildContext context) {

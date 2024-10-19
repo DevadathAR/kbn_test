@@ -13,7 +13,7 @@ import '../../../../service/companymodelClass.dart'; // Make sure your model cla
 
 class VerticalTable extends StatelessWidget {
   final ApplicantsPageData? applicantsData;
-  final List<ToBeApprovedCompany>? toApproveData;
+  final List<ToBeApprovedCompanies>? toApproveData;
   final VoidCallback onAdminAproval;
 
   const VerticalTable({

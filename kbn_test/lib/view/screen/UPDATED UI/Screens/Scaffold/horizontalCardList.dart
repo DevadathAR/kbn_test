@@ -105,7 +105,7 @@ class _OverViewCardsState extends State<OverViewCards> {
   Widget build(BuildContext context) {
     // List of card data
     final companyCommonData = companyData?.companyData?.commonData;
-    final adminCommonData = adminData?.adminData.commonData;
+    final adminCommonData = adminData?.adminData?.commonData;
 
     // if (companyCommonData == null && isCompany) {
     //   return const Center(child: Text("No company data available."));
@@ -146,30 +146,30 @@ class _OverViewCardsState extends State<OverViewCards> {
 
     // Example card data for admins (this is a placeholder, adjust based on actual data structure)
     final List<Map<String, String>> adminCardData = adminCommonData != null
-        ? [
-            {
-              'title': adminCommonData.bestCompany.companyName.toString(),
-              'subTitle': "Best Company on This Month",
-            },
-            {
-              'title': adminCommonData.companiesAdded.toString(),
-              'subTitle': "Company added on this month",
-            },
-            {
-              'title': adminCommonData.kbnCodeAdded.toString(),
-              'subTitle': "Companies has got Kbn Code",
-            },
-            {
-              'title':
-                  "${(double.tryParse(adminCommonData.mostAppliedCompany.applicationPercentage) ?? 0).toStringAsFixed(0)}%", // Convert to double and format
-              'subTitle': "Most Applied Company",
-            },
-            {
-              'title': adminCommonData.bestCompany.companyName.toString(),
-              'subTitle': "Total Growth on this month",
-            },
-          ]
-        : defaultAdminCardData;
+    ? [
+        {
+          'title': adminCommonData.bestCompany?.companyName?.toString() ?? "N/A", // Null check for companyName
+          'subTitle': "Best Company on This Month",
+        },
+        {
+          'title': adminCommonData.companiesAdded?.toString() ?? "0", // Default to "0" if null
+          'subTitle': "Companies added this month",
+        },
+        {
+          'title': adminCommonData.kbnCodeAdded?.toString() ?? "0", // Default to "0" if null
+          'subTitle': "Companies that received Kbn Code",
+        },
+        {
+          'title': "${(double.tryParse(adminCommonData.mostAppliedCompany?.applicationPercentage ?? '0') ?? 0).toStringAsFixed(0)}%", // Handle null case for applicationPercentage
+          'subTitle': "Most Applied Company",
+        },
+        {
+          'title': adminCommonData.totalGrowth?.toString() ?? "0", // Default to "0" if null
+          'subTitle': "Total Growth this month",
+        },
+      ]
+    : defaultAdminCardData;
+
 
     // Select the appropriate card data based on the user role
     final cardData = isCompany ? companyCardData : adminCardData;

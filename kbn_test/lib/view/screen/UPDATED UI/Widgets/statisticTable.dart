@@ -219,3 +219,183 @@ class _StatisticpagetableState extends State<Statisticpagetable> {
     );
   }
 }
+
+
+
+class HorizontalStatistic extends StatelessWidget {
+  final List<Recruitment>? recruitmentData;
+  final List<Performance>? performanceData;
+
+  const HorizontalStatistic({
+    super.key,
+    this.recruitmentData,
+    this.performanceData,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const double minColumnWidth = 80.0;
+    const double minHeaderWidth = 100.0;
+
+    // Define the headers based on user type
+    final List<String> headers =
+        isCompany ? ['JobTitle', 'Percentage'] : ['Company name', 'Percentage'];
+
+    final dataList = isCompany ? recruitmentData : performanceData;
+    Future<void> shareTableText() async {
+      // Start with the headers
+      String tableText = '${headers.join('\t-')}\n';
+
+      if (isCompany) {
+        for (var recruitment in recruitmentData ?? []) {
+          tableText +=
+              '${recruitment.jobTitle}\t-\t${recruitment.currentMonth ?? 0}%\n';
+        }
+      } else {
+        for (var performance in performanceData ?? []) {
+          tableText +=
+              '${performance.companyName}\t-\t${performance.performancePercentageThisMonth ?? 0}%\n';
+        }
+      }
+      // Share the constructed tableText
+      await Share.share(tableText);
+    }
+
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: white,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          //headers in this column
+          if (size.width > 400)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                for (var header in headers) _buildHeaderCell(header, context),
+              ],
+            ),
+          // Scrollable data
+          Expanded(
+            child: SingleChildScrollView(
+              
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  // First Column for Headers
+                  if (size.width < 400)
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        for (var header in headers)
+                          _buildHeaderCell(header, context),
+                      ],
+                    ),
+                  // Data Columns for each header row
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      for (int i = 0; i < headers.length; i++)
+                        Row(
+                          children: [
+                            for (var data in dataList ?? [])
+                              _buildDataCell(
+                                isCompany
+                                    ? _getRecruitment(data as Recruitment, i) ??
+                                        ''
+                                    : _getPerformance(data as Performance, i) ??
+                                        '',
+                              ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          // Button placed at the right of the table
+          GestureDetector(
+            onTap: shareTableText,
+            child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                decoration: BoxDecoration(
+                  color: tealblue,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: SvgPicture.asset(
+                  shareIcon,
+                  width: 10,
+                  height: 10,
+                  color: white,
+                )),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Header Cell Builder
+  Widget _buildHeaderCell(String text, context) {
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      width: size.width > 300 ? 100 : 60,
+      padding: const EdgeInsets.all(8.0),
+      child: Wrap(
+        children: [
+          Text(
+            softWrap: true,
+            textScaler: const TextScaler.linear(1),
+            text,
+            style: const TextStyle(
+                color: black, fontSize: 12, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Data Cell Builder
+  Widget _buildDataCell(String text) {
+    return Container(
+      width: 100, // Fixed width for each data cell
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        text,
+        style: const TextStyle(color: black, fontSize: 12),
+      ),
+    );
+  }
+
+  // Get Recruitment Data based on the index of the header
+  String? _getRecruitment(Recruitment recruitment, int index) {
+    switch (index) {
+      case 0:
+        return recruitment.jobTitle;
+      case 1:
+        return recruitment.currentMonth?.toString();
+      default:
+        return '';
+    }
+  }
+
+  // Get Performance Data based on the index of the header
+  String? _getPerformance(Performance performance, int index) {
+    switch (index) {
+      case 0:
+        return performance.companyName;
+      case 1:
+        return performance.performancePercentageThisMonth;
+      default:
+        return '';
+    }
+  }
+}

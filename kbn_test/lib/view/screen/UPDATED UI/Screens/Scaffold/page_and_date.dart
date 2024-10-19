@@ -25,6 +25,7 @@ class PageAndDate extends StatefulWidget {
 class _PageAndDateState extends State<PageAndDate> {
   DateTime selectedMonth = DateTime.now(); // Initial date set to current month
   String selectedMonthStr = ''; // Formatted month-year string
+  bool isLoading = true; // Add this in your state
 
   @override
   void initState() {
@@ -33,7 +34,7 @@ class _PageAndDateState extends State<PageAndDate> {
     _loadSelectedMonth();
   }
 
- Future<void> _loadSelectedMonth() async {
+  Future<void> _loadSelectedMonth() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int month = prefs.getInt('selectedMonth') ?? DateTime.now().month;
     int year = prefs.getInt('selectedYear') ?? DateTime.now().year;
@@ -41,6 +42,7 @@ class _PageAndDateState extends State<PageAndDate> {
     setState(() {
       selectedMonth = DateTime(year, month);
       selectedMonthStr = DateFormat('MM-yyyy').format(selectedMonth);
+      isLoading = false; // Data has loaded, remove the loading state
     });
   }
 
@@ -56,11 +58,12 @@ class _PageAndDateState extends State<PageAndDate> {
       setState(() {
         selectedMonth = pickedMonth;
         selectedMonthStr = DateFormat('MM-yyyy').format(selectedMonth);
-        widget.onMonthSelect();
       });
 
       // Save the selected month and year to SharedPreferences
       await _saveSelectedMonth(selectedMonth.month, selectedMonth.year);
+              widget.onMonthSelect();
+
     }
   }
 
@@ -76,83 +79,86 @@ class _PageAndDateState extends State<PageAndDate> {
 
     return SizedBox(
       width: size.width * 1,
-      child: Column(
-        children: [
-          if (size.width < 900)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: isLoading
+          ? const Center(
+              child: CircularProgressIndicator()) // Show a loader while loading
+          : Column(
               children: [
-                SizedBox(
-                  width: 100,
-                  child: GestureDetector(
-                    onTap: () {
-                      Scaffold.of(context).openDrawer();
-                    },
-                    child: const Row(
-                      children: [
-                        Image(
-                          image: AssetImage(filterPng),
-                          color: black,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          "Menu",
-                          style: AppTextStyle.sixteen_w400_black,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          const SizedBox(
-            height: 10,
-          ),
-          Center(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  widget.pageLabel,
-                  style: AppTextStyle.sixteen_w400_black,
-                ),
-                // Calendar to select month and year
-                if (widget.currentPage != "Terms" &&
-                    widget.currentPage != "Profile")
-                  GestureDetector(
-                    onTap: _pickMonth, // Trigger the month picker on tap
-                    child: Container(
-                      padding: const EdgeInsets.only(bottom: 5, right: 5),
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.85),
-                              blurRadius: 10,
-                              spreadRadius: 1,
-                            ),
-                          ],
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(6)),
-                          color: white),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          const Image(image: AssetImage(calenderPng)),
-                          const SizedBox(width: 2),
-                          Text(
-                            selectedMonthStr, // Display the selected month
-                            style: AppTextStyle.normalText,
+                if (size.width < 900)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: 100,
+                        child: GestureDetector(
+                          onTap: () {
+                            Scaffold.of(context).openDrawer();
+                          },
+                          child: const Row(
+                            children: [
+                              Image(
+                                image: AssetImage(filterPng),
+                                color: black,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                "Menu",
+                                style: AppTextStyle.sixteen_w400_black,
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Center(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        widget.pageLabel,
+                        style: AppTextStyle.sixteen_w400_black,
+                      ),
+                      // Calendar to select month and year
+                      if (widget.currentPage != "Terms" &&
+                          widget.currentPage != "Profile")
+                        GestureDetector(
+                          onTap: _pickMonth, // Trigger the month picker on tap
+                          child: Container(
+                            padding: const EdgeInsets.only(bottom: 5, right: 5),
+                            decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.85),
+                                    blurRadius: 10,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(6)),
+                                color: white),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                const Image(image: AssetImage(calenderPng)),
+                                const SizedBox(width: 2),
+                                Text(
+                                  selectedMonthStr, // Display the selected month
+                                  style: AppTextStyle.normalText,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

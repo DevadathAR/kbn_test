@@ -15,7 +15,7 @@ class ApiServices {
     'Content-Type': 'application/json',
     // "ngrok-skip-browser-warning": "69420"
   };
-  static const String baseUrl = 'http://192.168.29.37:8000';
+  static const String baseUrl = 'http://192.168.29.77:8000';
   // static const String baseUrl =
   //     'https://acab-2405-201-f017-980d-fd96-e1c9-8e85-ce21.ngrok-free.app';
 
@@ -153,21 +153,27 @@ class ApiServices {
       var jsonMap = jsonDecode(response.body);
       log("url ${response.statusCode}");
       // log("company ${response.body}");
-      try {
-      return CompanyApiResponse.fromJson(jsonMap);
-      } catch (e) {
-        print(e);
-        return null;
-      }
+      // try {
+        return CompanyApiResponse.fromJson(jsonMap);
+      // } catch (e) {
+      //   print(e);
+      //   // return null;
+      // }
     } else {
       throw Exception('Failed to fetch user details');
     }
   }
 
   static Future<AdminApiResponse> adminData() async {
-    var url = Uri.parse('$baseUrl/admin/data?month=9&year=2024');
+     var prefs = await SharedPreferences.getInstance();
+    int month = prefs.getInt('selectedMonth') ?? DateTime.now().month;
+    int year = prefs.getInt('selectedYear') ?? DateTime.now().year;
+    var url = Uri.parse('$baseUrl/admin/data?month=$month&year=$year');
 
     var response = await http.get(url, headers: headers);
+
+          //  log("company ${response.body}");
+
 
     // print('Raw response: ${response.body}');
 
@@ -383,15 +389,14 @@ class ApiServices {
 
 // Update AddressDetails Data API
   // static Future<Map<String, dynamic>> sendUpdatedCompanyData({
-   static Future<http.Response> sendUpdatedCompanyData({
-    required String address,
-    required String site,
-    required int number,
-    required String about
-  }) async {
+  static Future<http.Response> sendUpdatedCompanyData(
+      {required String address,
+      required String site,
+      required int number,
+      required String about}) async {
     // Construct the URL
     final url = Uri.parse('$baseUrl/user'); // Adjust the endpoint as necessary
-    
+
     // Create the request body
     final Map<String, String> body = {
       'address': address,
@@ -403,7 +408,7 @@ class ApiServices {
     // Send the request
     final response = await http.patch(
       url,
-      headers:headers,
+      headers: headers,
       body: jsonEncode(body),
     );
 

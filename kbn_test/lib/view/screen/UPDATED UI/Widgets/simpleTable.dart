@@ -13,7 +13,7 @@ import '../../../../service/companymodelClass.dart';
 
 class HorizontalTable extends StatelessWidget {
   final List<JobsPageData>? jobsData;
-  final List<ApprovedCompany>? approvedCompData;
+  final List<ApprovedCompanies>? approvedCompData;
 
   const HorizontalTable({
     super.key,
@@ -83,7 +83,7 @@ class HorizontalTable extends StatelessWidget {
                           isCompany
                               ? _getJobFieldData(data as JobsPageData, i) ?? ''
                               : _getCompanyFieldData(
-                                      data as ApprovedCompany, i) ??
+                                      data as ApprovedCompanies, i) ??
                                   '',
                         ),
                     ] else ...[
@@ -149,7 +149,7 @@ class HorizontalTable extends StatelessWidget {
   }
 
   // Get company data based on the index of the header
-  String _getCompanyFieldData(ApprovedCompany company, int index) {
+  String? _getCompanyFieldData(ApprovedCompanies company, int index) {
     switch (index) {
       case 0:
         return company.companyName;

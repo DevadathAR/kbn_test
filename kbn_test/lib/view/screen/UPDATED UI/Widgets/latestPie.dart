@@ -65,19 +65,19 @@ class SyncfusionPieChart extends StatelessWidget {
 
     final totalApplicantsThisMonth = isCompany
         ? companyData?.commonData?.applicantsTotal?.thisMonth ?? 1
-        : adminData?.statisticsPageData.currMonthTotalApplicants ?? 1;
+        : adminData?.statisticsPageData?.currMonthTotalApplicants ?? 1;
 
     final totalApplicantsPrevMonth = isCompany
         ? companyData?.commonData!.applicantsTotal?.prevMonth ?? 1
-        : adminData?.statisticsPageData.prevMonthTotalApplicants ?? 1;
+        : adminData?.statisticsPageData?.prevMonthTotalApplicants ?? 1;
 
     final selectedApplicantsThisMonth = isCompany
         ? companyData?.commonData?.applicantsSelected?.thisMonth ?? 0
-        : adminData?.statisticsPageData.currMonthSelectedApplicants ?? 0;
+        : adminData?.statisticsPageData?.currMonthSelectedApplicants ?? 0;
 
     final selectedApplicantsPrevMonth = isCompany
         ? companyData?.commonData?.applicantsSelected?.prevMonth ?? 0
-        : adminData?.statisticsPageData.prevMonthSelectedApplicants ?? 0;
+        : adminData?.statisticsPageData?.prevMonthSelectedApplicants ?? 0;
 
     //     if (totalApplicantsThisMonth == null || totalApplicantsPrevMonth == null) {
     //   return const Center(child: Text("No Pie Data available"));

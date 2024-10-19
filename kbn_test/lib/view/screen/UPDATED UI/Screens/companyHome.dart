@@ -48,37 +48,37 @@ class _CompanyHomeState extends State<CompanyHome> {
       setState(() {
         isLoading = false;
       });
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(content: Text('Error fetching data: $e')),
-      // );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching data: $e')),
+      );
     }
   }
 
-  Future<void> _refreshDataBasedOnRole(bool isCompany) async {
-    setState(() {
-      isLoading = true; // Set loading state
-    });
+  // Future<void> _refreshDataBasedOnRole(bool isCompany) async {
+  //   setState(() {
+  //     isLoading = true; // Set loading state
+  //   });
 
-    if (isCompany) {
-      // Fetch company data
-      CompanyApiResponse? companyData = await ApiServices.companyData();
-      setState(() {
-        companyData = companyData;
-        isLoading = false;
-      });
-    } else {
-      // Fetch admin data
-      AdminApiResponse adminData = await ApiServices.adminData();
-      setState(() {
-        this.adminData = adminData;
-        isLoading = false;
-      });
-    }
+  //   if (isCompany) {
+  //     // Fetch company data
+  //     CompanyApiResponse? companyData = await ApiServices.companyData();
+  //     setState(() {
+  //       companyData = companyData;
+  //       isLoading = false;
+  //     });
+  //   } else {
+  //     // Fetch admin data
+  //     AdminApiResponse adminData = await ApiServices.adminData();
+  //     setState(() {
+  //       this.adminData = adminData;
+  //       isLoading = false;
+  //     });
+  //   }
 
-    // setState(() {
-    //   isLoading = false; // Set loading state to false after fetching
-    // });
-  }
+  //   // setState(() {
+  //   //   isLoading = false; // Set loading state to false after fetching
+  //   // });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +86,7 @@ class _CompanyHomeState extends State<CompanyHome> {
 
     return ScaffoldBuilder(
       onMonthSelection: () {
-        _refreshDataBasedOnRole(isCompany);
+        _fetchData();
       },
       pageName: "Overview",
       currentPath: "Overview",
@@ -129,7 +129,7 @@ class _CompanyHomeState extends State<CompanyHome> {
               HorizontalTable(
                 jobsData: companyData?.companyData?.jobsPageData,
                 approvedCompData:
-                    adminData?.adminData.companiesPageData.approvedCompanies,
+                    adminData?.adminData?.companiesPageData?.approvedCompanies,
               ),
             ],
           ),
@@ -143,7 +143,7 @@ class _CompanyHomeState extends State<CompanyHome> {
             },
             applicantsData: companyData?.companyData?.applicantsPageData,
             toApproveData:
-                adminData?.adminData.companiesPageData.toBeApprovedCompanies,
+                adminData?.adminData?.companiesPageData?.toBeApprovedCompanies,
           ),
         ),
       ],

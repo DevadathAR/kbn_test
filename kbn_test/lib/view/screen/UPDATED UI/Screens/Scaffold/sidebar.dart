@@ -180,12 +180,15 @@ class _SidebarState extends State<Sidebar> {
             },
           ),
           profileButton(
+            path: "Profile",
             context: context, // Pass the context from the widget tree
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const CompanyProfileScreen()));
+              if (widget.currentPath != "Profile") {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CompanyProfileScreen()));
+              }
             },
           ),
         ],
@@ -196,6 +199,7 @@ class _SidebarState extends State<Sidebar> {
   Widget profileButton({
     required BuildContext context,
     required VoidCallback onTap,
+    required String path,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),

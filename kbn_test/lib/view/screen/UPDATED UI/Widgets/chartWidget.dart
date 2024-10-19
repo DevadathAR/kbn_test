@@ -52,8 +52,8 @@ class ChartWidget extends StatelessWidget {
         SizedBox(
           height: 180,
           child: RecruitmentBarChart(
-            recruitmentData: companyData!.statisticsPageData?.recruitment,
-            performanceData: adminData?.statisticsPageData.performance,
+            recruitmentData: companyData?.statisticsPageData?.recruitment,
+            performanceData: adminData?.statisticsPageData?.performance,
             length: 203,
             mobilelength: 163,
           ),
@@ -95,7 +95,7 @@ class ChartWidget extends StatelessWidget {
             height: 220,
             child: RecruitmentBarChart(
               recruitmentData: companyData?.statisticsPageData?.recruitment,
-              performanceData: adminData?.statisticsPageData.performance,
+              performanceData: adminData?.statisticsPageData?.performance,
               length: 220,
               mobilelength: 163,
             ),

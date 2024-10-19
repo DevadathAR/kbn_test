@@ -1,277 +1,311 @@
-// To parse this JSON data, do
-//
-//     final welcome = welcomeFromJson(jsonString);
-
-import 'dart:convert';
-
-AdminApiResponse welcomeFromJson(String str) => AdminApiResponse.fromJson(json.decode(str));
-
-String welcomeToJson(AdminApiResponse data) => json.encode(data.toJson());
-
 class AdminApiResponse {
-    String message;
-    AdminData adminData;
+  String? message;
+  AdminData? adminData;
 
-    AdminApiResponse({
-        required this.message,
-        required this.adminData,
-    });
+  AdminApiResponse({this.message, this.adminData});
 
-    factory AdminApiResponse.fromJson(Map<String, dynamic> json) => AdminApiResponse(
-        message: json["message"],
-        adminData: AdminData.fromJson(json["adminData"]),
-    );
+  AdminApiResponse.fromJson(Map<String, dynamic> json) {
+    message = json['message'];
+    adminData = json['adminData'] != null
+        ? AdminData.fromJson(json['adminData'])
+        : null;
+  }
 
-    Map<String, dynamic> toJson() => {
-        "message": message,
-        "adminData": adminData.toJson(),
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['message'] = message;
+    if (adminData != null) {
+      data['adminData'] = adminData!.toJson();
+    }
+    return data;
+  }
 }
 
 class AdminData {
-    CommonData commonData;
-    StatisticsPageData statisticsPageData;
-    CompaniesPageData companiesPageData;
+  CommonData? commonData;
+  StatisticsPageData? statisticsPageData;
+  CompaniesPageData? companiesPageData;
 
-    AdminData({
-        required this.commonData,
-        required this.statisticsPageData,
-        required this.companiesPageData,
-    });
+  AdminData({this.commonData, this.statisticsPageData, this.companiesPageData});
 
-    factory AdminData.fromJson(Map<String, dynamic> json) => AdminData(
-        commonData: CommonData.fromJson(json["commonData"]),
-        statisticsPageData: StatisticsPageData.fromJson(json["statisticsPageData"]),
-        companiesPageData: CompaniesPageData.fromJson(json["companiesPageData"]),
-    );
+  AdminData.fromJson(Map<String, dynamic> json) {
+    commonData = json['commonData'] != null
+        ? CommonData.fromJson(json['commonData'])
+        : null;
+    statisticsPageData = json['statisticsPageData'] != null
+        ? StatisticsPageData.fromJson(json['statisticsPageData'])
+        : null;
+    companiesPageData = json['companiesPageData'] != null
+        ? CompaniesPageData.fromJson(json['companiesPageData'])
+        : null;
+  }
 
-    Map<String, dynamic> toJson() => {
-        "commonData": commonData.toJson(),
-        "statisticsPageData": statisticsPageData.toJson(),
-        "companiesPageData": companiesPageData.toJson(),
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (commonData != null) {
+      data['commonData'] = commonData!.toJson();
+    }
+    if (statisticsPageData != null) {
+      data['statisticsPageData'] = statisticsPageData!.toJson();
+    }
+    if (companiesPageData != null) {
+      data['companiesPageData'] = companiesPageData!.toJson();
+    }
+    return data;
+  }
 }
 
 class CommonData {
-    BestCompany bestCompany;
-    int companiesAdded;
-    int kbnCodeAdded;
-    MostAppliedCompany mostAppliedCompany;
-    int totalGrowth;
+  BestCompany? bestCompany;
+  int? companiesAdded;
+  int? kbnCodeAdded;
+  MostAppliedCompany? mostAppliedCompany;
+  int? totalGrowth;
 
-    CommonData({
-        required this.bestCompany,
-        required this.companiesAdded,
-        required this.kbnCodeAdded,
-        required this.mostAppliedCompany,
-        required this.totalGrowth,
-    });
+  CommonData(
+      {this.bestCompany,
+      this.companiesAdded,
+      this.kbnCodeAdded,
+      this.mostAppliedCompany,
+      this.totalGrowth});
 
-    factory CommonData.fromJson(Map<String, dynamic> json) => CommonData(
-        bestCompany: BestCompany.fromJson(json["bestCompany"]),
-        companiesAdded: json["companiesAdded"],
-        kbnCodeAdded: json["kbnCodeAdded"],
-        mostAppliedCompany: MostAppliedCompany.fromJson(json["mostAppliedCompany"]),
-        totalGrowth: json["totalGrowth"],
-    );
+  CommonData.fromJson(Map<String, dynamic> json) {
+    bestCompany = json['bestCompany'] != null
+        ? BestCompany.fromJson(json['bestCompany'])
+        : null;
+    companiesAdded = json['companiesAdded'];
+    kbnCodeAdded = json['kbnCodeAdded'];
+    mostAppliedCompany = json['mostAppliedCompany'] != null
+        ? MostAppliedCompany.fromJson(json['mostAppliedCompany'])
+        : null;
+    totalGrowth = json['totalGrowth'];
+  }
 
-    Map<String, dynamic> toJson() => {
-        "bestCompany": bestCompany.toJson(),
-        "companiesAdded": companiesAdded,
-        "kbnCodeAdded": kbnCodeAdded,
-        "mostAppliedCompany": mostAppliedCompany.toJson(),
-        "totalGrowth": totalGrowth,
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (bestCompany != null) {
+      data['bestCompany'] = bestCompany!.toJson();
+    }
+    data['companiesAdded'] = companiesAdded;
+    data['kbnCodeAdded'] = kbnCodeAdded;
+    if (mostAppliedCompany != null) {
+      data['mostAppliedCompany'] = mostAppliedCompany!.toJson();
+    }
+    data['totalGrowth'] = totalGrowth;
+    return data;
+  }
 }
 
 class BestCompany {
-    int companyId;
-    String companyName;
-    int totalApplications;
+  int? companyId;
+  String? companyName;
+  int? totalApplications;
 
-    BestCompany({
-        required this.companyId,
-        required this.companyName,
-        required this.totalApplications,
-    });
+  BestCompany({this.companyId, this.companyName, this.totalApplications});
 
-    factory BestCompany.fromJson(Map<String, dynamic> json) => BestCompany(
-        companyId: json["companyId"],
-        companyName: json["companyName"],
-        totalApplications: json["totalApplications"],
-    );
+  BestCompany.fromJson(Map<String, dynamic> json) {
+    companyId = json['companyId'];
+    companyName = json['companyName'];
+    totalApplications = json['totalApplications'];
+  }
 
-    Map<String, dynamic> toJson() => {
-        "companyId": companyId,
-        "companyName": companyName,
-        "totalApplications": totalApplications,
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['companyId'] = companyId;
+    data['companyName'] = companyName;
+    data['totalApplications'] = totalApplications;
+    return data;
+  }
 }
 
 class MostAppliedCompany {
-    int companyId;
-    String companyName;
-    int applicationCount;
-    String applicationPercentage;
+  int? companyId;
+  String? companyName;
+  int? applicationCount;
+  String? applicationPercentage;
 
-    MostAppliedCompany({
-        required this.companyId,
-        required this.companyName,
-        required this.applicationCount,
-        required this.applicationPercentage,
-    });
+  MostAppliedCompany(
+      {this.companyId,
+      this.companyName,
+      this.applicationCount,
+      this.applicationPercentage});
 
-    factory MostAppliedCompany.fromJson(Map<String, dynamic> json) => MostAppliedCompany(
-        companyId: json["companyId"],
-        companyName: json["companyName"],
-        applicationCount: json["applicationCount"],
-        applicationPercentage: json["applicationPercentage"],
-    );
+  MostAppliedCompany.fromJson(Map<String, dynamic> json) {
+    companyId = json['companyId'];
+    companyName = json['companyName'];
+    applicationCount = json['applicationCount'];
+    applicationPercentage = json['applicationPercentage'];
+  }
 
-    Map<String, dynamic> toJson() => {
-        "companyId": companyId,
-        "companyName": companyName,
-        "applicationCount": applicationCount,
-        "applicationPercentage": applicationPercentage,
-    };
-}
-
-class CompaniesPageData {
-    List<ApprovedCompany> approvedCompanies;
-    List<ToBeApprovedCompany> toBeApprovedCompanies;
-
-    CompaniesPageData({
-        required this.approvedCompanies,
-        required this.toBeApprovedCompanies,
-    });
-
-    factory CompaniesPageData.fromJson(Map<String, dynamic> json) => CompaniesPageData(
-        approvedCompanies: List<ApprovedCompany>.from(json["approvedCompanies"].map((x) => ApprovedCompany.fromJson(x))),
-        toBeApprovedCompanies: List<ToBeApprovedCompany>.from(json["toBeApprovedCompanies"].map((x) => ToBeApprovedCompany.fromJson(x))),
-    );
-
-    Map<String, dynamic> toJson() => {
-        "approvedCompanies": List<dynamic>.from(approvedCompanies.map((x) => x.toJson())),
-        "toBeApprovedCompanies": List<dynamic>.from(toBeApprovedCompanies.map((x) => x.toJson())),
-    };
-}
-
-class ApprovedCompany {
-    int companyId;
-    String companyName;
-    DateTime date;
-    dynamic kbnCode;
-    String totalVacancy;
-    int selected;
-    String adminStatus;
-
-    ApprovedCompany({
-        required this.companyId,
-        required this.companyName,
-        required this.date,
-        required this.kbnCode,
-        required this.totalVacancy,
-        required this.selected,
-        required this.adminStatus,
-    });
-
-    factory ApprovedCompany.fromJson(Map<String, dynamic> json) => ApprovedCompany(
-        companyId: json["companyId"],
-        companyName: json["companyName"],
-        date: DateTime.parse(json["date"]),
-        kbnCode: json["kbn_code"],
-        totalVacancy: json["totalVacancy"],
-        selected: json["selected"],
-        adminStatus: json["adminStatus"],
-    );
-
-    Map<String, dynamic> toJson() => {
-        "companyId": companyId,
-        "companyName": companyName,
-        "date": date.toIso8601String(),
-        "kbn_code": kbnCode,
-        "totalVacancy": totalVacancy,
-        "selected": selected,
-        "adminStatus": adminStatus,
-    };
-}
-
-class ToBeApprovedCompany {
-    int companyId;
-    String companyName;
-    dynamic website;
-
-    ToBeApprovedCompany({
-        required this.companyId,
-        required this.companyName,
-        required this.website,
-    });
-
-    factory ToBeApprovedCompany.fromJson(Map<String, dynamic> json) => ToBeApprovedCompany(
-        companyId: json["companyId"],
-        companyName: json["companyName"],
-        website: json["website"],
-    );
-
-    Map<String, dynamic> toJson() => {
-        "companyId": companyId,
-        "companyName": companyName,
-        "website": website,
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['companyId'] = companyId;
+    data['companyName'] = companyName;
+    data['applicationCount'] = applicationCount;
+    data['applicationPercentage'] = applicationPercentage;
+    return data;
+  }
 }
 
 class StatisticsPageData {
-    List<Performance> performance;
-    int currMonthTotalApplicants;
-    int currMonthSelectedApplicants;
-    int prevMonthTotalApplicants;
-    int prevMonthSelectedApplicants;
+  List<Performance>? performance;
+  int? currMonthTotalApplicants;
+  int? currMonthSelectedApplicants;
+  int? prevMonthTotalApplicants;
+  int? prevMonthSelectedApplicants;
 
-    StatisticsPageData({
-        required this.performance,
-        required this.currMonthTotalApplicants,
-        required this.currMonthSelectedApplicants,
-        required this.prevMonthTotalApplicants,
-        required this.prevMonthSelectedApplicants,
-    });
+  StatisticsPageData(
+      {this.performance,
+      this.currMonthTotalApplicants,
+      this.currMonthSelectedApplicants,
+      this.prevMonthTotalApplicants,
+      this.prevMonthSelectedApplicants});
 
-    factory StatisticsPageData.fromJson(Map<String, dynamic> json) => StatisticsPageData(
-        performance: List<Performance>.from(json["performance"].map((x) => Performance.fromJson(x))),
-        currMonthTotalApplicants: json["currMonthTotalApplicants"],
-        currMonthSelectedApplicants: json["currMonthSelectedApplicants"],
-        prevMonthTotalApplicants: json["prevMonthTotalApplicants"],
-        prevMonthSelectedApplicants: json["prevMonthSelectedApplicants"],
-    );
+  StatisticsPageData.fromJson(Map<String, dynamic> json) {
+    if (json['performance'] != null) {
+      performance = <Performance>[];
+      json['performance'].forEach((v) {
+        performance!.add(Performance.fromJson(v));
+      });
+    }
+    currMonthTotalApplicants = json['currMonthTotalApplicants'];
+    currMonthSelectedApplicants = json['currMonthSelectedApplicants'];
+    prevMonthTotalApplicants = json['prevMonthTotalApplicants'];
+    prevMonthSelectedApplicants = json['prevMonthSelectedApplicants'];
+  }
 
-    Map<String, dynamic> toJson() => {
-        "performance": List<dynamic>.from(performance.map((x) => x.toJson())),
-        "currMonthTotalApplicants": currMonthTotalApplicants,
-        "currMonthSelectedApplicants": currMonthSelectedApplicants,
-        "prevMonthTotalApplicants": prevMonthTotalApplicants,
-        "prevMonthSelectedApplicants": prevMonthSelectedApplicants,
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (performance != null) {
+      data['performance'] = performance!.map((v) => v.toJson()).toList();
+    }
+    data['currMonthTotalApplicants'] = currMonthTotalApplicants;
+    data['currMonthSelectedApplicants'] = currMonthSelectedApplicants;
+    data['prevMonthTotalApplicants'] = prevMonthTotalApplicants;
+    data['prevMonthSelectedApplicants'] = prevMonthSelectedApplicants;
+    return data;
+  }
 }
 
 class Performance {
-    String companyName;
-    String performancePercentageThisMonth;
-    String performancePercentagePrevMonth;
+  String? companyName;
+  String? performancePercentageThisMonth;
+  String? performancePercentagePrevMonth;
 
-    Performance({
-        required this.companyName,
-        required this.performancePercentageThisMonth,
-        required this.performancePercentagePrevMonth,
-    });
+  Performance(
+      {this.companyName,
+      this.performancePercentageThisMonth,
+      this.performancePercentagePrevMonth});
 
-    factory Performance.fromJson(Map<String, dynamic> json) => Performance(
-        companyName: json["companyName"],
-        performancePercentageThisMonth: json["performancePercentageThisMonth"],
-        performancePercentagePrevMonth: json["performancePercentagePrevMonth"],
-    );
+  Performance.fromJson(Map<String, dynamic> json) {
+    companyName = json['companyName'];
+    performancePercentageThisMonth = json['performancePercentageThisMonth'];
+    performancePercentagePrevMonth = json['performancePercentagePrevMonth'];
+  }
 
-    Map<String, dynamic> toJson() => {
-        "companyName": companyName,
-        "performancePercentageThisMonth": performancePercentageThisMonth,
-        "performancePercentagePrevMonth": performancePercentagePrevMonth,
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['companyName'] = companyName;
+    data['performancePercentageThisMonth'] = performancePercentageThisMonth;
+    data['performancePercentagePrevMonth'] = performancePercentagePrevMonth;
+    return data;
+  }
+}
+
+class CompaniesPageData {
+  List<ApprovedCompanies>? approvedCompanies;
+  List<ToBeApprovedCompanies>? toBeApprovedCompanies;
+
+  CompaniesPageData({this.approvedCompanies, this.toBeApprovedCompanies});
+
+  CompaniesPageData.fromJson(Map<String, dynamic> json) {
+    if (json['approvedCompanies'] != null) {
+      approvedCompanies = <ApprovedCompanies>[];
+      json['approvedCompanies'].forEach((v) {
+        approvedCompanies!.add(ApprovedCompanies.fromJson(v));
+      });
+    }
+    if (json['toBeApprovedCompanies'] != null) {
+      toBeApprovedCompanies = <ToBeApprovedCompanies>[];
+      json['toBeApprovedCompanies'].forEach((v) {
+        toBeApprovedCompanies!.add(ToBeApprovedCompanies.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (approvedCompanies != null) {
+      data['approvedCompanies'] =
+          approvedCompanies!.map((v) => v.toJson()).toList();
+    }
+    if (toBeApprovedCompanies != null) {
+      data['toBeApprovedCompanies'] =
+          toBeApprovedCompanies!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class ApprovedCompanies {
+  int? companyId;
+  String? companyName;
+  String? date;
+  String? kbnCode;
+  String? totalVacancy;
+  int? selected;
+  String? adminStatus;
+
+  ApprovedCompanies(
+      {this.companyId,
+      this.companyName,
+      this.date,
+      this.kbnCode,
+      this.totalVacancy,
+      this.selected,
+      this.adminStatus});
+
+  ApprovedCompanies.fromJson(Map<String, dynamic> json) {
+    companyId = json['companyId'];
+    companyName = json['companyName'];
+    date = json['date'];
+    kbnCode = json['kbn_code'];
+    totalVacancy = json['totalVacancy'];
+    selected = json['selected'];
+    adminStatus = json['adminStatus'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['companyId'] = companyId;
+    data['companyName'] = companyName;
+    data['date'] = date;
+    data['kbn_code'] = kbnCode;
+    data['totalVacancy'] = totalVacancy;
+    data['selected'] = selected;
+    data['adminStatus'] = adminStatus;
+    return data;
+  }
+}
+
+class ToBeApprovedCompanies {
+  int? companyId;
+  String? companyName;
+  Null website;
+
+  ToBeApprovedCompanies({this.companyId, this.companyName, this.website});
+
+  ToBeApprovedCompanies.fromJson(Map<String, dynamic> json) {
+    companyId = json['companyId'];
+    companyName = json['companyName'];
+    website = json['website'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['companyId'] = companyId;
+    data['companyName'] = companyName;
+    data['website'] = website;
+    return data;
+  }
 }
