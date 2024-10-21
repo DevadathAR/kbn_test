@@ -15,9 +15,9 @@ class ApiServices {
     'Content-Type': 'application/json',
     "ngrok-skip-browser-warning": "69420"
   };
-  // static const String baseUrl = 'http://192.168.29.37:8000';
   static const String baseUrl =
-      'https://acab-2405-201-f017-980d-fd96-e1c9-8e85-ce21.ngrok-free.app';
+   'http://192.168.29.77:8000';
+      // 'https://acab-2405-201-f017-980d-fd96-e1c9-8e85-ce21.ngrok-free.app';
 
   Future<http.StreamedResponse> signUp({
     required String fullName,

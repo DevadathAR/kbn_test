@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
+import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/const.dart';
 import 'package:kbn_test/utilities/text_style.dart';
 import 'package:kbn_test/veiw/auth/logInPage.dart';
@@ -403,19 +404,44 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => _launchURL(kbnSite), // Navigate to the website
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Text(
-                      isCompany
-                          ? (userDetails['user']['company_website'] != null &&
+                  onTap: () => _launchURL(isCompany
+                          ? (userDetails['user']['company_website'] != null && 
                                   userDetails['user']['company_website']
                                       .isNotEmpty
-                              ? "Website\n${userDetails['user']['company_website']}"
+                              ? 
+                              "Website\n${userDetails['user']['company_website']}"
                               : addWebsite)
-                          : kbnSite,
-                      style: AppTextStyle.fourteenW400,
-                    ),
+                          : kbnSite,), // Navigate to the website
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: RichText(
+  text: TextSpan(
+    children: [
+      TextSpan(
+        text: isCompany
+            ? (userDetails['user']['company_website'] != null &&
+                    userDetails['user']['company_website'].isNotEmpty
+                ? "Website\n"
+                : addWebsite)
+            : "Website\n", // This part is plain with no underline and default color
+        style: AppTextStyle.fourteenW400, // No underline or color here
+      ),
+      TextSpan(
+        text: isCompany
+            ? (userDetails['user']['company_website'] != null &&
+                    userDetails['user']['company_website'].isNotEmpty
+                ? userDetails['user']['company_website']
+                : '')
+            : kbnSite, // This is the URL part
+        style: AppTextStyle.fourteenW400.copyWith(
+          decoration: TextDecoration.underline, // Underline for the URL
+          color: bluee, // Blue color for the URL
+        ),
+      ),
+    ],
+  ),
+),
+
                   ),
                 ),
                 Padding(

@@ -14,7 +14,7 @@ class LatestJobCard extends StatefulWidget {
   final String expLevel;
   final String jobMode;
   final String jobType;
-  final String companyImage;
+  final String? companyImage;
   final String datePosted;
   final String status;
   final String about;
@@ -27,7 +27,7 @@ class LatestJobCard extends StatefulWidget {
     required this.firmname,
     required this.jobMode,
     required this.jobType,
-    required this.companyImage,
+    this.companyImage,
     required this.datePosted,
     required this.status,
     required this.about,
@@ -122,14 +122,14 @@ class _LatestJobCardState extends State<LatestJobCard> {
                 children: [
                   CircleAvatar(
                     // radius: getLogoRadius(size.width),
+                    backgroundImage: NetworkImage('${ApiServices.baseUrl}${widget.companyImage}'),
                     radius: 40,
-                    foregroundImage: CachedNetworkImageProvider(
-                      '${ApiServices.baseUrl}${widget.companyImage}',
-                      // 'https://randomuser.me/api/portraits/men/75.jpg',
-                      headers: const { },
-                      errorListener: (p0) =>
-                          print('${ApiServices.baseUrl}${widget.companyImage}'),
-                    ),
+                    // foregroundImage:  CachedNetworkImageProvider(
+                    //         '${ApiServices.baseUrl}${widget.companyImage}',
+                    //         // 'https://randomuser.me/api/portraits/men/75.jpg',
+                    //         // errorListener: (p0) => print(
+                    //         //     '${ApiServices.baseUrl}${widget.companyImage}'),
+                    //       ),
                   ),
                   Column(
                     children: [
@@ -232,7 +232,7 @@ Widget Requirments(context, {required String txt}) {
 
   return Container(
     height: 25,
-    width: 100,
+    width: 90,
     // width: containerWidth,
     decoration: const BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(4)),

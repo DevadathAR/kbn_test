@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Widget HomeAppBarBox(BuildContext context,
     {Widget? T_and_C,
-    // Widget? logOutTo,
     Widget? profilePage,
     String? profileImage,
     Color? termscolor,
@@ -34,6 +33,7 @@ Widget HomeAppBarBox(BuildContext context,
                 .copyWith(fontSize: screenWidth < 600 ? 16 : 20),
           ),
           const Spacer(),
+          if(size.width>900)
           Row(
             children: [
               //Terms and Conditions
@@ -68,12 +68,12 @@ Widget HomeAppBarBox(BuildContext context,
 Widget AppBarButtons(
   BuildContext context, {
   required String icon,
-  String? uploadedImage,
-  Widget? nextPage,
-  Color? iconcolor,
+  uploadedImage,
+  nextPage,
+  iconcolor,
   bool isLogout = false,
-  Widget? logOutTo,
-  Widget? backHome,
+  logOutTo,
+  backHome,
 }) {
   Size size = MediaQuery.of(context).size;
   double screenWidth = size.width;

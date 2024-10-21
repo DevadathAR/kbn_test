@@ -8,6 +8,7 @@ import 'package:kbn_test/veiw/screen/userScreen/userWidgets/jobCards.dart';
 import 'package:kbn_test/veiw/screen/userScreen/jobDetails.dart';
 import 'package:kbn_test/veiw/screen/userScreen/userT_n_C.dart';
 import 'package:kbn_test/veiw/screen/userScreen/userWidgets/home_filter_box.dart';
+import 'package:kbn_test/veiw/screen/userScreen/userWidgets/pagging.dart';
 import 'package:kbn_test/veiw/screen/userScreen/userWidgets/upload_resume.dart';
 import 'package:kbn_test/veiw/widgets_common/home_appbar_box.dart';
 
@@ -162,6 +163,10 @@ class _UserHomeState extends State<UserHome> {
                             _jobs = filteredJobs;
                           });
                         },
+                        T_and_C: const user_T_n_C(),
+                        termscolor: white,
+                        profileImage:
+                            "${ApiServices.baseUrl}/${userDetails['user']['profile_image']}",
                       ),
                       const SizedBox(height: 10),
                       const Padding(
@@ -237,9 +242,9 @@ class _UserHomeState extends State<UserHome> {
                                   expLevel:
                                       job['experience_level'].toString(),
                                   jobMode: job['job_mode'].toString(),
-                                  jobType: job['job_type'].toString(),
+                                  jobType: job['job_type'].toString(), 
                                   companyImage:
-                                      job['company_profile_image'].toString(),
+                                      job['company_profile_image'],
                                   datePosted: job['created_at'].toString(),
                                   status:
                                       job['application_status'].toString(),
@@ -268,6 +273,12 @@ class _UserHomeState extends State<UserHome> {
                             ),
                           ],
                         ),
+
+                        Pagging(onFilterApplied: (filteredJobs) {
+                          setState(() {
+                            _jobs = filteredJobs;
+                          });
+                        },)
                     ],
                   ),
                 ),
@@ -410,19 +421,6 @@ class _UserHomeState extends State<UserHome> {
     );
   }
 
-  // int _getCrossAxisCount(Size size) {
-  //   if (size.width < 900) return 1;
-  //   if (size.width < 1200) return 2;
-  //   // if (size.width < 1200) return 4;
-  //   return 4;
-  // }
-
-  // double _getChildAspectRatio(Size size) {
-  //   if (size.width < 900) return size.width * 0.1 / size.width * 15;
-  //   if (size.width < 1200) return size.width * 0.15 / size.width * 10;
-  //   if (size.width < 1600) return size.width * 0.22 / size.width * 5;
-  //   return size.width * 0.25 / size.width * 5;
-  // }
 }
 
 // Create a PaginatedButton widget

@@ -22,22 +22,19 @@ class MainApp extends StatelessWidget {
         MonthYearPickerLocalizations.delegate, // Add this line
         // Add other localization delegates if necessary
       ],
-      home:
-          //  CompanyStatisticScreen(),
-          // TermsNconditions(),
-          // CompanyHome()
-
-          // AdminHome(),
-
-          //  CompanyJobpage(),
-
-          // Home(),
-
-          FutureBuilder(
+      home: FutureBuilder(
         future: _checkLoginStatus(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            // Show loading indicator with a minimum width of 200 pixels
+            return Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: 500, // Minimum width of 200 pixels
+                ),
+                child: const CircularProgressIndicator(),
+              ),
+            );
           } else if (snapshot.hasData && snapshot.data is String) {
             // Role-Based navigation
             switch (snapshot.data) {
@@ -73,12 +70,8 @@ class MainApp extends StatelessWidget {
         isCompany = false;
       }
       ApiServices.headers['Authorization'] = "Bearer $token";
-
       var userDetailsResponse = await ApiServices.fetchUserDetails();
       userDetails = userDetailsResponse;
-
-      // print(userDetailsResponse);
-
       return role;
     }
   }

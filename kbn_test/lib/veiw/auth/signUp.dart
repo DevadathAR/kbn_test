@@ -229,16 +229,14 @@ class _SignupPageState extends State<SignupPage> {
             ],
           ),
         ),
-        Expanded  (
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              bgWidget(
-                img: bg,
-              ),
-              _buildImagePicker(isMobile: false),
-            ],
-          ),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            bgWidget(
+              img: bg,
+            ),
+            _buildImagePicker(isMobile: false),
+          ],
         )
       ],
     );

@@ -3,11 +3,26 @@ import 'package:kbn_test/service/apiServices.dart';
 import 'package:kbn_test/utilities/assets_path.dart';
 import 'package:kbn_test/utilities/colors.dart';
 import 'package:kbn_test/utilities/text_style.dart';
+import 'package:kbn_test/veiw/auth/logInPage.dart';
+import 'package:kbn_test/veiw/widgets_common/home_appbar_box.dart';
 
 class HomeFilterBox extends StatefulWidget {
   final Function(List<dynamic>) onFilterApplied;
 
-  const HomeFilterBox({Key? key, required this.onFilterApplied})
+
+  final Widget? T_and_C;
+  final Color? termscolor;
+  final Widget? profilePage;
+  final String? profileImage;
+final Widget? home;
+  const HomeFilterBox({Key? key, required this.onFilterApplied,
+ required this.T_and_C,
+  required this.termscolor,
+ this.profilePage,
+  required this.profileImage,
+  this.home
+
+  })
       : super(key: key);
 
   @override
@@ -177,7 +192,15 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
                           }),
                         ],
                       )
-                    : GestureDetector(
+                    : 
+
+
+                   
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+
+              GestureDetector(
                         onTap: () {
                           Scaffold.of(context).openDrawer();
                         },
@@ -198,9 +221,41 @@ class _HomeFilterBoxState extends State<HomeFilterBox> {
                           ),
                         ),
                       ),
+
+
+const Spacer(),
+
+              //Terms and Conditions
+              AppBarButtons(
+                context,
+                icon: termsPng,
+                nextPage:widget. T_and_C,
+                iconcolor: widget.termscolor,
+              ),
+              SizedBox(width: size.width * 0.02),
+              //profileButton
+              AppBarButtons(context,
+                  icon: unknownPng,
+                  uploadedImage: widget. profileImage,
+                  nextPage: widget. profilePage
+                  ),
+              SizedBox(width: size.width * 0.02),
+              // LogOut
+              AppBarButtons(context,
+                  icon: logOutPng,
+                  isLogout: true,
+                  logOutTo: const CompanyLoginPage(),
+                  backHome: widget.home
+                  ),
+            ],
+          ),
+                    
+                    
+                    
+                    
               ),
               const SizedBox(height: 10),
-              if (size.width > 900)
+              // if (size.width > 900)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
